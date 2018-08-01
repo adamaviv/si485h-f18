@@ -1,0 +1,471 @@
+\documentclass{article}[9pt]
+
+\usepackage{listings}
+\usepackage{fullpage}
+\usepackage{textcomp}
+
+\lstset{ %
+  basicstyle=\ttfamily\small,
+  commentstyle=\ttfamily\small\emph,
+  upquote=true,
+  framerule=1.25pt,
+  breaklines=true,
+  showstringspaces=false,
+  escapeinside={(*@}{@*)},
+  belowskip=2em,
+  aboveskip=1em,
+}
+
+
+\newenvironment{answerfont}{\fontfamily{qhv}\selectfont}{\par}
+\newenvironment{myanswer}{\begin{mdframed}\begin{answerfont}}{\end{answerfont}\end{mdframed}}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+% To add an answer, use the myanswer environment command under \item heading,like
+%
+% \item What is the meaning of life, universe, everything?
+% \begin{mysanswer}
+%   The answer is 42!
+% \end{myanswer}
+%
+% You can also use macro's in your \myanswer if you want to control the
+% formatting. Such as verbatim enviroment or lstlisting environment.
+%
+% BUT(!) I have to be able to read/grade your resulting pdf to give you credit,
+% so make sure your home work is well formatted.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\title{SI485h: HW 01}
+\date{FILL IN THE DUE DATE}
+\author{FILL IN YOUR NAME}
+
+\maketitle
+
+\section*{Instructions}
+
+
+\begin{itemize}
+  \item You must submit your homework using this Latex template.
+
+\item This homework is graded out of 140 points. Point values are associated to each question
+\end{itemize}
+
+\section*{Questions}
+
+
+\begin{enumerate}
+\item (15 points) Consider the \texttt{gdb} output for function \texttt{foo()} :
+
+\begin{verbatim}
+(gdb) ds foo
+Dump of assembler code for function foo:
+0x0804846d <+0>: push ebp
+0x0804846e <+1>: mov ebp,esp
+0x08048470 <+3>: sub esp,0x28
+0x08048473 <+6>: lea eax,[ebp-0x18]
+0x08048476 <+9>: mov DWORD PTR [esp+0x4],eax
+0x0804847a <+13>: mov DWORD PTR [esp],0x8048540
+0x08048481 <+20>: call 0x8048360 <scanf@plt>
+0x08048486 <+25>: lea eax,[ebp-0x18]
+0x08048489 <+28>: mov DWORD PTR [esp+0x4],eax
+0x0804848d <+32>: mov DWORD PTR [esp],0x8048540
+0x08048494 <+39>: call 0x8048330 <printf@plt>
+0x08048499 <+44>: leave
+0x0804849a <+45>: ret
+End of assembler dump.
+(gdb) x/s 0x8048540
+0x8048540: "%s"
+\end{verbatim}
+
+\begin{itemize}
+\item At what address, in hexadecimal, could there be a potential buffer overflow vulnerability?
+
+\item Write the equivalent code for \texttt{foo()} in C.
+
+\item Consider executing the program like below
+\begin{verbatim}
+python -c "print 'A'*x"| ./main
+\end{verbatim}
+What is the \emph{smallest} value of \texttt{x} that will crash the
+program. (\emph{HINT: you do not have to overwrite the return
+address to cause the first crash.})
+\end{itemize}
+
+\item (15 points) Consider the \texttt{gdb} output for function \texttt{foo()} :
+
+\begin{verbatim}
+(gdb) ds foo
+Dump of assembler code for function foo:
+0x0804844d <+0>: push ebp
+0x0804844e <+1>: mov ebp,esp
+0x08048450 <+3>: sub esp,0x48
+0x08048453 <+6>: mov DWORD PTR [ebp-0xc],0x0
+0x0804845a <+13>: mov eax,DWORD PTR [ebp+0x8]
+0x0804845d <+16>: mov DWORD PTR [esp+0x4],eax
+0x08048461 <+20>: lea eax,[ebp-0x2c]
+0x08048464 <+23>: mov DWORD PTR [esp],eax
+0x08048467 <+26>: call 0x8048320 <strcpy@plt>
+0x0804846c <+31>: jmp 0x804848c <foo+63>
+0x0804846e <+33>: lea eax,[ebp-0x2c]
+0x08048471 <+36>: mov DWORD PTR [esp+0x8],eax
+0x08048475 <+40>: mov eax,DWORD PTR [ebp-0xc]
+0x08048478 <+43>: mov DWORD PTR [esp+0x4],eax
+0x0804847c <+47>: mov DWORD PTR [esp],0x8048540
+0x08048483 <+54>: call 0x8048310 <printf@plt>
+0x08048488 <+59>: add DWORD PTR [ebp-0xc],0x1
+0x0804848c <+63>: cmp DWORD PTR [ebp-0xc],0x2
+0x08048490 <+67>: jle 0x804846e <foo+33>
+0x08048492 <+69>: leave
+0x08048493 <+70>: ret
+End of assembler dump.
+(gdb) x/s 0x8048540
+0x8048540: "%s"
+(gdb) r "Go Navy"
+Starting program: /home/user/git/si485-binary-exploits/hw/04/demo/main "Go Navy"
+0: Go Navy
+1: Go Navy
+2: Go Navy
+[Inferior 1 (process 3044) exited with code 013]
+\end{verbatim}
+
+\begin{itemize}
+\item Write the equivalent C code for function \texttt{foo()}.
+
+\item Consider executing this program's \texttt{main()} function, which
+calls \texttt{foo()} with the command line argument as the argument to
+=foo(), like below:
+
+\begin{verbatim}
+./main `python -c "print 'A'*x"`
+\end{verbatim}
+
+At what value of \texttt{x} does the functionality of the loop change?
+
+\item Provide a complete command line of the form 
+\begin{verbatim}
+./main `python -c "---------------------------"`
+\end{verbatim}
+that will cause the loop to print 4 times. And, \textbf{explain} your answer.
+\end{itemize}
+
+\item (15 points) Consider the \texttt{gdb} output for the functions \texttt{foo()} and \texttt{bar()}
+
+\begin{verbatim}
+(gdb) ds foo
+Dump of assembler code for function foo:
+0x08048461 <+0>: push ebp
+0x08048462 <+1>: mov ebp,esp
+0x08048464 <+3>: sub esp,0x28
+0x08048467 <+6>: mov eax,DWORD PTR [ebp+0x8]
+0x0804846a <+9>: mov DWORD PTR [esp+0x4],eax
+0x0804846e <+13>: lea eax,[ebp-0xc]
+0x08048471 <+16>: mov DWORD PTR [esp],eax
+0x08048474 <+19>: call 0x8048310 <strcpy@plt>
+0x08048479 <+24>: lea eax,[ebp-0xc]
+0x0804847c <+27>: mov DWORD PTR [esp],eax
+0x0804847f <+30>: call 0x8048320 <puts@plt>
+0x08048484 <+35>: leave
+0x08048485 <+36>: ret
+End of assembler dump.
+(gdb) ds bar
+Dump of assembler code for function bar:
+0x0804844d <+0>: push ebp
+0x0804844e <+1>: mov ebp,esp
+0x08048450 <+3>: sub esp,0x18
+0x08048453 <+6>: mov DWORD PTR [esp],0x8048540
+0x0804845a <+13>: call 0x8048320 <puts@plt>
+0x0804845f <+18>: leave
+0x08048460 <+19>: ret
+End of assembler dump.
+(gdb) x/s 0x8048540
+0x8048540: "Beat Army!"
+(gdb) r "Go Navy!"
+Starting program: /home/user/git/si485-binary-exploits/hw/04/demo/main "Go Navy!"
+Go Navy!
+[Inferior 1 (process 3129) exited with code 011]
+\end{verbatim}
+
+\begin{itemize}
+\item Write the equivalent C source code for \texttt{foo()}.
+
+\item Consider executing this program's \texttt{main()} function, which
+calls \texttt{foo()} with the command line argument as the argument to
+=foo(), like below:
+
+\begin{verbatim}
+./main `python -c "print 'A'*x"`
+\end{verbatim}
+
+At what value of \texttt{x} will \texttt{foo()}'s return address be overwritten?
+
+\item Provide a complete command line of the form 
+\begin{verbatim}
+./main `python -c "---------------------------"`
+\end{verbatim}
+that will cause \texttt{bar()} to execute by exploiting \texttt{foo()}.
+\end{itemize}
+
+\item (10 points) Why does system calls use registers to pass arguments, as oppose
+to using the stack? What register is used for the return value of
+a system call?
+
+\item (10 points) Consider the following x86 code that is initializing the
+arguments for the exec system call being setup for interrupt.
+
+\begin{verbatim}
+0x0804806e <+14>: mov eax,0xb
+0x08048073 <+19>: lea ebx,[esp+0xc]
+0x08048077 <+23>: mov ecx,DWORD PTR [esp]
+0x0804807a <+26>: mov edx,0x0
+0x0804807f <+31>: int 0x80
+\end{verbatim}
+
+Complete the diagram below for how the stack looks just prior to
+the \texttt{int 0x80} command.
+
+\begin{verbatim}
+.-----------------.
+|                 |
+|-----------------|
+|                 |
+|-----------------|
+|                 |
+|-----------------|
+|                 |
+|-----------------|
+|                 | <- esp
+'-----------------'
+\end{verbatim}
+
+\item (15 points) Consider the following assembly program written in \texttt{asm} syntax:
+\begin{verbatim}
+SECTION .text
+    global _start
+
+_start:
+    mov eax,0x0a797661
+    push eax
+
+    mov eax,0x4e206f47
+    push eax 
+
+    mov edx,0x8
+    mov ecx,esp
+    mov ebx,0x1 ;MARK 1
+
+    mov eax,0x4
+    int 0x80 
+
+    mov ebx,0 ;MARK 2
+    mov eax,1
+    int 0x80
+\end{verbatim}
+\begin{itemize}
+\item What is the output of the program? \textbf{Explain}.
+
+\item How does the output of the program change if at \texttt{MARK 1} the 0x1
+were changed to 0x2?
+
+\item What system call is being performed at \texttt{MARK 2}?
+\end{itemize}
+
+\item (15 points) Consider the copiled and assembled shell code:
+
+\begin{verbatim}
+08048080 <_start>:
+8048080: 6a 00            push 0x0
+8048082: 68 a8 90 04 08   push 0x80490a8
+8048087: ba 00 00 00 00   mov edx,0x0
+804808c: 89 e1            mov ecx,esp
+804808e: bb a8 90 04 08   mov ebx,0x80490a8
+8048093: b8 0b 00 00 00   mov eax,0xb
+8048098: cd 80            int 0x80
+804809a: bb 00 00 00 00   mov ebx,0x0
+804809f: b8 01 00 00 00   mov eax,0x1
+80480a4: cd 80            int 0x80
+\end{verbatim}
+
+\begin{itemize}
+\item Complete the stack diagram prior to the first interupt assuming
+the string \texttt{"/bin/sh"} is at address 0x80490a8. 
+
+\begin{verbatim}
+.-----------------.
+|                 |
+|-----------------|
+|                 |
+|-----------------|
+|                 | <- esp
+'-----------------'
+\end{verbatim}
+
+\item If we were to package of the bytes into a string and call it
+like so:
+
+\begin{verbatim}
+int main(){
+  char * code = "\x6a\x00\x68\xa8 (...)";
+  ((void(*)(void)) code)();
+}
+\end{verbatim}
+
+Would this fail or succeed in launching a shell? \textbf{Explain.}
+
+\item If we were to package of the bytes into a string and call it
+like so:
+
+\begin{verbatim}
+int main(){
+  char * code = "\x6a\x00\x68\xa8 (...)";
+  char s[1024];
+  strcp(s,code);
+  ((void(*)(void)) s)();
+}
+\end{verbatim}
+
+Would this fail or succeed in launching a shell? \textbf{Explain.}
+\end{itemize}
+
+\item (15 points) Consider the following shell code:
+
+\begin{verbatim}
+08048060 <_start>:
+8048060: eb 20            jmp 8048082 <callback>
+
+08048062 <dowork>:
+8048062: 5e               pop esi
+8048063: 6a 00            push 0x0
+8048065: 56               push esi
+8048066: ba 00 00 00 00   mov edx,0x0
+804806b: 89 e1            mov ecx,esp
+804806d: 89 f3            mov ebx,esi
+804806f: b8 0b 00 00 00   mov eax,0xb
+8048074: cd 80            int 0x80
+8048076: bb 00 00 00 00   mov ebx,0x0
+804807b: b8 01 00 00 00   mov eax,0x1
+8048080: cd 80            int 0x80
+
+08048082 <callback>:
+8048082: e8 db ff ff ff   call 8048062 <dowork>
+8048087: 2f das
+8048088: 62 69 6e         bound ebp,QWORD PTR [ecx+0x6e]
+804808b: 2f das
+804808c: 73 68            jae 80480f6 <callback+0x74>
+\end{verbatim}
+
+\begin{itemize}
+\item At the the \texttt{pop esi} instructino at address \texttt{0x8048062}, what
+address will be stored in the \texttt{esi} register?
+
+\item Explain how this shell code avoids fixed references?
+
+\item This shell code still hass NULL bytes! Rewrite the \texttt{x86}
+such that the portion of the code under \texttt{<dowork>} is NULL free.
+\end{itemize}
+
+\item (20 points) Consider the following C source code and dissambly of \texttt{vuln()}
+
+\begin{verbatim}
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+void bad(){
+  printf("You've been naughty!\n");
+}
+
+void good(){
+  printf("Go Navy!\n");
+}
+
+void vuln(int n, char * str){
+  int i = 0;
+  char buf[32];
+  strcpy(buf,str);
+  while( i < n ){
+    printf("%d %s\n",i++, buf);
+  }
+}
+
+int main(int argc, char *argv[]){
+  vuln(atoi(argv[1]), argv[2]);
+  return 0;
+}
+\end{verbatim}
+\begin{verbatim}
+0x080484d5  <+0>: push ebp
+0x080484d6  <+1>: mov ebp,esp
+0x080484d8  <+3>: sub esp,0x48
+0x080484db  <+6>: mov DWORD PTR [ebp-0xc],0x0
+0x080484e2 <+13>: mov eax,DWORD PTR [ebp+0xc]
+0x080484e5 <+16>: mov DWORD PTR [esp+0x4],eax
+0x080484e9 <+20>: lea eax,[ebp-0x2c]
+0x080484ec <+23>: mov DWORD PTR [esp],eax
+0x080484ef <+26>: call 0x8048360 <strcpy@plt>
+0x080484f4 <+31>: jmp 0x8048516 <vuln+65>
+0x080484f6 <+33>: mov eax,DWORD PTR [ebp-0xc]
+0x080484f9 <+36>: lea edx,[eax+0x1]
+0x080484fc <+39>: mov DWORD PTR [ebp-0xc],edx
+0x080484ff <+42>: lea edx,[ebp-0x2c]
+0x08048502 <+45>: mov DWORD PTR [esp+0x8],edx
+0x08048506 <+49>: mov DWORD PTR [esp+0x4],eax
+0x0804850a <+53>: mov DWORD PTR [esp],0x804860e
+0x08048511 <+60>: call 0x8048350 <printf@plt>
+0x08048516 <+65>: mov eax,DWORD PTR [ebp-0xc]
+0x08048519 <+68>: cmp eax,DWORD PTR [ebp+0x8]
+0x0804851c <+71>: jl 0x80484f6 <vuln+33>
+0x0804851e <+73>: leave
+0x0804851f <+74>: ret 
+\end{verbatim}
+
+And, assume you had the following shell code of the following size
+\begin{verbatim}
+$ ./hexify.sh shell
+\xeb\x17\x5e\x31\xc0\x50\x56\x31\xd2\x89\xe1\x89\xf3\xb0\x0b\xcd\x80\x31\xdb\x31\
+xc0\xb0\x01\xcd\x80\xe8\xe4\xff\xff\xff\x2f\x62\x69\x6e\x2f\x73\x68
+$ $(printf `./hexify.sh shell`) | wc –c
+37
+\end{verbatim}
+
+\begin{itemize}
+\item If you were to explot the program using the following method,
+how many bytes of padding would you need? \textbf{Explain.}
+
+\begin{verbatim}
+                .-------------------------.
+                |                         |
+                v                         |
+./vulnerable 5 <shell-code><padding><address-of-buf>
+\end{verbatim}
+
+\item With the right padding, will the above method work? Explain
+why or why not.
+
+\item Consider smashing the stack using the following method, how
+many bytes of padding would you need in the \emph{first} padding? Explain?
+
+\begin{verbatim}
+                                         .--------------------------.
+                                         |                          |
+                                         |                          V
+./vulnerable 5 <--------padding-----><address-of-shelcode><padding><shell code>
+\end{verbatim}
+
+\item In some cases, the second padding is needed. Give one example case.
+\end{itemize}
+
+\item (10 points) What is a \texttt{nop} sled? Explain why replacing the second padding
+with a \texttt{nop}-sled increases the likelihood of the attack?
+\begin{verbatim}
+                                         .--------------------------.
+                                         |                          |
+                                         |                          V
+./vulnerable 5 <--------padding-----><address-of-shelcode><padding><shell code>
+\end{verbatim}
+\end{enumerate}
+\end{document}
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "hw_01"
+%%% End:
