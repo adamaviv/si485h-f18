@@ -129,7 +129,7 @@ not (which will be important later). If we were to run this a bunch of
 times, we'd start to see that every time we run the program, we get
 different values of the stack. Here's a script to do that:
 
-``` {.bash}
+``` bash
   #!/bin/bash
   for i in `seq 1 1 25` #loop 25 times
    do 
@@ -181,7 +181,7 @@ generally, how many bits in the address are really random?
 
 To do that, let's look at a more simple program:
 
-``` {#rand_sample.c .c}
+``` c
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -213,7 +213,7 @@ Now, let's take this a bit further. Here's a python program that will
 read in these values and determine which of the bits are actually
 changing across runs:
 
-``` {#random_bits.py .Py}
+```python
   #!/usr/bin/python
 
   import sys
@@ -309,7 +309,7 @@ least one right, is the inverse of never getting it right.
 
 Here is a small python program that does this calculation for us:
 
-``` {.py}
+```python
 #!/usr/bin/python
 
 import sys
@@ -476,7 +476,7 @@ return address, and thus any address in the range 0xbfbfffff -\>
 0xbfa0fffe will work. For the function we are going to exploit, we'll
 use the vulnerable program from earlier lessons, shown below:
 
-``` {.c}
+``` c
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -722,7 +722,7 @@ So, in our code, we are looking for `\xff\xe4` or `\xff\d4`. To see how
 this works, I've modified the vulnerable program we've been working with
 as follows:
 
-``` {.c}
+``` c
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -954,7 +954,7 @@ On fork() and memory space
 Another item we can leverage is that `fork()`'ed process share the same
 memory space as there parent. For example, here is a sample program:
 
-``` {.c}
+``` c
   #include <stdio.h>
   #include <stdlib.h>
   #include <unistd.h>
@@ -992,7 +992,7 @@ Basing a logging engine
 Below is a sample logging utility that uses a socket to accept new
 messages:
 
-``` {.c}
+``` c
 
   #include <stdio.h>
   #include <stdlib.h>
@@ -1319,7 +1319,7 @@ The anatomy of a canary
 Let's take a closer look at the `initcanary` function to understand the
 anatomy of what makes a good canary:
 
-``` {.c}
+``` c
 //initialize the cannary at program start up
 __attribute__ ((constructor)) int initcannary(){
   srand(time(NULL));
@@ -1409,7 +1409,7 @@ into the program to reconstruct the calling stack frame and print out a
 well formatted version of the stack so we can take a look around. Here's
 the `foo` function updated with the `print_stack` function:
 
-``` {.c}
+``` c
 void foo(char * s){
 
   char buf[10]; 
@@ -1910,7 +1910,7 @@ buffer and also(!) write null bytes along the way. This is so we can
 handle the issue of the canary having nulls. Here's some sample code
 that will do that:
 
-``` {.c}
+``` c
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

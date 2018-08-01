@@ -13,7 +13,7 @@ a memory page should either be writable or executable but not both.
 What does this mean in practice? Let's take a look at our dummy exploit
 code.
 
-``` {.c}
+``` c
 #include <string.h>
 
 int main(int argc, char *argv[]){
@@ -145,7 +145,7 @@ The `system()` library function takes a string as input and will execute
 that string via `execve`. This can be very useful, and very
 dangerous.Consider the following program:
 
-``` {.c}
+``` c
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -172,7 +172,7 @@ Overwriting Return Addresses with `system()`
 For this example, we'll work the vulnerable program we've been using so
 far in class:
 
-``` {.c}
+``` c
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -404,7 +404,7 @@ Let's now look at what it takes to do a return to libc attack where we
 don't get lucky with the stack alignment. Here's another vulnerable
 program:
 
-``` {.c}
+``` c
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -642,7 +642,7 @@ Overwriting the return address with function calls
 Let's start with a simple example of where ROPs become very useful.
 Consider the following code where we want bad() to get called
 
-``` {.c}
+``` c
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -717,7 +717,7 @@ Functions with Arguments
 We can make the exploit a little more intriguing if we were to make so
 that bad() will call system() with it's argument:
 
-``` {.c}
+``` c
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -789,7 +789,7 @@ Let's add a bit more complexity to this exploit. Suppose now we want to
 make a call to another function first before calling bad(), and the
 arguments to those functions matter.
 
-``` {.c}
+``` c
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -896,7 +896,7 @@ The slot for bad's return address is already being used for the argument
 to bin~sh~. We're hosed. Worse, consider what would happen in this code
 example where one of the functions needs to take **two** arguments:
 
-``` {.c}
+``` c
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -1169,7 +1169,7 @@ that, we can do anything. It means we can do arbitrary system calls to
 do arbitrary work. To start, let's remember how we would normally print
 an 'A' in x86:
 
-``` {.asm}
+```asm
 section .txt
  global _start
 
@@ -1697,8 +1697,7 @@ The cool thing is now that we have the infrastructure, we can just make
 functions out of these. That is, we can make a function that produces a
 ROP chain that does our task, and then we can just chain those together:
 
-``` {.example}
-user@si485H-base:demo$ cat print_string_rop.py
+```python
 #!/usr/bin/python
 
 import sys

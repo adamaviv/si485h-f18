@@ -10,7 +10,7 @@ At the heart of a format string attack is a casual programming error
 regarding format strings that allows the user to provide the format
 string portion, not just the arguments to the format. For example:
 
-``` {.c}
+``` c
   #include <stdio.h>
   #include <stdlib.h>
 
@@ -68,7 +68,7 @@ determine how long the output is until it actually formatted.
 
 Here's a basic example, of using `%n`:
 
-``` {.c}
+``` c
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -104,7 +104,7 @@ Ok, so why does this format exist? Well, there are some really practical
 uses, for example, consider counting the digits of a number read in
 using `scanf()`:
 
-``` {.c}
+``` c
 user@si485H-base:demo$ cat scanf_n.c
 #include <stdio.h>
 #include <stdio.h>
@@ -146,7 +146,7 @@ What you might not be aware is there is a wealth more options to change
 the formatting. Here's a sample program that will illuminate some of
 these, so called "flag" options:
 
-``` {.c}
+``` c
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -209,7 +209,7 @@ Flag Options for Strings
 With strings, things are similar but a bit different. Here's some
 example code:
 
-``` {.c}
+``` c
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -251,7 +251,7 @@ be super useful, from a security perspective of overflow protection, the
 right adjustment becomes a limiter to how many bytes can be written to
 the target address:
 
-``` {.c}
+``` c
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -282,7 +282,7 @@ see some other techniques soon.
 
 Here's the program we are going to exploit:
 
-``` {.c}
+``` c
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -410,7 +410,7 @@ Reading Memory with Format Attack
 
 To start, let's return to the simple format example that is vulnerable:
 
-``` {.c}
+``` c
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -449,7 +449,7 @@ Reading up the stack
 Let's look at example `printf()` to think about how the arguments are
 passed to it:
 
-``` {.c}
+``` c
  void foo( ... ){
   //...
   printf("Format this: %d! And this: %s! And this too: %x", i, str, j);
@@ -492,7 +492,7 @@ frame |     |-----------|
 Now if we were to change our function, to something like this and leave
 out the extra arguments to printf().
 
-``` {.c}
+``` c
  void foo( ... ){
   //...
   printf("Format this: %d! And this: %s! And this too: %x"); //<--- 
@@ -538,7 +538,7 @@ As an example of this, let's return to our function, let's try and get
 the extra variables in `main` to print out. To help with this, we'll add
 the `print_stack` function so we can see where we are:
 
-``` {.c}
+``` c
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -727,7 +727,7 @@ indexes format using the \$.
 Recall that you can refer to a specific argument in the format, such as
 in this example:
 
-``` {.c}
+``` c
   printf("%1$x %1$d\n",x);
 ```
 
@@ -736,7 +736,7 @@ formats. Each format usesin `%1$*` to refer to the 1'st argument so we
 can reference it twice. For example, the above is equivalent to the
 below
 
-``` {.c}
+``` c
   printf("%x %d\n",x,x);
 ```
 
@@ -797,7 +797,7 @@ formatting enough bytes.
 
 To demonstrate this, we'll work with the following program:
 
-``` {.c}
+``` c
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -1219,7 +1219,7 @@ Let's return to the example code we used the last time, but this time
 there is a function `foo()` that we wish to call by overwriting the
 return address of `main()`.
 
-``` {.c}
+``` c
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -1585,7 +1585,7 @@ aids that's have been making this easier. In particular, let's no longer
 print the stack each time and let's get rid of the test~val~. Instead,
 we'll have a much, much plainer vulnerable program.
 
-``` {.c}
+``` c
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
