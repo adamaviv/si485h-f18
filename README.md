@@ -21,9 +21,9 @@
 
 * [Policy](policy.md)
 * [Calendar](calendar.md)
-* [Units](units/README.md)
-* [Assignments](assign/README.md)
-* [Resources](resources/README.md)
+* [Units](units)
+* [HW](hw)
+* [Resources](resources)
     
     
     

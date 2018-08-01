@@ -1,0 +1,319 @@
+\documentclass{article}[9pt]
+
+\usepackage{listings}
+\usepackage{fullpage}
+\usepackage{textcomp}
+
+\lstset{ %
+  basicstyle=\ttfamily\small,
+  commentstyle=\ttfamily\small\emph,
+  upquote=true,
+  framerule=1.25pt,
+  breaklines=true,
+  showstringspaces=false,
+  escapeinside={(*@}{@*)},
+  belowskip=2em,
+  aboveskip=1em,
+}
+
+
+\newenvironment{answerfont}{\fontfamily{qhv}\selectfont}{\par}
+\newenvironment{myanswer}{\begin{mdframed}\begin{answerfont}}{\end{answerfont}\end{mdframed}}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+% To add an answer, use the myanswer environment command under \item heading,like
+%
+% \item What is the meaning of life, universe, everything?
+% \begin{mysanswer}
+%   The answer is 42!
+% \end{myanswer}
+%
+% You can also use macro's in your \myanswer if you want to control the
+% formatting. Such as verbatim enviroment or lstlisting environment.
+%
+% BUT(!) I have to be able to read/grade your resulting pdf to give you credit,
+% so make sure your home work is well formatted.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\title{SI485h: HW 02}
+\date{FILL IN THE DUE DATE}
+\author{FILL IN YOUR NAME}
+
+\begin{document}
+
+\maketitle
+
+\section*{Instructions}
+
+\begin{itemize}
+\item You must submit your homework using this Latex template.
+  
+\item This homework is graded out of 125 points. Point values are associated to each question
+\end{itemize}
+
+\section*{Questions}
+
+\begin{enumerate}
+\item (15 Points) Consider the following parts of the disassembled code below. For
+each labeled part, provide a short, plain-English description.
+
+\begin{verbatim}
+.--------------------------------------.
+| 0x0804841d <+0>: push ebp            |
+| 0x0804841e <+1>: mov ebp,esp         | (a)
+| 0x08048420 <+3>: and esp,0xfffffff0  |
+'--------------------------------------'
+.---------------------------------.
+| 0x08048423 <+6>: sub esp,0x30   | (b)
+'---------------------------------'
+
+.--------------------------------------------------------.
+| 0x08048426 <+9>: mov DWORD PTR [esp+0x1d],0x6c6c6548   |
+| 0x0804842e <+17>: mov DWORD PTR [esp+0x21],0x57202c6f  |
+| 0x08048436 <+25>: mov DWORD PTR [esp+0x25],0x646c726f  | (c)
+| 0x0804843e <+33>: mov WORD PTR [esp+0x29],0xa21        |
+| 0x08048445 <+40>: mov BYTE PTR [esp+0x2b],0x0          |
+'--------------------------------------------------------'
+.------------------------------------------------.
+| 0x0804844a <+45>: lea eax,[esp+0x1d]           |
+| 0x0804844e <+49>: mov DWORD PTR [esp+0x2c],eax | (d)
+'------------------------------------------------'
+.---------------------------------------------.
+| 0x08048452 <+53>: jmp 0x804846b <main+78>   | (e)
+'---------------------------------------------'
+
+.--------------------------------------------------.
+| 0x08048454 <+55>: mov eax,DWORD PTR [esp+0x2c]   |
+| 0x08048458 <+59>: movzx eax,BYTE PTR [eax]       |
+| 0x0804845b <+62>: movsx eax,al                   |
+| 0x0804845e <+65>: mov DWORD PTR [esp],eax        | (f)
+| 0x08048461 <+68>: call 0x8048310 <putchar@plt>   |
+| 0x08048466 <+73>: add DWORD PTR [esp+0x2c],0x1   |
+'--------------------------------------------------'
+.--------------------------------------------------.
+| 0x0804846b <+78>: mov eax,DWORD PTR [esp+0x2c]   |
+| 0x0804846f <+82>: movzx eax,BYTE PTR [eax]       |
+| 0x08048472 <+85>: test al,al                     | (g)
+| 0x08048474 <+87>: jne 0x8048454 <main+55>        |
+| 0x08048476 <+89>: mov eax,0x0                    |
+'--------------------------------------------------'
+.---------------------------.
+| 0x0804847b <+94>: leave   |
+|0x0804847c <+95>: ret      | (h)
+'---------------------------'
+\end{verbatim}
+
+\item (5 points) What size data element does each of the following \texttt{PTR} reference?
+
+\begin{enumerate}
+\item \texttt{BYTE PTR}
+
+\item \texttt{DWORD PTR}
+
+\item \texttt{WORD PTR}
+\end{enumerate}
+
+\item (15 points) Consider the disassembled program below:
+
+\begin{verbatim}
+0x0804841d <+0>: push ebp
+0x0804841e <+1>: mov ebp,esp
+0x08048420 <+3>: and esp,0xfffffff0
+0x08048423 <+6>: sub esp,0x30
+0x08048426 <+9>: mov DWORD PTR [esp+0x1f],0x74616542
+0x0804842e <+17>: mov DWORD PTR [esp+0x23],0x796d7241
+0x08048436 <+25>: mov BYTE PTR [esp+0x27],0x0
+0x0804843b <+30>: mov DWORD PTR [esp+0x2c],0x0
+0x08048443 <+38>: jmp 0x804846c <main+79>
+0x08048445 <+40>: mov DWORD PTR [esp+0x28],0x0
+0x0804844d <+48>: jmp 0x8048460 <main+67>
+0x0804844f <+50>: lea eax,[esp+0x1f]
+0x08048453 <+54>: mov DWORD PTR [esp],eax
+0x08048456 <+57>: call 0x80482f0 <puts@plt>
+0x0804845b <+62>: add DWORD PTR [esp+0x28],0x1
+0x08048460 <+67>: cmp DWORD PTR [esp+0x28],0x3
+0x08048465 <+72>: jle 0x804844f <main+50>
+0x08048467 <+74>: add DWORD PTR [esp+0x2c],0x1
+0x0804846c <+79>: cmp DWORD PTR [esp+0x2c],0x4
+0x08048471 <+84>: jle 0x8048445 <main+40>
+0x08048473 <+86>: leave
+0x08048474 <+87>: ret 
+\end{verbatim}
+
+\begin{itemize}
+\item How many times is \texttt{puts()} called? Explain.
+
+\item What is being outputted for each \texttt{puts()} call? Explain.
+
+\item Write the C equilvanent of this code.
+\end{itemize}
+
+\item (15 point) Consider the following scenario for function a function \texttt{bar()}
+about call a function \texttt{foo()}: the calling function \texttt{bar()}'s
+instruction pointer will be at address \texttt{0x8045520} after \texttt{foo()}
+returns; the register \texttt{ebp} has value \texttt{0xbfff540}; The register
+\texttt{esp} has value \texttt{xbffff504}; \texttt{foo()} takes one argument, an
+integer with value \texttt{0xdeadbeef}.
+
+We can then begin to trace the stack frame like so:
+\begin{verbatim}
+                                   call <foo>
+       .------------.           .------------.           
+ ebp-> |            |      ebp->|            |
+       |            |           |            |
+       |            |           |            |
+esp -> | 0xdeadbeef |           | 0xdeadbeef |
+       '------------'      esp->| 0x08045520 |
+                                '------------'
+\end{verbatim}
+ Complete the remaining stack frames after each of the following
+instructions complete.
+
+\begin{itemize}
+\item \texttt{push ebp}
+\item \texttt{mov ebp,esp}
+\item \texttt{sub esp, 0x30}
+\end{itemize}
+
+\item (5 points) Using the stack from the previous question, consider what
+happens when \texttt{foo()} returns. In x86, write the sequence of
+instructions needed to reset the stack frame to \texttt{bar()}'s
+execution. That is, you should have some set of \texttt{mov}'s \texttt{sub}'s
+or \texttt{pop}'s or whatever other instruction you might need.
+
+\item (5 points) If the register \texttt{eax} stores \texttt{0xdeadbeef}, what does the
+following registers store?
+
+\begin{itemize}
+\item \texttt{ax}
+\item \texttt{al}
+\item \texttt{ah}
+\end{itemize}
+
+\item (10 points) Consider the following source code below and disassembly, match
+the memory address to the variable name.
+
+\begin{verbatim}
+int foo(int a){
+  int i,r;
+  r=0;
+  for(i=1;i<=a;i++){
+    r+=i;
+  }
+  return r;
+}
+\end{verbatim}
+\begin{verbatim}
+0x0804846d <+0>: push ebp
+0x0804846e <+1>: mov ebp,esp
+0x08048470 <+3>: sub esp,0x10
+0x08048473 <+6>: mov DWORD PTR [ebp-0x4],0x0
+0x0804847a <+13>: mov DWORD PTR [ebp-0x8],0x1
+0x08048481 <+20>: jmp 0x804848d <foo+32>
+0x08048483 <+22>: mov eax,DWORD PTR [ebp-0x8]
+0x08048486 <+25>: add DWORD PTR [ebp-0x4],eax
+0x08048489 <+28>: add DWORD PTR [ebp-0x8],0x1
+0x0804848d <+32>: mov eax,DWORD PTR [ebp-0x8]
+0x08048490 <+35>: cmp eax,DWORD PTR [ebp+0x8]
+0x08048493 <+38>: jle 0x8048483 <foo+22>
+0x08048495 <+40>: mov eax,DWORD PTR [ebp-0x4]
+0x08048498 <+43>: leave
+0x08048499 <+44>: ret 
+\end{verbatim}
+
+\begin{itemize}
+\item \texttt{ebp-0x4}
+\item \texttt{ebp-0x8}
+\item \texttt{ebp+0x8}
+\end{itemize}
+
+\item (10 points) Clone the repository below here you will find a program called \texttt{main}.
+\begin{verbatim}
+git clone git@saddleback.academy.usna.edu:aviv/HW-2.git
+\end{verbatim}
+Execute the program under \texttt{gdb} and place a breakpoint at \texttt{foo},
+and then run the program with the following arguments:
+\begin{verbatim}
+(gdb) r 5 1
+\end{verbatim}
+
+\begin{itemize}
+\item Fill in the missing pieces of the memory diagram \emph{after} the
+instruction at \texttt{0x08048448} executes.
+\begin{verbatim}
+     .------------------.
+     |                  |
+     |------------------|
+     |                  |
+     |------------------|
+     |                  |
+     |------------------|
+ebp->|    0xbffff658    |
+     |------------------|
+     |                  | 
+     |------------------|
+esp->|                  |
+     '------------------'
+\end{verbatim}
+
+\item Fill in the missing pieces of the memory diagram \emph{after} the
+instruction at \texttt{0x08048460} executes for \emph{second} time.
+
+\begin{verbatim}
+     .------------------.
+     |                  |
+     |------------------|
+     |                  |
+     |------------------|
+     |                  |
+     |------------------|
+ebp->|    0xbffff658    |
+     |------------------|
+     |                  | 
+     |------------------|
+esp->|                  |
+     '------------------'
+\end{verbatim}
+\end{itemize}
+
+\item (5 points) In the HW2 git repo you cloned before, you will find a program
+called \texttt{stacked}. Run this program under \texttt{gdb} and place a break
+point at the function \texttt{baz()}.
+
+\begin{itemize}
+\item How many functions are called before \texttt{baz()}?
+\item How did you determine that?
+\end{itemize}
+
+\item (20 points) In the HW2 git repo you cloned before, you will find a program
+called \texttt{trace-me}. Using \texttt{gdb} determine the right input for
+the program such that it prints the secret message.
+
+\begin{itemize}
+\item What is the secret message?
+\item How did you determine the right input?
+\end{itemize}
+
+(Hint 1: Does it take arguemnts?)
+
+(Hint 2: Trace main using ni [next instruction])
+
+(Hint 3: What is being compared?)
+
+\item (20 points) In the HW3 git repo you cloned before, you will find a program
+called \texttt{crack-me}. Use \texttt{gdb} to inspect the various elements of
+the \texttt{main()} function to determine the secret message.
+
+\begin{itemize}
+\item What is the secret message?
+\item How did you determine the right input?
+\end{itemize}
+
+(Hint 1: use examine [i.e., x] check things out)
+
+(Hint 2: use print to perform operations and see results)
+
+(Hint 3: use print again to reinterpret those results)
+\end{enumerate}
+\end{document}

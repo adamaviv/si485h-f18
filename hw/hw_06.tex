@@ -1,0 +1,160 @@
+\documentclass{article}[9pt]
+
+\usepackage{listings}
+\usepackage{fullpage}
+\usepackage{textcomp}
+
+\lstset{ %
+  basicstyle=\ttfamily\small,
+  commentstyle=\ttfamily\small\emph,
+  upquote=true,
+  framerule=1.25pt,
+  breaklines=true,
+  showstringspaces=false,
+  escapeinside={(*@}{@*)},
+  belowskip=2em,
+  aboveskip=1em,
+}
+
+
+\newenvironment{answerfont}{\fontfamily{qhv}\selectfont}{\par}
+\newenvironment{myanswer}{\begin{mdframed}\begin{answerfont}}{\end{answerfont}\end{mdframed}}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+% To add an answer, use the myanswer environment command under \item heading,like
+%
+% \item What is the meaning of life, universe, everything?
+% \begin{mysanswer}
+%   The answer is 42!
+% \end{myanswer}
+%
+% You can also use macro's in your \myanswer if you want to control the
+% formatting. Such as verbatim enviroment or lstlisting environment.
+%
+% BUT(!) I have to be able to read/grade your resulting pdf to give you credit,
+% so make sure your home work is well formatted.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\title{SI485h: HW 06}
+\date{FILL IN THE DUE DATE}
+\author{FILL IN YOUR NAME}
+
+\begin{document}
+
+\maketitle
+\section*{Instructions}
+
+\begin{itemize}
+\item You must submit your homework using this Latex template.
+  
+\item This homework is graded out of 70 points. Point values are associated to each question.
+\end{itemize}
+
+\section*{Questions}
+\label{sec:org24d21ef}
+
+\begin{enumerate}
+\item (4 points) How many bits in a 32-bit memory address are typically randomized
+in ASLR?
+
+\item For the following addresses, what is the non random base address?
+For example, for the stack, the base portion is 0xbf8000.
+
+\begin{enumerate}
+\item (2 points) \texttt{0x09bed40}
+
+\item (2 points) \texttt{0xbd90023}
+
+\item (2 points) \texttt{0xe11eefa}
+\end{enumerate}
+
+\item (10 point) Consider a guessing game where you are trying to guess the number
+I'm thinking of right now. It's a number between 1 and m. Every
+time you guess, I change my number! How many guesses, in terms of
+n, would it take until you had a 50\% chance of getting it right
+within that number of guesses? 
+
+Write your answer in reduced form with respect to m and n. 
+
+(\emph{hint}: Use base 2 log is key!)
+
+\item (5 points) Explain how the above problem related to breaking ASLR.
+
+\item (5 points) Explain how a NOP sled improves your ability to brute force an
+ASLR program? Consider the situation of 32-bit address space.
+
+\item Consider a \textbf{48 bit} memory address space (6 bytes) that employs
+22 bits of randomness when basing the stack address. The first 20
+bits are fixed for the stack, e.g., 0xbff, the next 22 bits are
+random, and the last 6 bits are fixed. (\emph{hint: you may want to
+write a program to solve the questions below.})
+
+\begin{enumerate}
+\item (5 points) If you had no NOP sled, how many brute force attempts would it
+take to exploit this program with 50\% likelihood.
+
+\item (5 points) If you had a NOP sled of 255 bytes long, how many brute force
+attempts would it take to exploit this program with 50\%
+likelihood?
+
+\item (5 points) If you had a NOP sled of 8192 bytes long, how many brute force
+attempts would it take to exploit this program with 50\%
+likelihood?
+
+\item (5 points) Suppose you wanted to ensure you exploited this program with
+50\% likelihood with 25 guesses, how long must your NOP sled
+be?
+\end{enumerate}
+
+\item Complete the stack diagram for leave and ret for the following
+function frame:
+
+\begin{verbatim}
+      .----------------.
+      | shell code     |
+      |----------------|
+      | return address |
+      |----------------|
+ebp-> |       SBP      |
+      |----------------|
+      |                |
+      :                :
+      :                :
+esp-> |                |
+      '----------------'
+\end{verbatim}
+
+\begin{enumerate}
+\item (5 points) After the leave
+
+\item (5 points) After the ret
+\end{enumerate}
+
+\item (5 points) Using the diagrams from the previous question in your answer,
+explain why \texttt{jmp esp} or \texttt{call esp} instructions will execute
+your shell code? How can this technique be used to subvert ASLR?
+
+\item (5 points) The following is a hexdump of the text segment of a
+program. What addresses (plural!) could be used as bounce
+points?
+
+\begin{verbatim}
+0x08048470 b830a004 082d30a0 0408c1f8 0289c2c1 .0...-0.........
+0x08048480 ea1f01d0 d1f87501 c3ba0000 000085d2 ......u.........
+0x08048490 74f65589 e583ec18 89442404 c7042430 t.U......D$...$0
+0x080484a0 a00408ff d2c9c389 f68dbc27 00000000 ...........'....
+0x080484b0 803d30a0 04080075 135589e5 83ec08e8 .=0....u.U......
+0x080484c0 7cffffff c60530a0 040801c9 f3c36690 |.....0.......f.
+0x080484d0 a1109f04 0885c074 1fb80000 000085c0 .......t........
+0x080484e0 74165589 e583ec18 c7042410 9f0408ff t.U.......$.....
+0x080484f0 d0c9e979 ffffff90 e973ffff ff5589e5 ...y.....s...U..
+0x08048500 5dc35589 e583ec18 c7042470 860408e8 ].U.......$p....
+0x08048510 acfeffff ffe4c9c3 5589e583 ec18c704 ........U.......
+0x08048520 24858604 08e896fe ffffffd4 c9c35589 $.............U.
+0x08048530 e583ec48 8b450c89 45c465a1 14000000 ...H.E..E.e.....
+0x08048540 8945f431 c0c745d0 00000000 8b45c489 .E.1..E......E..
+0x08048550 4424048d 45d48904 24e852fe ffffeb20 D$..E...$.R....      
+\end{verbatim}
+\end{enumerate}
+\end{document}
