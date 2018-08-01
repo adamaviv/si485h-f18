@@ -220,7 +220,7 @@ ebp            0xbffff668 0xbffff668
 
 With a little more work, we get a diagram like:
 
-[![](file:imgs/stack_diagram_vuln.png)](file:imgs/stack_diagram_vuln.png)
+[![](imgs/stack_diagram_vuln.png)](imgs/stack_diagram_vuln.png)
 
 Overwriting Stack Variables
 ---------------------------
