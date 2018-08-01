@@ -45,7 +45,7 @@ ignore, but it will also produce a pdf file, `hw_05.pdf`.
 
 ### On Overleaf
 
-Check out [Overleaf](overleaf.com) as way to compile latex in the
+Check out [Overleaf](https://overleaf.com) as way to compile latex in the
 browser. You'll need to create a project and upload the template. You can
 compile and compose online, and download/print the resulting pdf file.
 
