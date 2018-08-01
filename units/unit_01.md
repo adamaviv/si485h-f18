@@ -3,7 +3,7 @@ Hello World
 
 Let's start in the beginning: Hello World!
 
-``` {.c}
+``` c
 /*helloworld.c*/
 #include <stdio.h>
 #include <stdlib.h>
@@ -90,7 +90,7 @@ functions `hello()` and `world()`, but only `hello()` is provided in the
 program source. Both functions have definitions, that is, the types of
 their input is known, but not the code for both functions.
 
-``` {.c}
+``` c
 /*hello.c*/
 #include <stdio.h>
 #include <stdlib.h>
@@ -136,7 +136,7 @@ provide more compiled code to complete the assembly process.
 Specifcially, we need to provide code that fills in the `world()`
 function.
 
-``` {.c}
+``` c
 /*world.c*/
 #include <stdio.h>
 #include <stdlib.h>
@@ -267,7 +267,7 @@ We can, of course, write a hello-world program without any library
 functions. But, we'll need some helper functions, like writing our own
 string length function.
 
-``` {.c}
+``` c
 /*hellosystem.c*/
 #include <unistd.h>
 
@@ -352,7 +352,7 @@ but it does mean some things may be a bit different at times.
 For example, consider this program and its output with the basic numeric
 types.
 
-``` {.c}
+``` c
 /*datatypes.c*/
 #include <stdio.h>
 #include <stdlib.h>
@@ -400,7 +400,7 @@ That means, you count backwards ... sort of.
 
 See the example below for the greatest and smallest negative values:
 
-``` {.c}
+``` c
 /*signess.c*/
 #include <stdio.h>
 #include <stdlib.h>
@@ -455,7 +455,7 @@ at 0xffffffff (-1) and go to 0x80000000 (-2147483648). This where the
 counting backwards comes from, except we are counting backwards in the
 lower 31 bits. The program below shows this clearly:
 
-``` {.c}
+``` c
 /*twos-comp.c*/
 #include <stdio.h>
 #include <stdlib.h>
@@ -495,7 +495,7 @@ Of course, as with all data in C, how we interpret ones and zeros is
 really in the eye of the beholder. If we were to instead interpret these
 values as **unsigned**, then we get very different output:
 
-``` {.c}
+``` c
 /*unsigned.c*/
 #include <stdio.h>
 #include <stdlib.h>
@@ -550,7 +550,7 @@ terminology for the syntax of pointers:
 
 The best way to get a feeling for this is to see it in action:
 
-``` {.c}
+``` c
 /*reference.c*/
 #include <stdio.h>
 #include <stdlib.h>
@@ -669,7 +669,7 @@ references memory. That means an array value is a pointer. Boom!
 
 If that is not so clear, let's look at an example.
 
-``` {.c}
+``` c
 /*arrays.c*/
 #include <stdio.h>
 #include <stdlib.h>
@@ -701,7 +701,7 @@ of data that `p` stores.
 
 Next, notice that this line:
 
-``` {.c}
+``` c
   p[2] = 5;
 ```
 
@@ -728,7 +728,7 @@ special deference that adds the index to the base. For example:
 
 You can see this to be true in the following example:
 
-``` {.c}
+``` c
 /*p_arrays.c*/
 #include <stdio.h>
 #include <stdlib.h>
@@ -799,7 +799,7 @@ within the array.
 Consider the same style program for different types, and this fact
 becomes apparent:
 
-``` {.c}
+``` c
 /*pointer_arithemtic.c*/
 #include <stdio.h>
 #include <stdlib.h>
@@ -860,7 +860,7 @@ not really that bad if you remember that string is simply an array of
 characters that is null terminated. In its most pedantic usage, we can
 declare a string as an array in the standard sense.
 
-``` {.c}
+``` c
 /*chararray.c*/
 #include <stdio.h>
 #include <stdlib.h>
@@ -879,7 +879,7 @@ However, this is a huge burden, so in C, we can use the double-quote
 mark to declare strings which automatically creates the array and null
 terminates. As below:
 
-``` {.c}
+``` c
 /*string.c*/
 #include <stdio.h>
 #include <stdlib.h>
@@ -903,7 +903,7 @@ the array using pointer iteration. It is also typical with strings to
 leverage the fact that it is NULL terminated. NULL is just a pseudonym
 for 0, which is a false value.
 
-``` {.c}
+``` c
 /*string_iterate.c*/
 #include <stdio.h>
 #include <stdlib.h>
@@ -949,7 +949,7 @@ we think of things, where the most significant byte comes first.
 
 The impact of this becomes clear with a simple program below.
 
-``` {.c}
+``` c
 /*endian.c*/
 #include <stdio.h>
 #include <stdlib.h>
@@ -1048,7 +1048,7 @@ Here's what each of these sections are used for:
 
 We can see each of these memory locations in the following program:
 
-``` {.c}
+``` c
 /*mem_layout.c*/
 #include <stdio.h>
 #include <stdlib.h>
