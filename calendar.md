@@ -81,7 +81,7 @@
 
 - Mon. 10/8: <font color="red">**No Class: Columbus Day** </font>
 
-- Wed. 10/10: (Unit 3)[units/unit_03.md]
+- Wed. 10/10: [Unit 3](units/unit_03.md)
     - [Smashing the Stack with Shell Code](units/unit_03.md#stack-smashing-with-shell-code)
 
 - Fri. 10/12:
