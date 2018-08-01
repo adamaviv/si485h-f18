@@ -1,4 +1,3 @@
-
 Understanding a Binary Program
 ==============================
 
@@ -495,7 +494,7 @@ registers, but `ax` refers to the last 16 bits of the `eax` register and
 `al` is the first 8 bits. Depending on the kind of data the register is
 storing, we may reference different parts.
 
-[![](file:imgs/x86-registers.png)](file:imgs/x86-registers.png)
+[![](imgs/x86-registers.png)](imgs/x86-registers.png)
 
 ### The Base Pointer and Stack Pointer
 
@@ -1695,10 +1694,10 @@ print_n_times (str=0x8048513 "Go Navy! Beat Army!\n", n=5) at print_n_times.c:3
 3   void print_n_times(char * str, int n){
 (gdb) ds
 Dump of assembler code for function print_n_times:
-=> 0x0804841d <+0>: push   ebp
-   0x0804841e <+1>: mov    ebp,esp
-   0x08048420 <+3>: sub    esp,0x28
-   0x08048423 <+6>: mov    DWORD PTR [ebp-0xc],0x0
+=> 0x0804841d <+0>:     push   ebp
+   0x0804841e <+1>:     mov    ebp,esp
+   0x08048420 <+3>:     sub    esp,0x28
+   0x08048423 <+6>:     mov    DWORD PTR [ebp-0xc],0x0
    0x0804842a <+13>:    jmp    0x8048443 <print_n_times+38>
    0x0804842c <+15>:    mov    eax,DWORD PTR [ebp+0x8]
    0x0804842f <+18>:    mov    DWORD PTR [esp+0x4],eax
@@ -1752,10 +1751,10 @@ and see where we are at:
 ``` {.example}
 (gdb) ds
 Dump of assembler code for function print_n_times:
-=> 0x0804841d <+0>: push   ebp
-   0x0804841e <+1>: mov    ebp,esp
-   0x08048420 <+3>: sub    esp,0x28
-   0x08048423 <+6>: mov    DWORD PTR [ebp-0xc],0x0
+=> 0x0804841d <+0>:     push   ebp
+   0x0804841e <+1>:     mov    ebp,esp
+   0x08048420 <+3>:     sub    esp,0x28
+   0x08048423 <+6>:     mov    DWORD PTR [ebp-0xc],0x0
    0x0804842a <+13>:    jmp    0x8048443 <print_n_times+38>
    0x0804842c <+15>:    mov    eax,DWORD PTR [ebp+0x8]
    0x0804842f <+18>:    mov    DWORD PTR [esp+0x4],eax
@@ -1776,10 +1775,10 @@ End of assembler dump.
 6     for( i=0 ; i < n ; i++){
 (gdb) ds
 Dump of assembler code for function print_n_times:
-   0x0804841d <+0>: push   ebp
-   0x0804841e <+1>: mov    ebp,esp
-   0x08048420 <+3>: sub    esp,0x28
-=> 0x08048423 <+6>: mov    DWORD PTR [ebp-0xc],0x0
+   0x0804841d <+0>:     push   ebp
+   0x0804841e <+1>:     mov    ebp,esp
+   0x08048420 <+3>:     sub    esp,0x28
+=> 0x08048423 <+6>:     mov    DWORD PTR [ebp-0xc],0x0
    0x0804842a <+13>:    jmp    0x8048443 <print_n_times+38>
    0x0804842c <+15>:    mov    eax,DWORD PTR [ebp+0x8]
    0x0804842f <+18>:    mov    DWORD PTR [esp+0x4],eax
@@ -1813,7 +1812,7 @@ and the stack pointer. Using our newly trained eye we can see that:
 
 We can see this visually like so at the point:
 
-[![](file:imgs/stack-frame.png)](file:imgs/stack-frame.png)
+[![](imgs/stack-frame.png)](imgs/stack-frame.png)
 
 And if we can also inspect this within gdb by examining from the stack
 pointer going backward. This is the stack right before the call to
@@ -1822,10 +1821,10 @@ printf():
 ``` {.example}
 (gdb) ds
 Dump of assembler code for function print_n_times:
-   0x0804841d <+0>: push   ebp
-   0x0804841e <+1>: mov    ebp,esp
-   0x08048420 <+3>: sub    esp,0x28
-   0x08048423 <+6>: mov    DWORD PTR [ebp-0xc],0x0
+   0x0804841d <+0>:     push   ebp
+   0x0804841e <+1>:     mov    ebp,esp
+   0x08048420 <+3>:     sub    esp,0x28
+   0x08048423 <+6>:     mov    DWORD PTR [ebp-0xc],0x0
    0x0804842a <+13>:    jmp    0x8048443 <print_n_times+38>
    0x0804842c <+15>:    mov    eax,DWORD PTR [ebp+0x8]
    0x0804842f <+18>:    mov    DWORD PTR [esp+0x4],eax
