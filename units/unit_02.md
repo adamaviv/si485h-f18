@@ -16,7 +16,7 @@ do we parse or dissemble the contents within?
 
 For this entire class, we will pick apart a simple helloworld program:
 
-``` {.c}
+``` c
 /*helloworld.c*/
 #include <stdio.h>
 
@@ -604,7 +604,7 @@ return, they are popped off of the stack.
 
 For example, in this code:
 
-``` {.c}
+``` c
 
 int foo(){
   bar();
@@ -826,7 +826,7 @@ The next set of instructions we will observe initializes the memory of
 the stack. Let's switch back to the C-code to see this in c first before
 we look at it in assembly.
 
-``` {.c}
+``` c
     char hello[15]="Hello, World!\n";
 ```
 
@@ -855,7 +855,7 @@ DWORD or WORD or BYTE PTR are deference commands.
 Another way to look at these instructions in C would be like this (don't
 program like this, though):
 
-``` {.c}
+``` c
   char hello[15];
   //                      l l e H  
   * ((int *) (hello)) = 0x6c6c6548;      // set hello[0]->hello[3]
@@ -880,7 +880,7 @@ The next two instructions are a bit different:
 bit a math and calculate a pointer offset and store it. If we look at
 what's next in the C-program, we see that it is setting up the for-loop.
 
-``` {.c}
+``` c
    for(p = hello; *p; p++){
 ```
 
@@ -1025,7 +1025,7 @@ process. So far, we've just been looking at the binary, but we might
 want to actually track the progress of a program line-by-line. Consider
 first the simple program `datatype`:
 
-``` {.c}
+``` c
 #include <stdio.h>
 #include <math.h>
 
@@ -1402,7 +1402,7 @@ remains the same, but we now have additional commands:
 
 For these example, let's look at a program with a little bit more heft:
 
-``` {.c}
+``` c
 /*print_n_times.c*/
 #include <stdio.h>
 
