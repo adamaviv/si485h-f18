@@ -14,6 +14,7 @@
 #### Week 2
 
 - Mon. 8/27: [Unit 1](units/unit_01.md)
+  - [HW 1](hw/hw_01.tex) due!
   - [Data Types and Data Representation](units/unit_01.md#numeric-data-types-and-sign-ness)
   
 - Wed. 8/29: [Unit 1](units/unit_01.md)
@@ -25,7 +26,7 @@
 #### Week 3
 
 
-- **Tue.** 9/4: [Unit 2](units/unit_02.md)
+- **Tue.** 9/4: [Unit 2](units/unit_02.md) 
   - [Disassembling a Binary Program](units/unit_01.md#program-memory-layout)
   
 - Wed. 9/5: [Unit 2](units/unit_02.md)
@@ -48,6 +49,8 @@
 #### Week 5
 
 - Mon. 9/17: <font color="red">**Lab Assessment 1**</font>
+  - [HW 2](hw/hw_02.tex) due!
+  - Review/Lab Work Day
   - Assessment covers labs for Week 1-4
   
 - Wed. 9/19: <font color="red">**Midterm 1**</font>
@@ -89,6 +92,7 @@
 #### Week 9
 
 - Mon. 10/15: [Unit 4](units/unit_04.md)
+  - [HW 3](hw/hw_03.tex) due!
   - [Smaller and Smaller Shell Code](units/unit_03.md#stack-smashing-with-shell-code)
   
 - Wed. 10/17: [Unit 4](units/unit_04.md)
@@ -99,6 +103,7 @@
 #### Week 10
 
 - Mon. 10/22: [Unit 4](units/unit_04.md)
+  - [HW 4](hw/hw_04.tex) due!
   - [Socket Programming and Remote Shell in C](units/unit_03.md#stack-smashing-with-shell-code)
    
 - Wed. 10/24: [Unit 4](units/unit_04.md)
@@ -109,6 +114,8 @@
 #### Week 11
 
 - Mon. 10/29: <font color="red">**Lab Assessment 2** </font>
+  - [HW 5](hw/hw_05.tex) due!
+  - Review/Catch-up Day
   - Assessment covers labs from Week 1-10
   
 - Wed. 10/31: <font color="red"> **Midterm 2** </font>
@@ -139,7 +146,8 @@
 #### Week 14
 
 - Mon. 11/19: [Unit 6](units/unit_06.md)
-   - [Format String Attacks I](units/unit_05.md#stack-smashing-detected)
+  - [HW 6](hw/hw_6.tex) due!
+  - [Format String Attacks I](units/unit_05.md#stack-smashing-detected)
 - Wed. 11/21: [Unit 6](units/unit_06.md)
    - [Format String Attacks II](units/unit_06.md#using-formats-in-an-exploit)
    
@@ -148,7 +156,8 @@
 #### Week 15
 
 - Mon. 11/26: [Unit 7](units/unit_07.md)
-   - [WxorE and Return to Lib C](units/unit_06.md#using-formats-in-an-exploit)
+  - [HW 7](hw/hw_07.tex) due!
+  - [WxorE and Return to Lib C](units/unit_06.md#using-formats-in-an-exploit)
 - Wed. 11/28: [Unit 7](units/unit_07.md)
    - [Return Oriented Programming I](units/unit_06.md#using-formats-in-an-exploit)
    
@@ -160,6 +169,7 @@
    - [Return Oriented Programming II](units/unit_06.md#using-formats-in-an-exploit)
    
 - Wed. 12/5: <font color="red"> **SOFS** </font>
+   - [HW 8](hw/hw_08.tex) due!
    
 - Fri. 12/7: <font color="red">**Lab Assessment 3**</font>
    - Assessment covers labs from weeks 1-14 (not 15!)
