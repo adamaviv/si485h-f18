@@ -177,6 +177,12 @@ alias ll='ls -alF'
 alias ls='ls --color=auto'
 ```
 
+Now, whenever you need to compile a program in 32-bit mode, you can do so with `gcc32`
+
+```
+gcc32 helloworld.c -o helloworld
+```
+
 
 
 
