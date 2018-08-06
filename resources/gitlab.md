@@ -35,7 +35,7 @@ And then select the key option
 
 Here, you'll see a window for you to copy and paste your ssh public key
 
-[!addkey](imgs/addkey.png)
+![addkey](imgs/addkey.png)
 
 On your VM, after you've run `ssh-keygen`, you'll have the file
 `~/.ssh/id_rsa.pub`. From the terminal in your local VM, you can print it to the
