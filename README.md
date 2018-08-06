@@ -23,7 +23,7 @@
 * [Calendar](calendar.md)
 * [Units](units)
 * [HW](hw)
-* [Resources](rsc/READM.md)
+* [Resources](resources/README.md)
     
     
     
