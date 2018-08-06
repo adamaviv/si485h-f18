@@ -290,20 +290,20 @@ right, and the inverse of that probability would be the same as getting
 it right *at least* once.
 
 The probability of not guessing correctly is calculated as one minus the
-probability of guessing correctly (or $q$):
+probability of guessing correctly (or $`q`$):
 
 ```math
 q = 1 - \frac{1}{2^{19}}
 ```
 
-So if we were to consider the probility in $n$ attempts of *not* getting
+So if we were to consider the probility in $`n`$ attempts of *not* getting
 it right, that would be
 
 ```math
 1 - q^{\ n}
 ```
 
-Another way to read this is that after $n$ independent events, each with
+Another way to read this is that after $`n`$ independent events, each with
 a probability of not guessing correctly, the probability of getting at
 least one right, is the inverse of never getting it right.
 
