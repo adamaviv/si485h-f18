@@ -18,7 +18,7 @@ The first time you go to gitlab, you must register a new account. Go
 https://si485h-git.academy.usna.edu, click on register, and fill out the
 information.
 
-[!registration](imgs/register.png)
+![registration](imgs/register.png)
 
 
 Note that you **MUST** use your network account for the username and your usna
@@ -27,11 +27,11 @@ email address. That is because the gitlab system is tied into the VM system.
 Next, add your ssh public key, and to do so you need to edit your settings by
 clicking in the upper left.
 
-[!settings](imgs/settings.png)
+![settings](imgs/settings.png)
 
 And then select the key option
 
-[!sshkeys](imgs/keys.png)
+![sshkeys](imgs/keys.png)
 
 Here, you'll see a window for you to copy and paste your ssh public key
 
