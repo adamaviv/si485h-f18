@@ -1,9 +1,13 @@
 # Homework
 
+
 ## Instructions
 
-You must submit HW printed out using the latex templates provided. The due date
-of the homework is posted on the calendar.
+You must submit HW printed out using the latex templates provided in the
+[template](hw/templates) folder, but you can purruse the hw in markdown above. The
+due date of the homework is posted on the [calendar](calendar.md).
+
+## Latex Answer Environment
 
 There is an `myanswer` environment defined in the latex template that you should
 use for formatting your answer. For example, if had the following question, the
@@ -23,7 +27,7 @@ occur.
 Critically, you MUST format your HW properly such that each answer can be
 properly graded. Bad latex formatting is not an excuse for a poor submissions.
 
-## Latex Environment
+## Compiling Latex 
 
 ### On Ubuntu
 
