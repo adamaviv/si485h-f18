@@ -237,9 +237,9 @@ explicitly stated, of the Department's policy holds.
 -   The weight of each homework will be noted on the homework in terms
     of the total points available for that homework.
 
-### Merge Request Bonus
+### Merge Request Bonus and Bug/Content Bounty Bonus
 
--   You can receive up to a 3% bonus on *your final grade* for submitting useful
+-   You can receive up to a 4% bonus on *your final grade* for submitting useful
     merge requests (sometimes called pull requests) for mistakes and errors found
     in the course notes.
     
@@ -256,7 +256,11 @@ explicitly stated, of the Department's policy holds.
     of the content, and should be placed in the `extra` folder in the course
     repository. The exact value is at the discretion of the instructor. 
 
--   You cannot receive more than 3 total percentage point bonus.
+-   Bonuses are also available for creating new labs and problems. These can
+    earn up to a 1 point bonus, depending on the difficulty and creativity of
+    the lab. These should be submitted to the instructor as a separate repository,
+    and the intention should be disc cussed with the instructor prior to
+    submission so that the lab can be deployed for other students to enjoy.
 
 -   When providing new content, you must cite appropriate sources, and the
     writing should be your own. The honor code holds.
