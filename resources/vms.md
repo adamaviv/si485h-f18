@@ -7,10 +7,14 @@ You will be using virtual machines VMs for both your local development/hacking a
 There are 4 remote VM's pre-setup for you to use both for development/hacking
 and to complete the labs.
 
-* `si585h-clone0` : `ssh -p 2210 si485h.academy.usna.edu` : NO-ASLR
-* `si585h-clone1` : `ssh -p 2211 si485h.academy.usna.edu` : NO-ASLR 
-* `si585h-clone2` : `ssh -p 2212 si485h.academy.usna.edu` : ASLR 
-* `si585h-clone3` : `ssh -p 2213 si485h.academy.usna.edu` : ASLR 
+* `clone0` : NO-ASLR
+    * `ssh -p 2210 si485h.academy.usna.edu` 
+* `clone1` : NO-ASLR
+    * `ssh -p 2211 si485h.academy.usna.edu` 
+* `clone2` : ASLR
+    * `ssh -p 2212 si485h.academy.usna.edu`
+* `clone3` : ASLR
+    * `ssh -p 2213 si485h.academy.usna.edu` 
 
 You will be directed to an appropriate clone VM dependent on the lab
 assignment. If you want a general purpose VM to use for your work, please
