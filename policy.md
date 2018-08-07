@@ -89,12 +89,12 @@ explicitly stated, of the Department's policy holds.
     problem exploration; however, each student must individually solve each of
     the lab assignments and submit their own solution.
 
--   You are not allowed to share code or other solution material with others
+-   You are **not** allowed to share code or other solution material with others
     (e.g., the secret messages) --- except if you are presenting the lab to the
     class during presentation time.
     
 -   You may discuss the main concepts and solution techniques with others and
-    collaborate on developing a solution processes. Sharing specific solutions,
+    collaborate on developing solution processes. Sharing specific solutions,
     however, is strictly against this policy.
 
 -   You are required to indicate all collaborators on your lab assignments via
@@ -280,7 +280,7 @@ explicitly stated, of the Department's policy holds.
 
 -   Your overall lab grade will be graded on a logarithmic scale using the
     following formula.
-
+    
         grade = log(c+1)/log(n+1) 
 
     where n is the total points assigned, and c is the total points earned by
@@ -293,16 +293,15 @@ explicitly stated, of the Department's policy holds.
    despite the lack of strict deadlines.
    
 -  You can receive **lab bonuses** for presenting a lab during presentation
-   time. A lab can only be presented once for a bonus! Each student may only
-   present at most 3 times during the semester --- choose your labs wisely!
+   time. Each lab can only be presented once for a bonus! Each student may only
+   present at most 2 times during the semester --- choose your labs wisely!
    
 -  To present a lab you must have first submitted and received a correct
    determination from the instructor. The bonus for presenting a lab is 75% of
-   the lab point value. This will be added to your c value in the above
-   formula. Yes, it is possible to have greater than 100% for your lab grade.
+   the current lab point value (rounded up). This will be added to your c value
+   in the above formula. Yes, it is possible to have greater than 100% for your
+   lab grade.
    
-   
-
 ### Homework
 
 -   Homeworks are roughly assigned for each unit and should be turned in at the

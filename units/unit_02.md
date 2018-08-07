@@ -1,3 +1,5 @@
+# Unit 2: Reverse Engineering Binary Programs
+
 Understanding a Binary Program
 ==============================
 
