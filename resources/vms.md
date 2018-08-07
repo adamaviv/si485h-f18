@@ -27,7 +27,7 @@ the port to connect properly.
 
 You cannot access the remote VMs with a password --- **you must use a
 ssh-key**. To establish your ssh-key you will need to follow the
-[gitlab](rsc/gitlab.md) setup instructions and upload a ssh public key to your
+[gitlab](gitlab.md) setup instructions and upload a ssh public key to your
 gitlab account.
 
 ## Local VM Setup
