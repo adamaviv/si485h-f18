@@ -45,7 +45,8 @@ pdflatex hw_05.tex
 ```
 
 This will produce a bunch of extra files, like an `aux` file, which you can
-ignore, but it will also produce a pdf file, `hw_05.pdf`.
+ignore, but it will also produce a pdf file, `hw_05.pdf`. Print that out and
+bring it in for grading.
 
 ### On Overleaf
 
