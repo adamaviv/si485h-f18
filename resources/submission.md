@@ -53,7 +53,7 @@ This will cause the fork, and you'll now have your own version of the repository
 
 Now that the repository is forked, you can clone a local copy. Select the git URL and copy it.
 
-![git url](img/git_url.png)
+![git url](imgs/git_url.png)
 
 Then on your local VM you can clone it into a directory. I recommend you create
 a directory called `labs` just to keep things organized, and have all your lab
