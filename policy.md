@@ -144,88 +144,15 @@ explicitly stated, of the Department's policy holds.
 
 ### Grading Breakdown
 
-<table  border="2" rules="groups" frame="hsides" class="center">
 
-
-<colgroup>
-<col  class="org-left">
-
-<col  class="org-right">
-
-<col  class="org-right">
-
-<col  class="org-right">
-
-<col  class="org-right">
-</colgroup>
-<thead>
-<tr>
-<th scope="col" class="org-left">&#xa0;</th>
-<th scope="col" class="org-right">6-week</th>
-<th scope="col" class="org-right">12-Week</th>
-<th scope="col" class="org-right">16-Week</th>
-<th scope="col" class="org-right">Final Grade</th>
-</tr>
-</thead>
-
-<tbody>
-<tr>
-<td class="org-left">Final Exam</td>
-<td class="org-right">&#xa0;</td>
-<td class="org-right">&#xa0;</td>
-<td class="org-right">&#xa0;</td>
-<td class="org-right">25%</td>
-</tr>
-
-
-<tr>
-<td class="org-left">Midterm Exam</td>
-<td class="org-right">45%</td>
-<td class="org-right">45%</td>
-<td class="org-right">45%</td>
-<td class="org-right">20%</td>
-</tr>
-
-
-<tr>
-<td class="org-left">Practicum</td>
-<td class="org-right">5%</td>
-<td class="org-right">5%</td>
-<td class="org-right">5%</td>
-<td class="org-right">5%</td>
-</tr>
-
-
-<tr>
-<td class="org-left">Labs</td>
-<td class="org-right">40%</td>
-<td class="org-right">40%</td>
-<td class="org-right">40%</td>
-<td class="org-right">40%</td>
-</tr>
-
-
-<tr>
-<td class="org-left">Homework</td>
-<td class="org-right">10%</td>
-<td class="org-right">10%</td>
-<td class="org-right">10%</td>
-<td class="org-right">10%</td>
-</tr>
-
-
-</tbody>
-
-<tbody>
-<tr>
-<td class="org-left">Total</td>
-<td class="org-right">100%</td>
-<td class="org-right">100%</td>
-<td class="org-right">100%</td>
-<td class="org-right">100%</td>
-</tr>
-</tbody>
-</table>
+|              | 6-week  | 12-week | 16-Week | Final Grade
+|---           |---      |---      |---      |---
+| Final Exam   |         |         |         | 20%
+| Midterm Exam | 40%     | 40%     | 45%     | 20%
+| Practicum    |  8%     |  8%     |  8%     |  8%
+| Labs         | 42%     | 42%     | 42%     | 42%
+| Homework     | 10%     | 10%     | 10%     | 10%
+| **Total**    | **100%**    | **100%**    | **100%**    | **100%**
 
 
 ### Final Exams
@@ -310,6 +237,30 @@ explicitly stated, of the Department's policy holds.
 -   The weight of each homework will be noted on the homework in terms
     of the total points available for that homework.
 
+### Merge Request Bonus
+
+-   You can receive up to a 3% bonus on *your final grade* for submitting useful
+    merge requests (sometimes called pull requests) for mistakes and errors found
+    in the course notes.
+    
+-   Merge requests for typos in the unit notes are worth 0.05 points each, on
+    your final grade. Your merge requests must be in the same style os the
+
+-   Merge request for new or corrected content in the unit notes (due to errors
+    or out-of-date) can be worth as much h 0.5 points, or more, depending on the
+    quality of the corrections. The quality of the correction is at the
+    discretion of the instructor.
+    
+-   Merge requests that include new content beyond the unit notes will also be
+    accepted and can be worth as much as 1 point, depending on length and depth
+    of the content, and should be placed in the `extra` folder in the course
+    repository. The exact value is at the discretion of the instructor. 
+
+-   You cannot receive more than 3 total percentage point bonus.
+
+-   When providing new content, you must cite appropriate sources, and the
+    writing should be your own. The honor code holds.
+    
 
 <hr>
 <b> APPROVED </b><br><br>
