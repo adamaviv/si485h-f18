@@ -5,7 +5,7 @@
 |---   |---        |---                          |---                                                     |---         | 
 | 1    | Mon. 8/20 | [Unit 1](units/unit_01.md)  | [How C programs compile](units/unit_01.md#hello-world) |            |
 |      | Wed. 8/22 | [Unit 1](units/unit_01.md)  | [Library and System Calls](units/unit_01.md#library-functions-vs-system-calls) |  |
-|      | Fri. 8/24 |                             |                                                        |                       |  |
+|      | Fri. 8/24 | [Lab 1](labs/lab_01.md)     |                                                        |                       |  |
 |---   |---        |---                          |---                                                     |---         |
 | 2    | Mon. 8/27 | [Unit 1](units/unit_01.md)  |  [Data Types and Data Representation](units/unit_01.md#numeric-data-types-and-sign-ness) |  [HW 1](hw/hw_01.tex) **due!** |
 |      | Wed. 8/29 | [Unit 1](units/unit_01.md)  |  [Program Memory Layout](units/unit_01.md#program-memory-layout) | |
