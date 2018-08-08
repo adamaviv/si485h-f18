@@ -2,7 +2,7 @@
 
 
 | Week | Date      | Unit                        | Topic                                                  | Assignment |
-|---   |---|---   |---        |---                          |---                                                     |---         |        |---                          |---                                                     |---         |
+|---   |---        |---                          |---                                                     |---         | 
 | 1    | Mon. 8/20 | [Unit 1](units/unit_01.md)  | [How C programs compile](units/unit_01.md#hello-world) |            |
 |      | Wed. 8/22 | [Unit 1](units/unit_01.md)  | [Library and System Calls](units/unit_01.md#library-functions-vs-system-calls) |  |
 |      | Fri. 8/24 |                             |                                                        |                       |  |
