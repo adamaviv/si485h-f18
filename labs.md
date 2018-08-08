@@ -9,4 +9,4 @@ complete and submit a lab.
 
 ## Labs
 
-- [Lab 1.1: Spoon, Knife, Fork](aviv/lab-1.1)
+- [Lab 1.1: Spoon, Knife, Fork](https://si485h-git.academy.usna.edu/aviv/lab-1.1)
