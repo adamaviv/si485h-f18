@@ -23,6 +23,8 @@
 * [Calendar](calendar.md)
 * [Units](units)
 * [HW](hw)
+* [Labs](labs.md)
+* [Extra Content](extra/README.md)
 * [Resources](resources/README.md)
 
     
