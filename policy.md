@@ -41,7 +41,7 @@ execution model.
 
 ## Extra Instruction
 
--   You are **strongly** encouraged to request come in for extra instruction (EI)
+-   You are **strongly** encouraged to meet for extra instruction (EI)
     when you are having trouble.
     
 -   **The best way to schedule EI is by prior arrangement by email.** This will
