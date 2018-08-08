@@ -239,28 +239,34 @@ explicitly stated, of the Department's policy holds.
 
 ### Merge Request Bonus and Bug/Content Bounty Bonus
 
--   You can receive up to a 4% bonus on *your final grade* for submitting useful
-    merge requests (sometimes called pull requests) for mistakes and errors found
-    in the course notes.
+-   You can receive up to a 5% bonus on *your final grade* for submitting useful
+    merge requests (sometimes called pull requests) to the course. The value of the merge requests
+    are limmitted in terms of total bonus points awarded per catagory and the number of available points 
+    overall (limmited to 5% total bonus); however, exceptions may be made in exceptional circumstances due to
+    exceptional contributions at the discretion of the instructor.
     
 -   Merge requests for typos in the unit notes are worth 0.05 points each, on
-    your final grade. Your merge requests must be in the same style os the
+    your final grade. Your merge requests must be in the same style as the document. 
+    You can only receive up to 1% points for typo corrections on your final grade. 
 
 -   Merge request for new or corrected content in the unit notes (due to errors
-    or out-of-date) can be worth as much h 0.5 points, or more, depending on the
+    or out-of-date) can be worth as much as 0.5% points, or more, depending on the
     quality of the corrections. The quality of the correction is at the
-    discretion of the instructor.
+    discretion of the instructor and must be more than just typo corrections. You
+    can receive up to 1.5% points for error/out-of-date corrections. 
     
--   Merge requests that include new content beyond the unit notes will also be
-    accepted and can be worth as much as 1 point, depending on length and depth
+-   Merge requests that include new content beyond the unit are also encouraged
+    and can be worth as much as 1% points, depending on length and depth
     of the content, and should be placed in the `extra` folder in the course
-    repository. The exact value is at the discretion of the instructor. 
+    repository. The exact value is at the discretion of the instructor. You can
+    receive up to 2% points for new content. 
 
 -   Bonuses are also available for creating new labs and problems. These can
     earn up to a 1 point bonus, depending on the difficulty and creativity of
     the lab. These should be submitted to the instructor as a separate repository,
     and the intention should be disc cussed with the instructor prior to
-    submission so that the lab can be deployed for other students to enjoy.
+    submission so that the lab can be deployed for other students to enjoy. You
+    can receive up to 2% points for new, deployed labs.
 
 -   When providing new content, you must cite appropriate sources, and the
     writing should be your own. The honor code holds.
