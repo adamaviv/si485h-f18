@@ -9,7 +9,7 @@
 |---   |---        |---                          |---                                                     |---         |
 | 2    | Mon. 8/27 | [Unit 1](units/unit_01.md)  |  [Data Types and Data Representation](units/unit_01.md#numeric-data-types-and-sign-ness) |  [HW 1](hw/hw_01.tex) **due!** |
 |      | Wed. 8/29 | [Unit 1](units/unit_01.md)  |  [Program Memory Layout](units/unit_01.md#program-memory-layout) | |
-|      | Fri. 8/31 |                             |                                                                  | |
+|      | Fri. 8/31 | [Lab 2 ](labs/lab_02.md)    |                                                                  | |
 |---   |---        |---                          |---                                                     |---         |
 | 3    |**Tue.** 9/4 |  [Unit 2](units/unit_02.md) | [Disassembling a Binary Program](units/unit_01.md#program-memory-layout) | |
 |      | Wed. 9/5  |  [Unit 2](units/unit_02.md) |  [Basics of x86 Assembly Programming](units/unit_01.md#program-memory-layout)<br> [Managing Stacks in Assembly](units/unit_02.md#stack-frame-management-and-assembly) | |

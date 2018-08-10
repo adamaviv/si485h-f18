@@ -9,4 +9,4 @@ complete and submit a lab.
 
 ## Labs
 - [Lab 1](lab_01.md)
-
+- [Lab 2](lab_02.md)
