@@ -21,8 +21,8 @@
 
 * [Policy](policy.md)
 * [Calendar](calendar.md)
-* [Units](units)
-* [HW](hw)
+* [Units](units/README.md)
+* [HW](hw/README.md)
 * [Labs](labs/README.md)
 * [Extra Content](extra/README.md)
 * [Resources](resources/README.md)
