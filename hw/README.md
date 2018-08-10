@@ -4,8 +4,17 @@
 ## Instructions
 
 You must submit HW printed out using the latex templates provided in the
-[template](templates) folder, but you can peruse the hw in markdown above. The
+[template](templates) folder, but you can also peruse the hw in markdown. The
 due date of the homework is posted on the [calendar](calendar.md).
+
+- [HW 1](hw_01.md)
+- [HW 2](hw_02.md)
+- [HW 3](hw_03.md)
+- [HW 4](hw_04.md)
+- [HW 5](hw_05.md)
+- [HW 6](hw_06.md)
+- [HW 7](hw_07.md)
+- [HW 8](hw_08.md)
 
 ## Latex Answer Environment
 
