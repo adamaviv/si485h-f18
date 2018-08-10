@@ -1,7 +1,6 @@
 # Unit 1: C Programming and Compilation
 
-Hello World
-===========
+# Hello World
 
 Let's start in the beginning: Hello World!
 
@@ -22,7 +21,8 @@ This program prints "Hello World!" by making a call to the library
 function `printf()`, the format print function. Additionally, note that
 `main()` in c programs take two arguments:
 
--   `int argc` : the number of command line arguments (always at least 1)
+-   `int argc` : the number of command line arguments (always at least
+    1)
 -   `char * argv[]` : a NULL terminated array of strings for the command
     line arguments.
 
@@ -44,14 +44,13 @@ will use. The header files contain the function definitions, for example
 for `printf()`, so the compiler knows if the function call type checks.
 More on the compilation process next.
 
-Simple Compilation Process
---------------------------
+## Simple Compilation Process
 
 We will use `gcc` (the GNU c compiler) exclusively to do compilation for
 c programs. The most straight forward way to use `gcc` is to just call
 it with the program source file as the argument.
 
-``` {.example}
+``` example
 user@si485H-base:demo$ gcc helloworld.c 
 user@si485H-base:demo$ ls
 a.out  helloworld.c
@@ -64,14 +63,13 @@ to get the "Hello World!" message. If we want to compile the program to
 a specific file name, same `helloworld`, then we use the `-o` option to
 specify the name of the output file.
 
-``` {.example}
+``` example
 user@si485H-base:demo$ gcc -o helloworld helloworld.c 
 user@si485H-base:demo$ ./helloworld 
 Hello World!
 ```
 
-Multi Step Compilation Process
-------------------------------
+## Multi Step Compilation Process
 
 There is is actually obscuring a large portion of the compilation
 process which really involves multiple steps. A source program actually
@@ -112,7 +110,7 @@ int main(int argc, char *argv[]){
 
 If we were to try and compile this program, we will get an error.
 
-``` {.example}
+``` example
 user@si485H-base:demo$ gcc -o hello hello.c
 /tmp/ccC4VYbK.o: In function `main':
 hello.c:(.text+0x20): undefined reference to `world'
@@ -129,7 +127,7 @@ assembled.
 You can see, that yes, this program does actually compile by using the
 `-c` tag with gcc, which says to compile the source to an object file:
 
-``` {.example}
+``` example
 user@si485H-base:demo$ gcc -c -o hello.o hello.c
 ```
 
@@ -152,7 +150,7 @@ void world( ){
 Once we have that, we can compile `world.c` into `world.o` and we can
 assemble the two `.o` files into a single executable.
 
-``` {.example}
+``` example
 user@si485H-base:demo$ gcc -c -o world.o world.c
 user@si485H-base:demo$ gcc -o hello hello.o world.o
 user@si485H-base:demo$ ./hello 
@@ -164,7 +162,7 @@ going on beneath the surface. There is still more code that is being
 used in the assembly process. And we can actually use `ld` directly to
 do the final linking to expose all those parts.
 
-``` {.example}
+``` example
 ld -o hello hello.o world.o --dynamic-linker /lib/ld-linux.so.2 /usr/lib/i386-linux-gnu/crt1.o /usr/lib/i386-linux-gnu/crti.o -lc /usr/lib/i386-linux-gnu/crtn.o
 ```
 
@@ -174,8 +172,7 @@ The compilation actually requires three other object files `crt1.o`
 important starter and ending code blocks and other functions that will
 become relevant when we start to reverse engineer some software.
 
-Library Functions vs. System Calls
-==================================
+# Library Functions vs. System Calls
 
 If you look more closely at the `ld` command line above, you will also
 see the flag `-lc` which says to include `clib` in the compilation. The
@@ -195,8 +192,7 @@ few key features relevant to this class:
 -   Program Execution: loading and unloading programs and executing them
     on the CPU
 
-Tracing Function and System Calls
----------------------------------
+## Tracing Function and System Calls
 
 A library function, on the other hand, provides a more user friendly
 interface to the system calls. To see this dynamic, we can *trace* a
@@ -209,7 +205,7 @@ There are two tracers we will use heavily in this class:
 And we can look at the output of these traces to get a sense of how
 programs execute.
 
-``` {.example}
+``` example
 user@si485H-base:demo$ ltrace ./hello > /dev/null 
 __libc_start_main(0x8048304, 1, 0xbffa7744, 0x8048360 <unfinished ...>
 printf("Hello ")                                                                  = 6
@@ -224,7 +220,7 @@ string and writes it to `stdout`. However, we know that the actual
 method for writing to `stdout` is using the `write()` system call, and
 we can see this using `strace`.
 
-``` {.example}
+``` example
 user@si485H-base:demo$ strace ./hello > /dev/null 
 execve("./hello", ["./hello"], [/* 20 vars */]) = 0
 brk(0)                                  = 0x87b7000
@@ -262,8 +258,7 @@ the program, but after that, there is a lot of loading and reading
 libraries into memory. And finally, two from the bottom, we see the
 `write()` system call to `stdout` (file descriptor 1).
 
-Hello System Call
------------------
+## Hello System Call
 
 We can, of course, write a hello-world program without any library
 functions. But, we'll need some helper functions, like writing our own
@@ -291,13 +286,12 @@ int main(int argc, char *argv[]){
   write(1,str,mystrlen(str));
 
 }
-
 ```
 
 Compiling and executing this program and analyzing the `ltrace`, we
 still see a call to `write()` but no calls to `puts()` or `printf()`.
 
-``` {.example}
+``` example
 user@si485H-base:demo$ ltrace ./hellosystem > /dev/null 
 __libc_start_main(0x8048494, 1, 0xbf8c5034, 0x8048510 <unfinished ...>
 write(1, "Hello World!\n", 13)                                                                                                    = 13
@@ -310,7 +304,7 @@ that is a story for another day. What's more interesting is the
 `strace`, which if you observe closely, you will see is the same as the
 other version of the program.
 
-``` {.example}
+``` example
 user@si485H-base:demo$ strace ./hellosystem > /dev/null 
 execve("./hellosystem", ["./hellosystem"], [/* 20 vars */]) = 0
 brk(0)                                  = 0x8c9b000
@@ -340,11 +334,9 @@ exit_group(13)                          = ?
 +++ exited with 13 +++
 ```
 
-Numeric Data Types and Sign-ness
-================================
+# Numeric Data Types and Sign-ness
 
-Basic Numeric Types
--------------------
+## Basic Numeric Types
 
 Let's recall the basic data types for C programs. One thing to consider
 is that we are going to be working with 32-bit architectures as opposed
@@ -375,7 +367,7 @@ int main(int argc, char *argv[]){
 }
 ```
 
-``` {.example}
+``` example
 user@si485H-base:demo$ ./datatypes
 char c=-17 size=1
 short s=-16657 size=2
@@ -389,16 +381,15 @@ opposed to 8-bytes on 64 bit machines. This is because the registers on
 at best. You can still have 8-byte values, but you have to use
 `long long`.
 
-Signed Numeric Values
----------------------
+## Signed Numeric Values
 
 The basic numeric types are also signed, that is, their range of values
-go from [ -2^(w-1)^ : 2^(w-1)^-1 ] because one of the bits is used to
-indicate the sign. The signed bit is the leading one, if it is 1 then
-the number is negative, but if it is 0, the number is positive. Positive
-numbers are represented as you may expected, with regard to binary
-counting; however, negative numbers are represented with 2's-compliment.
-That means, you count backwards ... sort of.
+go from [ -2<sup>(w-1)</sup> : 2<sup>(w-1)</sup>-1 ] because one of the
+bits is used to indicate the sign. The signed bit is the leading one, if
+it is 1 then the number is negative, but if it is 0, the number is
+positive. Positive numbers are represented as you may expected, with
+regard to binary counting; however, negative numbers are represented
+with 2's-compliment. That means, you count backwards ... sort of.
 
 See the example below for the greatest and smallest negative values:
 
@@ -443,7 +434,7 @@ int main(int argc, char * argv[]){
 }
 ```
 
-``` {.example}
+``` example
 user@si485H-base:demo$ ./signess 
  largest positive=2147483647     (0x7fffffff)
 smallest positive=0          (0x00000000)
@@ -480,7 +471,7 @@ int main(int argc, char * argv[]){
 }
 ```
 
-``` {.example}
+``` example
 user@si485H-base:demo$ ./twos-comp
 largest negative  =-1       (0xffffffff)
 largest negative-1=-2       (0xfffffffe)
@@ -520,7 +511,7 @@ int main(int argc, char * argv[]){
 }
 ```
 
-``` {.example}
+``` example
 user@si485H-base:demo$ ./unsigned 
 (unsigned) largest negative  =4294967295  (0xffffffff)
 (unsigned) largest negative-1=4294967294  (0xfffffffe)
@@ -533,11 +524,9 @@ user@si485H-base:demo$ ./unsigned
 (unsigned) smallest negative  =2147483648 (0x80000000)
 ```
 
-Pointers and Memory References
-==============================
+# Pointers and Memory References
 
-Pointers Basic
---------------
+## Pointers Basic
 
 Pointers (or memory references) are crucial for C programs. Some
 terminology for the syntax of pointers:
@@ -579,7 +568,7 @@ int main(int argc, char * argv[]){
 We can analyze this using a memory diagram for each of the marks. We use
 arrows to indicate a memory reference.
 
-``` {.example}
+``` example
 
    MARK 1            Mark 2           Mark 3
 
@@ -590,12 +579,11 @@ arrows to indicate a memory reference.
   |----+----|  |    |----+----|  |   |----+----|  |
   | p  |  --+--'    | p  |  --+--'   | p  |  --+--'
   '----'----'       '----'----'      '----'----'
-
 ```
 
 And, we can see the last mark is the case when we run the program.
 
-``` {.example}
+``` example
 user@si485H-base:demo$ ./reference 
 a=20 &a=0xbfd00ebc
 b=50 &b=0xbfd00eb8
@@ -606,7 +594,7 @@ Notice, though, that the pointer values or memory references are really
 just numbers. Really, the way we should model this diagram is with the
 full references and values, for the end state:
 
-``` {.example}
+``` example
        address     value
     .------------.------------.
   a | 0xbfaebd9c |  20        |
@@ -617,15 +605,14 @@ full references and values, for the end state:
     '------------'------------'
 ```
 
-Randomization of Memory
------------------------
+## Randomization of Memory
 
 One thing that will trip you up is that on most modern linux install,
 each run of the program will randomize the address space. The reason for
 this will be clear later, but the implications is that when your run the
 program again, you'll get different values.
 
-``` {.example}
+``` example
 user@si485H-base:demo$ ./reference 
 a=20 &a=0xbfaebd9c
 b=20 &b=0xbfaebd98
@@ -635,13 +622,13 @@ p=0xbfaebd98 &p=0xbfaebd94 *p=50
 To ensure that this will not be the case, you'll have to turn this
 feature off. Here's how to do that.
 
-``` {.example}
+``` example
 user@si485H-base:demo$ echo 0 | sudo tee /proc/sys/kernel/randomize_va_space
 ```
 
 Now, when you run the program, you'll get the same output ever time.
 
-``` {.example}
+``` example
 user@si485H-base:demo$ ./reference 
 a=20 &a=0xbffff6bc
 b=20 &b=0xbffff6b8
@@ -653,11 +640,9 @@ p=0xbffff6b8 &p=0xbffff6b4 *p=50
 user@si485H-base:demo$ 
 ```
 
-Arrays and Strings
-==================
+# Arrays and Strings
 
-Array Values and Pointers are the same thing!
----------------------------------------------
+## Array Values and Pointers are the same thing!
 
 Here is a fact: pointers and array values are the same thing. Hold this
 truth to be self evident, and you will never be lost in the dark forest
@@ -711,7 +696,7 @@ We are using the array index operator `[ ]` with `p`, so in a very real
 sense, we are treating `p` as an array. And, the operation does as we
 would expect in the output.
 
-``` {.example}
+``` example
 user@si485H-base:demo$ ./arrays 
 a=0xbffff6b4 p=0xbffff6b4
 a[0] = 10
@@ -724,7 +709,7 @@ a[4] = 14
 This begs the question: What is the array index operator anyway? It's a
 special deference that adds the index to the base. For example:
 
-``` {.example}
+``` example
   p[i]  <-- same as --->   *(p+i) 
 ```
 
@@ -754,7 +739,7 @@ int main(int argc, char * argv[]){
 }
 ```
 
-``` {.example}
+``` example
 user@si485H-base:demo$ ./p_arrays 
 a=0xbffff6b4 p=0xbffff6b4
 a+0=0xbffff6b4 *(a+0) = 10
@@ -777,12 +762,11 @@ When you declare a pointer, on the other hand, you are creating a
 variable whose value reference memory, but the memory it references can
 change.
 
-Pointer Arithmetic
-------------------
+## Pointer Arithmetic
 
 Let's take a closer look at the last output:
 
-``` {.example}
+``` example
 user@si485H-base:demo$ ./p_arrays 
 a=0xbffff6b4 p=0xbffff6b4
 a+0=0xbffff6b4 *(a+0) = 10
@@ -833,7 +817,7 @@ int main(int argc, char * argv[]){
 }
 ```
 
-``` {.example}
+``` example
 user@si485H-base:demo$ ./pointer_arithemtic 
 a+0=0xbffff6a8 *(a+0) = 10
 a+1=0xbffff6ac *(a+1) = 11
@@ -854,8 +838,7 @@ c+3=0xbffff69c *(c+3) = 13
 c+4=0xbffff69d *(c+4) = 14
 ```
 
-Strings
--------
+## Strings
 
 C-strings(!!!!) the bane of student programmers world wide, but they are
 not really that bad if you remember that string is simply an array of
@@ -923,22 +906,16 @@ int main(int argc, char * argv[]){
 }
 ```
 
-Program Memory Layout
-=====================
+# Program Memory Layout
 
-Cowboys and Endian-s
---------------------
+## Cowboys and Endian-s
 
 If you think about it, there are two very different fundamental ways to
 organize bytes with meaning. As western language thinkers and learning,
 we assign meaning from left to right. For example, if I wrote down the
 number:
 
-<div class="center">
-
 210500
-
-</div>
 
 That is the number two-hundred-and-ten thousand, five hundred. It is not
 the number five thousand and twelve (reading the number right to left).
@@ -977,7 +954,7 @@ Here, we treat the integer `a` as a buffer of 4-bytes. If we write those
 bytes out indexed from 0 to 3, we see that the number 0xdeadbeef is
 written out in reveres, 0xef, 0xbe, 0xad, 0xde.
 
-``` {.example}
+``` example
 user@si485H-base:demo$ ./endian 
 p[0] = 0xef
 p[1] = 0xbe
@@ -985,8 +962,7 @@ p[2] = 0xad
 p[3] = 0xde
 ```
 
-Stack, Heap, Data, BSS
-----------------------
+## Stack, Heap, Data, BSS
 
 Now that we have a decent sense of how we interact with memory, let's
 spend some time looking at the memory address layout. The big question
@@ -1007,7 +983,7 @@ Here are the general areas of the program memory layout, from higher
 address to lower address. Note that this is a 32-bit memory addresses,
 so there is total of about 4GB in the memory space.
 
-``` {.example}
+``` example
 
 
 higher address
@@ -1030,7 +1006,6 @@ higher address
                |     text       |  <-- code segments
 0x00000000 --> '----------------'
 lower address
-
 ```
 
 Here's what each of these sections are used for:
@@ -1081,7 +1056,7 @@ int main(int argc, char *argp[], char *envp[]){
 }
 ```
 
-``` {.example}
+``` example
 user@si485H-base:demo$ ./mem_layout 
 (reserved)   evnp = 0xbffff77c 
 (stack)        &a = 0xbffff6c4 

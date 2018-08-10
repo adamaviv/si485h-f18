@@ -1,10 +1,8 @@
 # Unit 2: Reverse Engineering Binary Programs
 
-Understanding a Binary Program
-==============================
+# Understanding a Binary Program
 
-A binary program ... what is it?
---------------------------------
+## A binary program ... what is it?
 
 In the last unit we looked a lot at writing programs in c, compiling
 them into binaries, and then running them. in this unit, we peal back
@@ -12,8 +10,7 @@ the covers further and look right at the binary files themselves. We
 will examine both what exactly is a binary, how is it formatted, and how
 do we parse or dissemble the contents within?
 
-`objdump` and `readelf` basics
-------------------------------
+## `objdump` and `readelf` basics
 
 For this entire class, we will pick apart a simple helloworld program:
 
@@ -46,14 +43,14 @@ int main(){
 Let's compile the program to create a binary (but with a bunch of
 options to make it easier for us):
 
-``` {.example}
+``` example
 $ gcc -fno-stack-protector -z execstack -Wno-format-security -O0 -g    helloworld.c   -o helloworld
 ```
 
 Now if we use the `file` command we can see what kind of file the binary
 is.
 
-``` {.example}
+``` example
 $ file helloworld
 helloworld: ELF 32-bit LSB executable, Intel 80386, version 1 (SYSV), dynamically linked, interpreter /lib/ld-linux.so.2, for GNU/Linux 2.6.32, BuildID[sha1]=2653c851c192779ec91599dc79d28f98bdf66bb4, not stripped
 ```
@@ -67,7 +64,7 @@ All ELF files have a header describing the different sections and
 general information. We can read the header information for our
 `helloworld` program using the `readelf`
 
-``` {.example}
+``` example
 $ readelf -h helloworld
 ELF Header:
   Magic:   7f 45 4c 46 01 01 01 00 00 00 00 00 00 00 00 00 
@@ -89,7 +86,6 @@ ELF Header:
   Size of section headers:           40 (bytes)
   Number of section headers:         36
   Section header string table index: 33
-
 ```
 
 Most of this information isn't too useful, but let me point out some key
@@ -100,14 +96,14 @@ things.
 2.  The class is ELF32, so it's 32 bit
 3.  The machine is Intel 80386, or x386 to be execpected
 4.  The entry point for the file is address 0x8048310, essentially what
-    is the first intsruction in the \_~start~ section function which
-    calls main.
+    is the first intsruction in the \_<sub>start</sub> section function
+    which calls main.
 
 Everything else is not super useful for our purposes. Another nice thing
 we can do with `readelf` is we can look at all the sections, which is
 regions of the binary for different purposes.
 
-``` {.example}
+``` example
 $ readelf -S helloworld
 There are 36 section headers, starting at offset 0x1b74:
 
@@ -172,7 +168,7 @@ nice to get down into the details of the machine instructions
 themselves. For this, we'll use `objdump` or "object dump". Simply, we
 can call it on the binary executable like so:
 
-``` {.example}
+``` example
 $ objdump -d helloworld
 
 helloworld:     file format elf32-i386
@@ -199,7 +195,7 @@ Disassembly of section .init:
 It's going to dump a lot of stuff, but lets look more carefully down,
 we'll see one header that looks familiar `main()` and `printhello()`:
 
-``` {.example}
+``` example
 0804840b <printhello>:
 804840b:55                   push   %ebp
 804840c:89 e5                mov    %esp,%ebp
@@ -256,7 +252,7 @@ simply, sucks! We will use an alternative format called Intel syntax,
 which is much, much nicer. For that, we need to pass an argument to
 `objdump`:
 
-``` {.example}
+``` example
 user@si485H-base:demo$ objdump -M intel -d helloworld 
 
 (... snip ...)
@@ -312,7 +308,7 @@ Another way to get the dissambly code is using `gdb`, the gnu debugger,
 which also does a tone of other tasks which we will look at later. To
 start, run the program under the debugger:
 
-``` {.example}
+``` example
 $ gdb ./helloworld 
 GNU gdb (Ubuntu 7.11.1-0ubuntu1~16.04) 7.11.1
 Copyright (C) 2016 Free Software Foundation, Inc.
@@ -384,7 +380,7 @@ page, you can shorten that to `ds` for dissasemble.
 
 If your output is in AT&T syntax, then issue the command:
 
-``` {.example}
+``` example
 (gdb) set disassembly-flavor intel
 ```
 
@@ -394,8 +390,7 @@ I'll mostly work with gdb dissambled output because it's more nicely
 formatted, IMHO. Our next task is understanding what the hell is going
 on?!?!
 
-x86 the Processor Register State
---------------------------------
+## x86 the Processor Register State
 
 ### x86 Instruction Set
 
@@ -431,7 +426,7 @@ encounter an unfamiliar instruction, we will look it up.
 
 An instruction, in the human readable format, has the following format:
 
-``` {.example}
+``` example
 operation <dst>, <src>
 ```
 
@@ -444,7 +439,7 @@ the command.
 
 If we take a few operations from our sample code:
 
-``` {.example}
+``` example
    0x0804841d <+0>: push   ebp
    0x0804841e <+1>: mov    ebp,esp
    0x08048420 <+3>: and    esp,0xfffffff0
@@ -510,7 +505,7 @@ function frame.
 
 The structure of a function frame is like such
 
-``` {.example}
+``` example
            <- 4 bytes ->
           .-------------.    
           |    ...      |    higher address
@@ -549,11 +544,9 @@ allocated. Addresses past this point are considered un-allocated.
 However, it's pretty easy to allocate more space, we'll just subtract
 from the stack pointer.
 
-Stack Frame Management and Assembly
-===================================
+# Stack Frame Management and Assembly
 
-Stack Frames
-------------
+## Stack Frames
 
 The stack frame is an encapsulation of the local memory state for a
 function call. It has information about the local variables of the
@@ -573,7 +566,7 @@ of esp or ebp.
 
 For example, a typical stack frame looks like so:
 
-``` {.example}
+``` example
            <- 4 bytes ->
           .-------------.    
           |    ...      |    higher address
@@ -595,8 +588,7 @@ The base pointer always references the saved based pointer of the
 calling function (more on that soon), and above that (in higher address)
 is the return address and the arguments to the function.
 
-Stack Machines
---------------
+## Stack Machines
 
 We often describe x86 processors as stack machines. The reason for this
 is that the execution model is built around a stack. As functions are
@@ -623,18 +615,17 @@ In the stack machine model, the first calling function is pushed on the
 stack, namely `main`. Since `main` calls `foo`, we push `foo` onto the
 stack next. Now we have something that looks like this:
 
-``` {.example}
+``` example
 
    .------.
    | main |
    | foo  |
-
 ```
 
 Since foo calls `bar` before it can return, `bar` is pushed on the
 stack.
 
-``` {.example}
+``` example
 
    .------.
    | main |
@@ -645,7 +636,7 @@ stack.
 Once `bar` returns, `foo` still can't return since `baz` needs to be
 called and is pushed on the stack.
 
-``` {.example}
+``` example
 
    .------.
    | main |
@@ -667,13 +658,12 @@ pushed and popped off the stack accordingly, but this doesn't happen
 automatically. There needs to be explicit instructions to do that, and
 that is what we'll look at next.
 
-Allocating a new stack frame
-----------------------------
+## Allocating a new stack frame
 
 The first set of instructions in our main function is for managing the
 stack frame for the current function. In our code, this looks like this:
 
-``` {.example}
+``` example
 0x0804840b <+0>:push   ebp
 0x0804840c <+1>:mov    ebp,esp
 0x0804840e <+3>:sub    esp,0x28
@@ -698,7 +688,7 @@ pointer to the return address.
 
 Visually the frame construction looks like this:
 
-``` {.example}
+``` example
 
     (0) calling         (1) return addr of      (2) push ebp
         function's          calling function   
@@ -738,11 +728,9 @@ esp,ebp->|  saved ebp  |    bp->|  saved ebp  |
                                 :   stack     :
                            esp->|      Frame  |
                                 '-------------'
-
 ```
 
-De-allocating a stack frame
----------------------------
+## De-allocating a stack frame
 
 Now that a new stack frame construction is complete, we can jump to the
 end and look at what happens once the function returns. How is the stack
@@ -750,7 +738,7 @@ frame deallocated and popped off the stack.
 
 Two instructions manage that process.
 
-``` {.example}
+``` example
   0x0804845c <+81>:leave  
   0x0804845d <+82>:ret    
 ```
@@ -765,7 +753,7 @@ First the `leave` instruction will do two things:
 
 Visually this would look like this:
 
-``` {.example}
+``` example
                               leave                  leave
                               1. =mov esp,ebp=       2. pop ebp
       .-------------.          .-------------.      .-------------.   
@@ -785,7 +773,6 @@ Visually this would look like this:
       :   stack     :
  esp->|      Frame  |
       '-------------'
-
 ```
 
 At this point the stack is almost back to its state prior to the
@@ -802,7 +789,7 @@ In reality, these procedures happen at the same time since setting the
 eip is the same as jumping, but it's good to think of them as separate
 steps.
 
-``` {.example}
+``` example
                              ret                  ret 
                             1. pop eip          2. jmp eip
       .-------------.      .-------------.     
@@ -817,11 +804,9 @@ esp-> | return adr  |      '-------------'
       '-------------'
 ```
 
-Memory References, Jumps/Loops, and Function Calls
-==================================================
+# Memory References, Jumps/Loops, and Function Calls
 
-Referencing, De-Referencing, and Setting Memory
------------------------------------------------
+## Referencing, De-Referencing, and Setting Memory
 
 The next set of instructions we will observe initializes the memory of
 the stack. Let's switch back to the C-code to see this in c first before
@@ -834,7 +819,7 @@ we look at it in assembly.
 The string "Hello World!\\n" is set on the stack in 15 byte character
 array. In assembly, this looks like this.
 
-``` {.example}
+``` example
 0x08048411 <+6>:mov    DWORD PTR [ebp-0x1b],0x6c6c6548
 0x08048418 <+13>:mov    DWORD PTR [ebp-0x17],0x57202c6f
 0x0804841f <+20>:mov    DWORD PTR [ebp-0x13],0x646c726f
@@ -872,7 +857,7 @@ program like this, though):
 
 The next two instructions are a bit different:
 
-``` {.example}
+``` example
 0x08048430 <+37>:lea    eax,[ebp-0x1b]
 0x08048433 <+40>:mov    DWORD PTR [ebp-0xc],eax
 ```
@@ -899,13 +884,12 @@ set that address to the value of `p`. This is a two step process:
 At this point, everything is set up. And for reference, remeber that the
 address of `p` is at `ebp-0xc`.
 
-Loops, Jumps, and Condition Testing
------------------------------------
+## Loops, Jumps, and Condition Testing
 
 Now, we've reached the meat of the program: the inner loop. We can
 follow the execution at this point by following the jumps.
 
-``` {.example}
+``` example
 0x08048436 <+43>:jmp    0x8048451 <printhello+70> # ------------.
 0x08048438 <+45>:mov    eax,DWORD PTR [ebp-0xc]   # <------.    |
 0x0804843b <+48>:movzx  eax,BYTE PTR [eax]        #        |    |
@@ -926,7 +910,7 @@ specified. It is not conditioned, it is explicit hard jump. Following
 that jump in the code, we find the following three instructions which is
 testing the exit condition from the loop.
 
-``` {.example}
+``` example
 0x08048451 <+70>:mov    eax,DWORD PTR [ebp-0xc]   
 0x08048454 <+73>:movzx  eax,BYTE PTR [eax]        
 0x08048457 <+76>:test   al,al                     
@@ -959,12 +943,11 @@ The `jne` command says to *jump when not equal to zero*. If it is the
 case that `al` is zero, do not jump, otherwise continue to the address
 and continue the loop.
 
-Function Calls
---------------
+## Function Calls
 
 If we investigate the loop body, we find the following instructions:
 
-``` {.example}
+``` example
 0x08048438 <+45>:mov    eax,DWORD PTR [ebp-0xc]  
 0x0804843b <+48>:movzx  eax,BYTE PTR [eax]       
 0x0804843e <+51>:movsx  eax,al                   
@@ -1006,7 +989,7 @@ allocate prior to the call.
 
 The final instruction to consider is
 
-``` {.example}
+``` example
    0x0804844d <+66>:add    DWORD PTR [ebp-0xc],0x1  
 ```
 
@@ -1014,11 +997,9 @@ The final instruction to consider is
 zero. And the loop goes on to check the exit condition, which may jump
 to do it all over again.
 
-Tracing a Program with `gdb`
-============================
+# Tracing a Program with `gdb`
 
-Compiling with Debug Symbols
-----------------------------
+## Compiling with Debug Symbols
 
 To use GDB to its fullest, we want to include the debug flags during
 compilation. This enable us to view the code along side the compilation
@@ -1054,14 +1035,14 @@ int main(){
 
 If we were to compile this program, we might do something like this:
 
-``` {.example}
+``` example
 gcc datatype.c -o datatype
 ```
 
 Which gives us the executable binary datatype, and we can run it to
 produce the expected output:
 
-``` {.example}
+``` example
 user@si485H-base:demo$ ./datatype 
 i:0 c:a s:4097 f:3.141593 d:15.154262
 i:1 c:a s:4097 f:3.141593 d:15.154262
@@ -1078,7 +1059,7 @@ i:9 c:a s:4097 f:3.141593 d:15.154262
 We can also trace the program with gdb and take a look at the output
 (the `-q` just suppreses the welcome message):
 
-``` {.example}
+``` example
 user@si485H-base:demo$ gdb -q ./datatype 
 Reading symbols from ./datatype...(no debugging symbols found)...done.
 (gdb) disassemble main
@@ -1122,7 +1103,7 @@ means, line-by-line stepping of the program will not work. For example,
 if I try and break at `main` and then take a step, it will fail because
 gdb doesn't know what the next line of the source code is.
 
-``` {.example}
+``` example
 (gdb) br main
 Breakpoint 1 at 0x8048420
 (gdb) r
@@ -1160,13 +1141,13 @@ to use GDB for both line-by-line and also by instrction. We might as
 well include the debug symbols ... for now. The gcc option to compile
 with debug symbols is `-g`:
 
-``` {.example}
+``` example
 gcc -g datatype.c -o datatype
 ```
 
 Now, when we run the program in `gdb` we can actually step through it:
 
-``` {.example}
+``` example
 user@si485H-base:demo$ gdb -q ./datatype 
 Reading symbols from ./datatype...done.
 (gdb) br main
@@ -1184,8 +1165,7 @@ Breakpoint 1, main () at datatype.c:15
 18    d = exp(exp(1));
 ```
 
-Source code line-by-line debugging with `gdb`
----------------------------------------------
+## Source code line-by-line debugging with `gdb`
 
 Now that we have a compiled binary with debug symbols, we can explore
 the process of line-by-line source code debugging. Here are the standard
@@ -1213,7 +1193,7 @@ commands for iterating through a program:
 
 Let's get our hands dirty and see some of these commands in action
 
-``` {.example}
+``` example
 $ gdb -q ./datatypes 
 Reading symbols from ./datatypes...done.
 (gdb) list
@@ -1261,7 +1241,7 @@ continue the program to let it reach its conclusion.
 
 Let's do it again, with a bit more advanced this time:
 
-``` {.example}
+``` example
 gdb) br main
 Breakpoint 1 at 0x8048426: file datatypes.c, line 15.
 (gdb) list 21
@@ -1324,7 +1304,7 @@ functions, which means it will allow the function to execute without
 debugging. If we want to also debug the funciton, we need to **step
 into** the function. That is the step option.
 
-``` {.example}
+``` example
 (gdb) br 21
 Breakpoint 1 at 0x804844f: file datatypes.c, line 21.
 (gdb) r
@@ -1346,7 +1326,7 @@ dynamically loaded into the program at run time. It is a separately
 compiled binary and it was not compiled with debugging symbols. BUT, we
 can still look at the assembly:
 
-``` {.example}
+``` example
 (gdb) disassemble printf
 Dump of assembler code for function __printf:
 => 0xb7e684a0 <+0>: push   ebx
@@ -1371,7 +1351,7 @@ We're only concerned with the source code debugging right now, so we can
 get out of here by using the `finish` option, which will complete the
 current function and break on return.
 
-``` {.example}
+``` example
 (gdb) finish
 Run till exit from #0  __printf (format=0x8048530 "i:%d c:%c s:%d f:%f d:%f\n") at printf.c:37
 main () at datatypes.c:20
@@ -1379,8 +1359,7 @@ main () at datatypes.c:20
 Value returned is $1 = 38
 ```
 
-Instruction Level Debugging
----------------------------
+## Instruction Level Debugging
 
 We have a similar set of gdb tools for stepping through programs at the
 instruction level as at the source level. Basic program control flow
@@ -1435,7 +1414,7 @@ with a break at main: (/note: that I'm using `ds` for `disassemble`
 because I've set up the aliase in my gdb init file, see the resource
 pages for how to do this/).
 
-``` {.example}
+``` example
 user@si485H-base:demo$ gdb -q ./print_n_times 
 Reading symbols from ./print_n_times...done.
 (gdb) br main
@@ -1471,7 +1450,7 @@ really want, but let's not focus on that right now.
 We can now look at the state of the program in a bit more detail,
 starting with the sate of the registers:
 
-``` {.example}
+``` example
 (gdb) i r
 eax            0x1  1
 ecx            0x7669b348   1986638664
@@ -1496,7 +1475,7 @@ instruction pointer, and you see that it is reference 0x8048456, or
 `<main+9>`, which matches the current instruction makred with an *=\>*.
 We can go further, but inspecting this address using the `x` command:
 
-``` {.example}
+``` example
 (gdb) x $eip
 0x8048456 <main+9>: 0x1c2444c7
 ```
@@ -1507,7 +1486,7 @@ from `main` it wants to show you the address in the most raw form.
 However, we can ask gdb to change it's preesentation of that memory,
 this time showing the bytes as an x86 instruction:
 
-``` {.example}
+``` example
 (gdb) x/i $eip
 => 0x8048456 <main+9>:  mov    DWORD PTR [esp+0x1c],0x5
 ```
@@ -1519,7 +1498,7 @@ to write the value 0x5 to the stack at an offset from the stack pointer
 of 0x16. Let's execute the instruction and use examine to see that this
 did in fact occur:
 
-``` {.example}
+``` example
 (gdb) ni
 18    print_n_times("Go Navy! Beat Army!\n",n);
 (gdb) ds
@@ -1545,7 +1524,7 @@ The next instruction moves the value from the stack and puts it in the
 eax register. Let's continue with the next instruction and see the
 states of the eax register:
 
-``` {.example}
+``` example
 (gdb) ni 
 0x08048462  18    print_n_times("Go Navy! Beat Army!\n",n);
 (gdb) i r eax
@@ -1562,7 +1541,7 @@ hex.
 The next instructoin, takes the value in `eax`, namely 0x5, and writes
 to the address 4-bytes above the stack pointer:
 
-``` {.example}
+``` example
 (gdb) ds
 Dump of assembler code for function main:
    0x0804844d <+0>: push   ebp
@@ -1589,7 +1568,7 @@ eax            0x5  5
 Good, Continuing on (ni) we see that the value 0x8048513 is written to
 the memory address at the top of the stack.
 
-``` {.example}
+``` example
 (gdb) ds
 Dump of assembler code for function main:
    0x0804844d <+0>: push   ebp
@@ -1615,7 +1594,7 @@ End of assembler dump.
 What is 0x8048513? It is the memory address of the string "Go Navy! Beat
 Army!\\n" and we can see this by examining the memory address.
 
-``` {.example}
+``` example
 (gdb) x/x 0x08048513
 0x8048513:  0x4e206f47
 ```
@@ -1624,7 +1603,7 @@ The initial examine will just display the values in hex, but if you look
 closely you see that this is ASCII. We can get gdb to display this a
 little more clearly with more options to examine:
 
-``` {.example}
+``` example
 (gdb) x/21b 0x08048513
 0x8048513:  0x47    0x6f    0x20    0x4e    0x61    0x76    0x79    0x21
 0x804851b:  0x20    0x42    0x65    0x61    0x74    0x20    0x41    0x72
@@ -1636,7 +1615,7 @@ and now we see each of the bytes all the way up to the NULL at the end.
 Let's go one step further, and using the `bc` option which shows the
 bytes and the ASCII char values.
 
-``` {.example}
+``` example
 (gdb) x/21bc 0x08048513
 0x8048513:  71 'G'  111 'o' 32 ' '  78 'N'  97 'a'  118 'v' 121 'y' 33 '!'
 0x804851b:  32 ' '  66 'B'  101 'e' 97 'a'  116 't' 32 ' '  65 'A'  114 'r'
@@ -1646,7 +1625,7 @@ bytes and the ASCII char values.
 Now, the string is mostly revealed. We can go further and just treat the
 address as a char \* and print the string directly with the `s` option:
 
-``` {.example}
+``` example
 (gdb) x/s 0x08048513
 0x8048513:  "Go Navy! Beat Army!\n"
 ```
@@ -1672,10 +1651,10 @@ we have a lot of options:
 ### Step Instruction and Stack Frames
 
 At this point in the trace, we are about to call `print_n_times()`
-function, so lets *step into* that function with the `step
-instruction` or `si` command:
+function, so lets *step into* that function with the `step instruction`
+or `si` command:
 
-``` {.example}
+``` example
 (gdb) ds
 Dump of assembler code for function main:
    0x0804844d <+0>: push   ebp
@@ -1724,7 +1703,7 @@ return, control continue after the function call. So if we ere to look
 at the top of the stack right now, we'll that it references the
 instruction at `<main+37>`:
 
-``` {.example}
+``` example
 (gdb) x/wx $esp
 0xbffff65c: 0x08048472
 (gdb) x/i 0x08048472
@@ -1737,7 +1716,7 @@ the string to be printed at the top of the stack. That means, the next
 items above (higher in the address space) from the stack pointer will be
 the arguments to the function:
 
-``` {.example}
+``` example
 (gdb) x/3wx $esp
 0xbffff65c: 0x08048472  0x08048513  0x00000005
 (gdb) x/s 0x08048513
@@ -1750,7 +1729,7 @@ base pointer, and set the new base pointer to the top of the stack. This
 is often called the saved frame pointer or (sfp). Let's execute these
 and see where we are at:
 
-``` {.example}
+``` example
 (gdb) ds
 Dump of assembler code for function print_n_times:
 => 0x0804841d <+0>:     push   ebp
@@ -1820,7 +1799,7 @@ And if we can also inspect this within gdb by examining from the stack
 pointer going backward. This is the stack right before the call to
 printf():
 
-``` {.example}
+``` example
 (gdb) ds
 Dump of assembler code for function print_n_times:
    0x0804841d <+0>:     push   ebp
@@ -1856,20 +1835,20 @@ It's a little verbose to examine the stack in this manner and so gdb
 provides some easier ways to inspect the stack. The first is a
 backtrace:
 
-``` {.example}
+``` example
 (gdb) bt
 #0  0x0804843a in print_n_times (str=0x8048513 "Go Navy! Beat Army!\n", n=5) at print_n_times.c:7
 #1  0x08048472 in main () at print_n_times.c:18
 ```
 
 The backtrace will show you the frames going backwards. Above, main
-called print~ntimes~, so we have two frames. The 0 frame is always the
-current one.
+called print<sub>ntimes</sub>, so we have two frames. The 0 frame is
+always the current one.
 
 Additionally the info tools are really, really helpful. We've seen the
 info registers, but you can alss use info to inspect the frame:
 
-``` {.example}
+``` example
 (gdb) info frame
 Stack level 0, frame at 0xbffff660:
  eip = 0x804843a in print_n_times (print_n_times.c:7); saved eip = 0x8048472

