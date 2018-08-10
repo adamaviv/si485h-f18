@@ -51,10 +51,10 @@ c programs. The most straight forward way to use `gcc` is to just call
 it with the program source file as the argument.
 
 ``` example
-user@si485H-base:demo$ gcc helloworld.c 
-user@si485H-base:demo$ ls
+user@si485h-clone0:demo$ gcc helloworld.c 
+user@si485h-clone0:demo$ ls
 a.out  helloworld.c
-user@si485H-base:demo$ ./a.out 
+user@si485h-clone0:demo$ ./a.out 
 Hello World!
 ```
 
@@ -64,16 +64,16 @@ a specific file name, same `helloworld`, then we use the `-o` option to
 specify the name of the output file.
 
 ``` example
-user@si485H-base:demo$ gcc -o helloworld helloworld.c 
-user@si485H-base:demo$ ./helloworld 
+user@si485h-clone0:demo$ gcc -o helloworld helloworld.c 
+user@si485h-clone0:demo$ ./helloworld 
 Hello World!
 ```
 
 ## Multi Step Compilation Process
 
-There is is actually obscuring a large portion of the compilation
-process which really involves multiple steps. A source program actually
-goes through two stages before becoming a binary executable.
+There is actually obscuring a large portion of the compilation process which
+really involves multiple steps. A source program actually goes through two
+stages before becoming a binary executable.
 
 First, the source code must be *compiled* into *object code*, which is
 an intermediate representation of the source file. This is called
@@ -111,7 +111,7 @@ int main(int argc, char *argv[]){
 If we were to try and compile this program, we will get an error.
 
 ``` example
-user@si485H-base:demo$ gcc -o hello hello.c
+user@si485h-clone0:demo$ gcc -o hello hello.c
 /tmp/ccC4VYbK.o: In function `main':
 hello.c:(.text+0x20): undefined reference to `world'
 collect2: error: ld returned 1 exit status
@@ -128,12 +128,12 @@ You can see, that yes, this program does actually compile by using the
 `-c` tag with gcc, which says to compile the source to an object file:
 
 ``` example
-user@si485H-base:demo$ gcc -c -o hello.o hello.c
+user@si485h-clone0:demo$ gcc -c -o hello.o hello.c
 ```
 
 This succeeds, and now we have an object file for `hello` and we need to
 provide more compiled code to complete the assembly process.
-Specifcially, we need to provide code that fills in the `world()`
+Specifically, we need to provide code that fills in the `world()`
 function.
 
 ``` c
@@ -151,26 +151,198 @@ Once we have that, we can compile `world.c` into `world.o` and we can
 assemble the two `.o` files into a single executable.
 
 ``` example
-user@si485H-base:demo$ gcc -c -o world.o world.c
-user@si485H-base:demo$ gcc -o hello hello.o world.o
-user@si485H-base:demo$ ./hello 
+user@si485h-clone0:demo$ gcc -c -o world.o world.c
+user@si485h-clone0:demo$ gcc -o hello hello.o world.o
+user@si485h-clone0:demo$ ./hello 
 Hello World!
 ```
 
-However, as you will see many times in this class. There is still more
-going on beneath the surface. There is still more code that is being
-used in the assembly process. And we can actually use `ld` directly to
-do the final linking to expose all those parts.
+However, as you will see many times in this class, there is still more going on
+beneath the surface. There is still yet more code that is being used in the
+assembly process. We can reveal this with the `-v` flag for gcc.
 
-``` example
-ld -o hello hello.o world.o --dynamic-linker /lib/ld-linux.so.2 /usr/lib/i386-linux-gnu/crt1.o /usr/lib/i386-linux-gnu/crti.o -lc /usr/lib/i386-linux-gnu/crtn.o
+```example
+aviv@si485h-clone0: demo$ gcc -v hello.o world.o -o hello
+Using built-in specs.
+COLLECT_GCC=gcc
+COLLECT_LTO_WRAPPER=/usr/lib/gcc/x86_64-linux-gnu/7/lto-wrapper
+OFFLOAD_TARGET_NAMES=nvptx-none
+OFFLOAD_TARGET_DEFAULT=1
+Target: x86_64-linux-gnu
+Configured with: ../src/configure -v --with-pkgversion='Ubuntu 7.3.0-16ubuntu3' --with-bugurl=file:///usr/share/doc/gcc-7/README.Bugs --enable-languages=c,ada,c++,go,brig,d,fortran,objc,obj-c++ --prefix=/usr --with-gcc-major-version-only --with-as=/usr/bin/x86_64-linux-gnu-as --with-ld=/usr/bin/x86_64-linux-gnu-ld --program-suffix=-7 --program-prefix=x86_64-linux-gnu- --enable-shared --enable-linker-build-id --libexecdir=/usr/lib --without-included-gettext --enable-threads=posix --libdir=/usr/lib --enable-nls --with-sysroot=/ --enable-clocale=gnu --enable-libstdcxx-debug --enable-libstdcxx-time=yes --with-default-libstdcxx-abi=new --enable-gnu-unique-object --disable-vtable-verify --enable-libmpx --enable-plugin --enable-default-pie --with-system-zlib --with-target-system-zlib --enable-objc-gc=auto --enable-multiarch --disable-werror --with-arch-32=i686 --with-abi=m64 --with-multilib-list=m32,m64,mx32 --enable-multilib --with-tune=generic --enable-offload-targets=nvptx-none --without-cuda-driver --enable-checking=release --build=x86_64-linux-gnu --host=x86_64-linux-gnu --target=x86_64-linux-gnu
+Thread model: posix
+gcc version 7.3.0 (Ubuntu 7.3.0-16ubuntu3) 
+COMPILER_PATH=/usr/lib/gcc/x86_64-linux-gnu/7/:/usr/lib/gcc/x86_64-linux-gnu/7/:/usr/lib/gcc/x86_64-linux-gnu/:/usr/lib/gcc/x86_64-linux-gnu/7/:/usr/lib/gcc/x86_64-linux-gnu/
+LIBRARY_PATH=/usr/lib/gcc/x86_64-linux-gnu/7/:/usr/lib/gcc/x86_64-linux-gnu/7/../../../x86_64-linux-gnu/:/usr/lib/gcc/x86_64-linux-gnu/7/../../../../lib/:/lib/x86_64-linux-gnu/:/lib/../lib/:/usr/lib/x86_64-linux-gnu/:/usr/lib/../lib/:/usr/lib/gcc/x86_64-linux-gnu/7/../../../:/lib/:/usr/lib/
+COLLECT_GCC_OPTIONS='-v' '-o' 'hello' '-mtune=generic' '-march=x86-64'
+ /usr/lib/gcc/x86_64-linux-gnu/7/collect2 -plugin /usr/lib/gcc/x86_64-linux-gnu/7/liblto_plugin.so -plugin-opt=/usr/lib/gcc/x86_64-linux-gnu/7/lto-wrapper -plugin-opt=-fresolution=/tmp/cc08edqZ.res -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s --sysroot=/ --build-id --eh-frame-hdr -m elf_x86_64 --hash-style=gnu --as-needed -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -z now -z relro -o hello /usr/lib/gcc/x86_64-linux-gnu/7/../../../x86_64-linux-gnu/Scrt1.o /usr/lib/gcc/x86_64-linux-gnu/7/../../../x86_64-linux-gnu/crti.o /usr/lib/gcc/x86_64-linux-gnu/7/crtbeginS.o -L/usr/lib/gcc/x86_64-linux-gnu/7 -L/usr/lib/gcc/x86_64-linux-gnu/7/../../../x86_64-linux-gnu -L/usr/lib/gcc/x86_64-linux-gnu/7/../../../../lib -L/lib/x86_64-linux-gnu -L/lib/../lib -L/usr/lib/x86_64-linux-gnu -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-linux-gnu/7/../../.. hello.o world.o -lgcc --push-state --as-needed -lgcc_s --pop-state -lc -lgcc --push-state --as-needed -lgcc_s --pop-state /usr/lib/gcc/x86_64-linux-gnu/7/crtendS.o /usr/lib/gcc/x86_64-linux-gnu/7/../../../x86_64-linux-gnu/crtn.o
+COLLECT_GCC_OPTIONS='-v' '-o' 'hello' '-mtune=generic' '-march=x86-64'
 ```
 
-The compilation actually requires three other object files `crt1.o`
-`crti.o` and `crtn.o` as well as a dynamically linked library
-`ld-linkux.so.2` to really assemble the code. These object files provide
-important starter and ending code blocks and other functions that will
-become relevant when we start to reverse engineer some software.
+Holly cow! That's a lot of stuff. The most important part is the last line, with
+the program `collect2` (a fancy name for `ld`). You'll notice there is a ton of
+flag options, and you'll also notice that these are 64-bit libraries and object files. 
+
+Let's see if we get this down to the smallest set of possible library and object
+files to get this to work.
+
+## Breaking down compilation even further
+
+First notice, if we use `ld` directly on the compilation, we get the following
+error:
+
+```example
+aviv@si485h-clone0:demo$ ld hello.o world.o -o hello
+ld: warning: cannot find entry symbol _start; defaulting to 00000000004000b0
+hello.o: In function `hello':
+hello.c:(.text+0x11): undefined reference to `printf'
+world.o: In function `world':
+world.c:(.text+0xc): undefined reference to `puts'
+```
+
+Two big errors: First, we don't know where the program `_start` is --- this is
+the real `main()` method of a program; Second, we don't know what `printf` or
+`puts` are. We need the object/library files to include these as well.
+
+The second problem is solved more easily than the first --- we need the C
+library! That's right, when we included `stdio.h` and `stdlib.h` these are
+functions defined by the larger C library, and we need to link in the code for
+those functions. We can do this with `-lc` flag:
+
+```example
+aviv@si485h-clone0:demo$ ld -lc hello.o world.o -o hello
+ld: warning: cannot find entry symbol _start; defaulting to 0000000000400310
+```
+
+Just one more error to go. This error is related to how programs are written in
+assembly where `_start` is the real starting point. We didn't write such a
+function in C, but it does exist in another object file that is part of the
+include list.
+
+Looking at the `gcc -v` output, we see some `.o` files that might contain the
+`_start` point. Trying `crt1.o`, this removes the error but introduces a new
+one. 
+
+```example
+aviv@si485h-clone0:~/tmp$ ld -lc -o hello /usr/lib/x86_64-linux-gnu/crt1.o -lc hello.o world.o 
+/usr/lib/x86_64-linux-gnu/libc_nonshared.a(elf-init.oS): In function `__libc_csu_init':
+(.text+0x2d): undefined reference to `_init'
+```
+
+To solve this we can add `crti.o` which contains `_init` 
+
+```example
+aviv@si485h-clone0:~/tmp$ ld -lc -o hello /usr/lib/x86_64-linux-gnu/crt1.o /usr/lib/x86_64-linux-gnu/crti.o hello.o world.o 
+/usr/lib/x86_64-linux-gnu/crt1.o: In function `_start':
+(.text+0x12): undefined reference to `__libc_csu_fini'
+(.text+0x19): undefined reference to `__libc_csu_init'
+```
+
+Which introduces a new error because the c library contains those methods, so we
+have to relink that after that object, move the `-lc` later in the command.
+
+```
+aviv@si485h-clone0:~/tmp$ ld -o hello /usr/lib/x86_64-linux-gnu/crt1.o -lc /usr/lib/x86_64-linux-gnu/crti.o hello.o world.o 
+```
+
+And we have a clean compilation, but running our program, that introduces problems.
+
+```
+aviv@si485h-clone0:~/tmp$ ./hello 
+-bash: ./hello: No such file or directory
+aviv@si485h-clone0:~/tmp$ ls hello
+hello
+```
+
+That's awfully strange, because `hello` is where we would expect it. What gives?
+Well, it turns out that the error is within the execution of `hello` and not the
+absence of `hello`. The error is that we are missing the loaders code that can
+load in the dynamic libraries.
+
+```
+aviv@si485h-clone0:~/tmp$ ld --dynamic-linker /lib64/ld-linux-x86-64.so.2  -o hello /usr/lib/x86_64-linux-gnu/crt1.o -lc /usr/lib/x86_64-linux-gnu/crti.o hello.o world.o 
+aviv@si485h-clone0:~/tmp$ ./hello 
+Segmentation fault (core dumped)
+```
+
+Closer, but still missing something --- we need some code to end the
+assembly. In particular, `crtn.o` that contains our ending routines and connects
+the circle.
+
+```
+aviv@si485h-clone0:~/tmp$ ld --dynamic-linker /lib64/ld-linux-x86-64.so.2  -o hello /usr/lib/x86_64-linux-gnu/crt1.o -lc /usr/lib/x86_64-linux-gnu/crti.o hello.o world.o  /usr/lib/x86_64-linux-gnu/crtn.o 
+aviv@si485h-clone0:~/tmp$ ./hello 
+Hello World!
+```
+
+Hello world, indeed.
+
+## 32 Bit Compilation
+
+All of that was for 64-bit compilation since we will be running our programs on
+a 64-bit machine. However, hacking in 64-bits is a whole other level and not
+covered in this class. Instead we'll do our compilation in 32-bit.
+
+Fortunately, most 64-bit processors can execute 32-bit code, and `gcc` can
+compile into both variants, with the right flags. (There's always another flag
+for that in `gcc`!).
+
+In the compilation instructions, you'll notice that there is a flag `-m
+elf_x86_64`. The `-m` flag specifies the machine type to compile to. For our
+purposes, we can specify `-m32` (shorthand for `elf_x86`), and we can see we
+have a different kind of file now. 
+
+```
+aviv@si485h-clone0:~/tmp$ gcc helloworld.c
+aviv@si485h-clone0:~/tmp$ file a.out 
+a.out: ELF 64-bit LSB shared object, x86-64, version 1 (SYSV), dynamically linked, interpreter /lib64/ld-linux-x86-64.so.2, for GNU/Linux 3.2.0, BuildID[sha1]=9d9573a79d4bce9874568534406bb99533995299, not stripped
+aviv@si485h-clone0:~/tmp$ gcc -m32 helloworld.c
+aviv@si485h-clone0:~/tmp$ file a.out 
+a.out: ELF 32-bit LSB shared object, Intel 80386, version 1 (SYSV), dynamically linked, interpreter /lib/ld-linux.so.2, for GNU/Linux 3.2.0, BuildID[sha1]=4b6a3496b7616638a4ce488997628f0faceee5e4, not stripped
+```
+
+Note that elf is the file type for executable binaries on linux, and 32-bit elf
+file runs just fine, even on a 32 bit machine (if you have the right libraries
+installed --- see [resources](../resources/vms.md) for how to setup a machine for that)
+
+```
+aviv@si485h-clone0:~/tmp$ ./a.out 
+Hello, world!
+```
+
+As a last note, as of `gcc` version 7.3, all programs are compiled with position
+independent loading. This isn't a big deal for hacking, generally, but it will
+make some stuff annoying, so we will by default turn it off with the `-no-pie` flag.
+
+```
+aviv@si485h-clone0:~/tmp$ gcc -m32 -no-pie helloworld.c
+aviv@si485h-clone0:~/tmp$ ./a.out 
+Hello, world!
+```
+
+Finally, finally, we will also use a slew of other flags to turn off security
+features. The eventually compilation will be obnoxiously long.
+
+```
+aviv@si485h-clone0:~/tmp$ gcc -no-pie -m32 -fno-stack-protector -z execstack helloworld.c
+aviv@si485h-clone0:~/tmp$ ./a.out 
+Hello, world!
+```
+
+As such, we'll create an alias for these set of compilations, `gcc32`.
+
+```
+aviv@si485h-clone0:~/tmp$ alias gcc32
+alias gcc32='gcc -no-pie -m32 -fno-stack-protector -z execstack'
+aviv@si485h-clone0:~/tmp$ gcc32 helloworld.c
+aviv@si485h-clone0:~/tmp$ ./a.out 
+Hello, world!
+```
+
+And for simplicity in the notes, I will shorthand `gcc32` just to `gcc`, and you
+should assume that ALL `gcc` compilation is occurring in 32 bit mode with these
+options, unless otherwise specified. 
+
 
 # Library Functions vs. System Calls
 
@@ -206,7 +378,7 @@ And we can look at the output of these traces to get a sense of how
 programs execute.
 
 ``` example
-user@si485H-base:demo$ ltrace ./hello > /dev/null 
+user@si485h-clone0:demo$ ltrace ./hello > /dev/null 
 __libc_start_main(0x8048304, 1, 0xbffa7744, 0x8048360 <unfinished ...>
 printf("Hello ")                                                                  = 6
 puts("World!")                                                                    = 7
@@ -221,7 +393,7 @@ method for writing to `stdout` is using the `write()` system call, and
 we can see this using `strace`.
 
 ``` example
-user@si485H-base:demo$ strace ./hello > /dev/null 
+user@si485h-clone0:demo$ strace ./hello > /dev/null 
 execve("./hello", ["./hello"], [/* 20 vars */]) = 0
 brk(0)                                  = 0x87b7000
 access("/etc/ld.so.nohwcap", F_OK)      = -1 ENOENT (No such file or directory)
@@ -292,7 +464,7 @@ Compiling and executing this program and analyzing the `ltrace`, we
 still see a call to `write()` but no calls to `puts()` or `printf()`.
 
 ``` example
-user@si485H-base:demo$ ltrace ./hellosystem > /dev/null 
+user@si485h-clone0:demo$ ltrace ./hellosystem > /dev/null 
 __libc_start_main(0x8048494, 1, 0xbf8c5034, 0x8048510 <unfinished ...>
 write(1, "Hello World!\n", 13)                                                                                                    = 13
 +++ exited (status 13) +++
@@ -305,7 +477,7 @@ that is a story for another day. What's more interesting is the
 other version of the program.
 
 ``` example
-user@si485H-base:demo$ strace ./hellosystem > /dev/null 
+user@si485h-clone0:demo$ strace ./hellosystem > /dev/null 
 execve("./hellosystem", ["./hellosystem"], [/* 20 vars */]) = 0
 brk(0)                                  = 0x8c9b000
 access("/etc/ld.so.nohwcap", F_OK)      = -1 ENOENT (No such file or directory)
@@ -368,7 +540,7 @@ int main(int argc, char *argv[]){
 ```
 
 ``` example
-user@si485H-base:demo$ ./datatypes
+user@si485h-clone0:demo$ ./datatypes
 char c=-17 size=1
 short s=-16657 size=2
 int i=-559038737 size=4
@@ -435,7 +607,7 @@ int main(int argc, char * argv[]){
 ```
 
 ``` example
-user@si485H-base:demo$ ./signess 
+user@si485h-clone0:demo$ ./signess 
  largest positive=2147483647     (0x7fffffff)
 smallest positive=0          (0x00000000)
 
@@ -472,7 +644,7 @@ int main(int argc, char * argv[]){
 ```
 
 ``` example
-user@si485H-base:demo$ ./twos-comp
+user@si485h-clone0:demo$ ./twos-comp
 largest negative  =-1       (0xffffffff)
 largest negative-1=-2       (0xfffffffe)
 largest negative-2=-3       (0xfffffffd)
@@ -512,7 +684,7 @@ int main(int argc, char * argv[]){
 ```
 
 ``` example
-user@si485H-base:demo$ ./unsigned 
+user@si485h-clone0:demo$ ./unsigned 
 (unsigned) largest negative  =4294967295  (0xffffffff)
 (unsigned) largest negative-1=4294967294  (0xfffffffe)
 (unsigned) largest negative-2=4294967293  (0xfffffffd)
@@ -584,7 +756,7 @@ arrows to indicate a memory reference.
 And, we can see the last mark is the case when we run the program.
 
 ``` example
-user@si485H-base:demo$ ./reference 
+user@si485h-clone0:demo$ ./reference 
 a=20 &a=0xbfd00ebc
 b=50 &b=0xbfd00eb8
 p=0xbfd00eb8 &p=0xbfd00eb4 *p=50
@@ -613,7 +785,7 @@ this will be clear later, but the implications is that when your run the
 program again, you'll get different values.
 
 ``` example
-user@si485H-base:demo$ ./reference 
+user@si485h-clone0:demo$ ./reference 
 a=20 &a=0xbfaebd9c
 b=20 &b=0xbfaebd98
 p=0xbfaebd98 &p=0xbfaebd94 *p=50
@@ -623,21 +795,21 @@ To ensure that this will not be the case, you'll have to turn this
 feature off. Here's how to do that.
 
 ``` example
-user@si485H-base:demo$ echo 0 | sudo tee /proc/sys/kernel/randomize_va_space
+user@si485h-clone0:demo$ echo 0 | sudo tee /proc/sys/kernel/randomize_va_space
 ```
 
 Now, when you run the program, you'll get the same output ever time.
 
 ``` example
-user@si485H-base:demo$ ./reference 
+user@si485h-clone0:demo$ ./reference 
 a=20 &a=0xbffff6bc
 b=20 &b=0xbffff6b8
 p=0xbffff6b8 &p=0xbffff6b4 *p=50
-user@si485H-base:demo$ ./reference 
+user@si485h-clone0:demo$ ./reference 
 a=20 &a=0xbffff6bc
 b=20 &b=0xbffff6b8
 p=0xbffff6b8 &p=0xbffff6b4 *p=50
-user@si485H-base:demo$ 
+user@si485h-clone0:demo$ 
 ```
 
 # Arrays and Strings
@@ -697,7 +869,7 @@ sense, we are treating `p` as an array. And, the operation does as we
 would expect in the output.
 
 ``` example
-user@si485H-base:demo$ ./arrays 
+user@si485h-clone0:demo$ ./arrays 
 a=0xbffff6b4 p=0xbffff6b4
 a[0] = 10
 a[1] = 11
@@ -740,7 +912,7 @@ int main(int argc, char * argv[]){
 ```
 
 ``` example
-user@si485H-base:demo$ ./p_arrays 
+user@si485h-clone0:demo$ ./p_arrays 
 a=0xbffff6b4 p=0xbffff6b4
 a+0=0xbffff6b4 *(a+0) = 10
 a+1=0xbffff6b8 *(a+1) = 11
@@ -767,7 +939,7 @@ change.
 Let's take a closer look at the last output:
 
 ``` example
-user@si485H-base:demo$ ./p_arrays 
+user@si485h-clone0:demo$ ./p_arrays 
 a=0xbffff6b4 p=0xbffff6b4
 a+0=0xbffff6b4 *(a+0) = 10
 a+1=0xbffff6b8 *(a+1) = 11
@@ -818,7 +990,7 @@ int main(int argc, char * argv[]){
 ```
 
 ``` example
-user@si485H-base:demo$ ./pointer_arithemtic 
+user@si485h-clone0:demo$ ./pointer_arithemtic 
 a+0=0xbffff6a8 *(a+0) = 10
 a+1=0xbffff6ac *(a+1) = 11
 a+2=0xbffff6b0 *(a+2) = 12
@@ -955,7 +1127,7 @@ bytes out indexed from 0 to 3, we see that the number 0xdeadbeef is
 written out in reveres, 0xef, 0xbe, 0xad, 0xde.
 
 ``` example
-user@si485H-base:demo$ ./endian 
+user@si485h-clone0:demo$ ./endian 
 p[0] = 0xef
 p[1] = 0xbe
 p[2] = 0xad
@@ -1057,7 +1229,7 @@ int main(int argc, char *argp[], char *envp[]){
 ```
 
 ``` example
-user@si485H-base:demo$ ./mem_layout 
+user@si485h-clone0:demo$ ./mem_layout 
 (reserved)   evnp = 0xbffff77c 
 (stack)        &a = 0xbffff6c4 
 (stack) stack_str = 0xbffff6be 
