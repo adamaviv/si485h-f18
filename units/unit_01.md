@@ -256,8 +256,9 @@ hello
 
 That's awfully strange, because `hello` is where we would expect it. What gives?
 Well, it turns out that the error is within the execution of `hello` and not the
-absence of `hello`. The error is that we are missing the loaders code that can
-load in the dynamic libraries.
+absence of `hello`. The error is that we are missing `ld` library code that will
+do the dynamic loading as part of the linux system. This needs to be dynamically
+linked in, like below.
 
 ```
 aviv@si485h-clone0:~/tmp$ ld --dynamic-linker /lib64/ld-linux-x86-64.so.2  -o hello /usr/lib/x86_64-linux-gnu/crt1.o -lc /usr/lib/x86_64-linux-gnu/crti.o hello.o world.o 
@@ -266,8 +267,8 @@ Segmentation fault (core dumped)
 ```
 
 Closer, but still missing something --- we need some code to end the
-assembly. In particular, `crtn.o` that contains our ending routines and connects
-the circle.
+assembly. In particular, `crtn.o` contains our ending routines and completes the
+circle.
 
 ```
 aviv@si485h-clone0:~/tmp$ ld --dynamic-linker /lib64/ld-linux-x86-64.so.2  -o hello /usr/lib/x86_64-linux-gnu/crt1.o -lc /usr/lib/x86_64-linux-gnu/crti.o hello.o world.o  /usr/lib/x86_64-linux-gnu/crtn.o 
