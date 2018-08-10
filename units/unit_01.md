@@ -303,7 +303,7 @@ a.out: ELF 32-bit LSB shared object, Intel 80386, version 1 (SYSV), dynamically 
 ```
 
 Note that elf is the file type for executable binaries on linux, and 32-bit elf
-file runs just fine, even on a 32 bit machine (if you have the right libraries
+file runs just fine, even on a 64 bit machine (if you have the right libraries
 installed --- see [resources](../resources/vms.md) for how to setup a machine for that)
 
 ```
