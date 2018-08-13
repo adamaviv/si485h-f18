@@ -148,7 +148,7 @@ explicitly stated, of the Department's policy holds.
 |              | 6-week  | 12-week | 16-Week | Final Grade
 |---           |---      |---      |---      |---
 | Final Exam   |         |         |         | 20%
-| Midterm Exam | 40%     | 40%     | 45%     | 20%
+| Midterm Exam | 40%     | 40%     | 40%     | 20%
 | Practicum    |  8%     |  8%     |  8%     |  8%
 | Labs         | 42%     | 42%     | 42%     | 42%
 | Homework     | 10%     | 10%     | 10%     | 10%
