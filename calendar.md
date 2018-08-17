@@ -15,9 +15,9 @@
 |      | Wed. 9/5  |  [Unit 2](units/unit_02.md) |  [Basics of x86 Assembly Programming](units/unit_01.md#program-memory-layout)<br> [Managing Stacks in Assembly](units/unit_02.md#stack-frame-management-and-assembly) | |
 |      | Fri. 9/7  |
 |---   |---        |---                          |---                                                     |---         |
-| 4    | Mon. 9/10 | [Unit 2](units/unit_02.md)  | [References/Loops/Functions in x86](units/unit_02.md#stack-frame-management-and-assembly) | |
-|      | Wed. 9/12 | [Unit 2](units/unit_02.md)  |  [Tracing a program with gdb](units/unit_02.md#stack-frame-management-and-assembly) | |
-|      | Fri. 9/14 |                          
+| 4    | Mon. 9/10 | Lab Work Day (Rosh Hashana) |
+|      | Wed. 9/12 | [Unit 2](units/unit_02.md)  | [References/Loops/Functions in x86](units/unit_02.md#stack-frame-management-and-assembly) | |
+|      | Fri. 9/14 | [Unit 2](units/unit_02.md)  |  [Tracing a program with gdb](units/unit_02.md#stack-frame-management-and-assembly) | |                         
 |---   |---        |---                          |---                                                     |---         |
 | 5    | Mon. 9/17 | **Lab Assessment**          | Assessment for Week 1-4 labs                           | [HW 2](hw/hw_02.md) **due!** |
 |      | Wed. 9/19 | **Midterm 1**               | Midterm covers unit 1-2                 
