@@ -240,9 +240,10 @@ explicitly stated, of the Department's policy holds.
 ### Merge Request Bonus and Bug/Content Bounty Bonus
 
 -   You can receive up to a 5% bonus on *your final grade* for submitting useful
-    merge requests (sometimes called pull requests) to the course. The value of the merge requests
-    are limmitted in terms of total bonus points awarded per catagory and the number of available points 
-    overall (limmited to 5% total bonus); however, exceptions may be made in exceptional circumstances due to
+    merge requests (sometimes called pull requests) to the course. The value of
+    the merge requests are limited in terms of total bonus points awarded per
+    category and the number of available points overall (limited to 5% total
+    bonus); however, exceptions may be made in exceptional circumstances due to
     exceptional contributions at the discretion of the instructor.
     
 -   Merge requests for typos in the unit notes are worth 0.05 points each, on
