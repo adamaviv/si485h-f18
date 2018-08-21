@@ -24,7 +24,7 @@ answer would appear like so.
 
 ```{.latex}
 \item What is the meaning of life, universe, everything?
-\being{myanswer}
+\begin{myanswer}
     The answer is 42!
 \end{myanswer}
 ```
