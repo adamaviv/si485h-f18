@@ -77,7 +77,7 @@ will be utilized.
 ```
 sudo apt-get update
 sudo dpkg --add-architecture i386
-sudo apt-get udpate
+sudo apt-get update
 sudo apt-get install gcc gdb nasm emacs libc6:i386 libncurses5:i386 libstdc++6:i386 gcc-multilib python python3 openssh-server git
 sudo apt-get upgrade
 ```
