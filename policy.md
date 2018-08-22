@@ -73,7 +73,7 @@ explicitly stated, of the Department's policy holds.
 -   You are required to indicate all collaborators on your homework assignments.
 
 -   Each student must submit an individual assignment, and the
-    pencile-to-paper/fingers-to-keyboard work must be your own. Even when
+    pencil-to-paper/fingers-to-keyboard work must be your own. Even when
     collaborating, in many situations, we do not expect two students to produce
     the same answer.
 
