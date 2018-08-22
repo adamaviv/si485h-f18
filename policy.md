@@ -100,7 +100,7 @@ explicitly stated, of the Department's policy holds.
 -   You are required to indicate all collaborators on your lab assignments via
     an appropriate mechanism (e.g., by submitting a README file). Collaborating
     and not indicating your collaborators is in violation of this and the
-    departments policy.
+    department's policy.
 
 
 ## Classroom Conduct
@@ -182,7 +182,7 @@ explicitly stated, of the Department's policy holds.
 
 ### Practicum
 
--   There will be two practicum exams occuring at the 6 and 12 week
+-   There will be two practicum exams occurring at the 6 and 12 week
     mark.
 
 -   The practicum will consist of two-to-four short programming
@@ -192,7 +192,7 @@ explicitly stated, of the Department's policy holds.
 -   Practicums are designed to test learning and problem solving
     skills in a realistic way, and are thus open notes and open
     Internet. However, you may not communicate with others, in a
-    direct fashion (e.g, speaking with a classmate, texting with
+    direct fashion (e.g. speaking with a classmate, texting with
     someone outside the classroom, posting on a message board, etc.).
 
 
