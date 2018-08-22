@@ -28,7 +28,7 @@ execution model.
 2.   The ability to trace and analyze the execution of a program using standard tools (e.g., gdb,strace,ltrace,objdump,readelef)
 3.   The ability to identify and exploit vulnerabilities in software
 4.   Read, write, and understand x86 assembly programs
-5.   Understand system level defenses (e.g., ASLR, stack cannaries) and how to circumvent them
+5.   Understand system level defenses (e.g., ASLR, stack canaries) and how to circumvent them
 6.   Develop and deploy stack based exploits and shell code (e.g., via stack overflows, format string attacks, ROP)
 
 
