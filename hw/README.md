@@ -43,7 +43,7 @@ properly graded. Bad latex formatting is not an excuse for a poor submissions.
 You can install your own latex environment on your Ubuntu VM via `apt-get`
 
 ```
-sudo apt-get instal texlive-full
+sudo apt-get install texlive-full
 ```
 
 This will install a lot of stuff! But, once finished, you can compile using
