@@ -28,7 +28,7 @@ execution model.
 2.   The ability to trace and analyze the execution of a program using standard tools (e.g., gdb,strace,ltrace,objdump,readelef)
 3.   The ability to identify and exploit vulnerabilities in software
 4.   Read, write, and understand x86 assembly programs
-5.   Understand system level defenses (e.g., ASLR, stack cannaries) and how to circumvent them
+5.   Understand system level defenses (e.g., ASLR, stack canaries) and how to circumvent them
 6.   Develop and deploy stack based exploits and shell code (e.g., via stack overflows, format string attacks, ROP)
 
 
@@ -73,7 +73,7 @@ explicitly stated, of the Department's policy holds.
 -   You are required to indicate all collaborators on your homework assignments.
 
 -   Each student must submit an individual assignment, and the
-    pencile-to-paper/fingers-to-keyboard work must be your own. Even when
+    pencil-to-paper/fingers-to-keyboard work must be your own. Even when
     collaborating, in many situations, we do not expect two students to produce
     the same answer.
 
@@ -100,7 +100,7 @@ explicitly stated, of the Department's policy holds.
 -   You are required to indicate all collaborators on your lab assignments via
     an appropriate mechanism (e.g., by submitting a README file). Collaborating
     and not indicating your collaborators is in violation of this and the
-    departments policy.
+    department's policy.
 
 
 ## Classroom Conduct
@@ -182,7 +182,7 @@ explicitly stated, of the Department's policy holds.
 
 ### Practicum
 
--   There will be two practicum exams occuring at the 6 and 12 week
+-   There will be two practicum exams occurring at the 6 and 12 week
     mark.
 
 -   The practicum will consist of two-to-four short programming
@@ -192,7 +192,7 @@ explicitly stated, of the Department's policy holds.
 -   Practicums are designed to test learning and problem solving
     skills in a realistic way, and are thus open notes and open
     Internet. However, you may not communicate with others, in a
-    direct fashion (e.g, speaking with a classmate, texting with
+    direct fashion (e.g. speaking with a classmate, texting with
     someone outside the classroom, posting on a message board, etc.).
 
 
