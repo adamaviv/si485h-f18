@@ -98,7 +98,7 @@ Change directories into that repo to complete the lab.
 
 ## Add, Commit, Push, and Pull
 
-Once in the cloned repository, you can user the git command to manage the
+Once in the cloned repository, you can use the git command to manage the
 repository. The big idea behind git is that a repository is distributed, so the
 cloned version you have is a local copy. In your local copy, you can modify
 files and commit those changes. However, to make those changes available to
