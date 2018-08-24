@@ -84,7 +84,7 @@ yet because it must be *assembled* and *linked* properly with some other
 code sources (e.g., code from the c standard library) so that it can
 actually execute on the specific target machine.
 
-To see how this works, lets look at multi-file hello world program. In
+To see how this works, let's look at multi-file hello world program. In
 one file (below) we have the `main()` function which calls two other
 functions `hello()` and `world()`, but only `hello()` is provided in the
 program source. Both functions have definitions, that is, the types of
@@ -818,11 +818,11 @@ user@si485h-clone0:demo$
 ## Array Values and Pointers are the same thing!
 
 Here is a fact: pointers and array values are the same thing. Hold this
-truth to be self evident, and you will never be lost in the dark forest
+truth to be self-evident, and you will never be lost in the dark forest
 of memory ...
 
 Why is this truth true? Well it has to do with the definition of an
-array. An `array` is a contiugous memory block of a sequence of
+array. An `array` is a contiguous memory block of a sequence of
 similarly typed data types. An array is a reference to the first data
 item in the contiguous memory block, and thus an array's value
 references memory. That means an array value is a pointer. Boom!
@@ -1013,7 +1013,7 @@ c+4=0xbffff69d *(c+4) = 14
 
 ## Strings
 
-C-strings(!!!!) the bane of student programmers world wide, but they are
+C-strings(!!!!) the bane of student programmers worldwide, but they are
 not really that bad if you remember that string is simply an array of
 characters that is null terminated. In its most pedantic usage, we can
 declare a string as an array in the standard sense.
@@ -1162,7 +1162,7 @@ so there is total of about 4GB in the memory space.
 higher address
 0xffffffff --> .----------------.
                |    reserved    |  <-- command line args
-               +----------------+      envirment variables
+               +----------------+      environment variables
                |                |
                |     stack      |  <-- user stack, function frames
                |       |        |
@@ -1183,7 +1183,7 @@ lower address
 
 Here's what each of these sections are used for:
 
--   *reserved*: the reserved space is used for passing enviroment
+-   *reserved*: the reserved space is used for passing environment
     variables and command line arguments to the program.
 -   *stack*: the stack is for organizing the execution of the program
     into stack frames for tracing functions and local variables. Each
@@ -1192,7 +1192,7 @@ Here's what each of these sections are used for:
     addresses, into empty memory address space.
 -   *heap* : the heap is for dynamic, global memory allocations, such as
     called from `malloc()`
--   *bss* : the bss is used to store gloabl or stacically declared vaues
+-   *bss* : the bss is used to store global or statically declared values
 -   *text* : is where the program code, i.e., the x86 instructions, is
     stored.
 
