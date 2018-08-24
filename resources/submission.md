@@ -266,7 +266,9 @@ $ git branch
 To create a new branch, you specify the branch name. For submission, this branch
 must be called `submit`
 
+
 ```
+$ git branch submit
 $ git branch
 * master
   submit
