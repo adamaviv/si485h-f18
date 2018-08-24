@@ -106,7 +106,7 @@ others, you must **push** the changes to the remote copy of the repository
 stored on gitlab --- sometimes called the origin. You can also **pull** changes
 from the origin to your local copy.
 
-### Adding a committing a file
+### Adding and committing a file
 
 The notion of "adding" in git means that you are "adding a file to be
 committed." This can include current files, as in you are modifying them, or new
