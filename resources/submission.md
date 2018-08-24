@@ -256,7 +256,7 @@ allow your instructor to only grade a specific portion of the lab.
 
 Branches are used by git to allow one repository to exist in different stages or
 branches of work. You can create a check the current branch you're working on
-using the branch command. You'll always being on the `master` branch.
+using the branch command. You'll always begin on the `master` branch.
 
 ```
 $ git branch
