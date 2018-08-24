@@ -217,7 +217,7 @@ $ git commit -m "creating a hash.txt file"
 
 ## Pushing changes to the remote repo
 
-Now that you've finish all your local modifications to the repository, you may
+Now that you've finished all your local modifications to the repository, you may
 want to push your changes to the remote repository. You do this with a `git push`
 command.
 
