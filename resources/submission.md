@@ -80,7 +80,7 @@ git@si485h-git.academy.usna.edu's password:
 That means you haven't setup your public key on this machine with gitlab. See
 the [gitlab guide](gitlab.md) for extended details, you'll need to generate a
 ssh key-pair with `ssh-keygen` and upload the public key to gitlab. Once you do
-that, you should have a successful clone, and a directory for the repsitory will be created.
+that, you should have a successful clone, and a directory for the repository will be created.
 
 ```
 $ git clone git@si485h-git.academy.usna.edu:m209999/lab-1.1.git
