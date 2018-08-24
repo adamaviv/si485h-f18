@@ -123,7 +123,7 @@ For 98% of what we do this semester, you'll need to have ASLR (address space
 layout randomization) turned off. To do so, use the following command:
 
 ```
-echo 0 | sudo tee > /proc/sys/kernel/randomize_va_space
+echo 0 | sudo tee /proc/sys/kernel/randomize_va_space
 ```
 
 You might find it useful to save this command in a bash script, maybe something called `no_aslr.sh`, like
