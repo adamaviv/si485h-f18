@@ -121,7 +121,7 @@ Looking closely at the error, we see that it is actually *not* gcc that
 is printing an error, but rather `ld`. That is because the program
 actually compiled but did not assemble properly. `ld` the GNU linker was
 not able to find the reference (or code) for `world()` and failed to
-link the code into the executable source and those nothing was
+link the code into the executable source and thus nothing was
 assembled.
 
 You can see, that yes, this program does actually compile by using the
