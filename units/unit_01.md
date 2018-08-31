@@ -179,7 +179,7 @@ COLLECT_GCC_OPTIONS='-v' '-o' 'hello' '-mtune=generic' '-march=x86-64'
 COLLECT_GCC_OPTIONS='-v' '-o' 'hello' '-mtune=generic' '-march=x86-64'
 ```
 
-Holly cow! That's a lot of stuff. The most important part is the last line, with
+Holy cow! That's a lot of stuff. The most important part is the last line, with
 the program `collect2` (a fancy name for `ld`). You'll notice there is a ton of
 flag options, and you'll also notice that these are 64-bit libraries and object files. 
 
