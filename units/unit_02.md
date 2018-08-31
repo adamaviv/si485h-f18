@@ -5,7 +5,7 @@
 ## A binary program ... what is it?
 
 In the last unit we looked a lot at writing programs in c, compiling
-them into binaries, and then running them. in this unit, we peal back
+them into binaries, and then running them. In this unit, we peal back
 the covers further and look right at the binary files themselves. We
 will examine both what exactly is a binary, how is it formatted, and how
 do we parse or dissemble the contents within?
@@ -94,9 +94,9 @@ things.
 1.  There is a magic number! The magic number is used to say, hey this
     is ELF and what version
 2.  The class is ELF32, so it's 32 bit
-3.  The machine is Intel 80386, or x386 to be execpected
+3.  The machine is Intel 80386, or x386 to be expected
 4.  The entry point for the file is address 0x8048310, essentially what
-    is the first intsruction in the \_<sub>start</sub> section function
+    is the first instruction in the \_<sub>start</sub> section function
     which calls main.
 
 Everything else is not super useful for our purposes. Another nice thing
@@ -242,7 +242,7 @@ we'll see one header that looks familiar `main()` and `printhello()`:
 ```
 
 This is the assembly for the main function. Looking across, from left to
-right, the furtherest left is the address this instruction is loaded
+right, the furthest left is the address this instruction is loaded
 into, then the actually bytes of the instruction, and then finally the
 name of the details of the instruction.
 
@@ -302,9 +302,9 @@ user@si485H-base:demo$ objdump -M intel -d helloworld
 8048481:c3                   ret    
 ```
 
-### Dissasembling with `gdb`
+### Disassembling with `gdb`
 
-Another way to get the dissambly code is using `gdb`, the gnu debugger,
+Another way to get the disassembly code is using `gdb`, the gnu debugger,
 which also does a tone of other tasks which we will look at later. To
 start, run the program under the debugger:
 
@@ -376,7 +376,7 @@ End of assembler dump.
 This will print out a disclaimer and leave you in a gdb terminal. Now,
 you can type `disassemble <func name>main` to disassemble the main
 function. If you set up the alias already as suggested in the resource
-page, you can shorten that to `ds` for dissasemble.
+page, you can shorten that to `ds` for disassemble.
 
 If your output is in AT&T syntax, then issue the command:
 
