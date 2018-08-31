@@ -71,7 +71,7 @@ Hello World!
 
 ## Multi Step Compilation Process
 
-There is actually obscuring a large portion of the compilation process which
+This is actually obscuring a large portion of the compilation process which
 really involves multiple steps. A source program actually goes through two
 stages before becoming a binary executable.
 
