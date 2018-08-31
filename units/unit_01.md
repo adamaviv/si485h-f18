@@ -322,7 +322,7 @@ Hello, world!
 ```
 
 Finally, finally, we will also use a slew of other flags to turn off security
-features. The eventually compilation will be obnoxiously long.
+features. Eventually the compilation will be obnoxiously long.
 
 ```
 aviv@si485h-clone0:~/tmp$ gcc -no-pie -m32 -fno-stack-protector -z execstack helloworld.c
