@@ -353,7 +353,7 @@ c standard library provides a lot of functionality for the programmer,
 but its primary task is to provide an interface by which the programmer
 can easily access the underlying operating system interface.
 
-Recall that a system call is a mechanisms for the programmer to gain
+Recall that a system call is a mechanism for the programmer to gain
 access to an operating system feature. The operating system provides a
 few key features relevant to this class:
 
