@@ -18,7 +18,7 @@ due date of the homework is posted on the [calendar](calendar.md).
 
 ## Latex Answer Environment
 
-There is an `myanswer` environment defined in the latex template that you should
+There is a `myanswer` environment defined in the latex template that you should
 use for formatting your answer. For example, if had the following question, the
 answer would appear like so.
 
