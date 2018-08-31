@@ -77,7 +77,7 @@ stages before becoming a binary executable.
 
 First, the source code must be *compiled* into *object code*, which is
 an intermediate representation of the source file. This is called
-compilation because there is a literal transformation of one source doe
+compilation because there is a literal transformation of one source code
 to another source code. The object file contains the compiled source in
 machine level instructions (e.g. x86 assembly) but it is not executable
 yet because it must be *assembled* and *linked* properly with some other
