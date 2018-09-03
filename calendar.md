@@ -13,7 +13,7 @@
 |---   |---        |---                          |---                                                     |---         |
 | 3    |**Tue.** 9/4 |  [Unit 2](units/unit_02.md) | [Disassembling a Binary Program](units/unit_01.md#program-memory-layout) |[HW 1](hw/hw_01.md) **due!** |
 |      | Wed. 9/5  |  [Unit 2](units/unit_02.md) |  [Basics of x86 Assembly Programming](units/unit_01.md#program-memory-layout)<br> [Managing Stacks in Assembly](units/unit_02.md#stack-frame-management-and-assembly) | |
-|      | Fri. 9/7  |
+|      | Fri. 9/7  | [Lab 3] (labs/lab_03.md) 
 |---   |---        |---                          |---                                                     |---         |
 | 4    | Mon. 9/10 | Lab Work Day (Rosh Hashana) |
 |      | Wed. 9/12 | [Unit 2](units/unit_02.md)  | [References/Loops/Functions in x86](units/unit_02.md#stack-frame-management-and-assembly) | |
