@@ -7,7 +7,7 @@ learn.
 
 * [Makefile](Makefile) : A handy, universal makefile that can compile most C and asm
   programs with the right arguments for 32 bit with all the fancy stuff turned
-  of. Just put it in your source directory and fire away. It doesn't not handle
+  off. Just put it in your source directory and fire away. It doesn't not handle
   dependencies, though, so sources should be self contained.
   
   
