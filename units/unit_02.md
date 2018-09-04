@@ -105,7 +105,7 @@ regions of the binary for different purposes.
 
 ``` example
 $ readelf -S helloworld
-There are 36 section headers, starting at offset 0x1b74:
+There are 35 section headers, starting at offset 0x2070:
 
 Section Headers:
   [Nr] Name              Type            Addr     Off    Size   ES Flg Lk Inf Al
@@ -119,36 +119,36 @@ Section Headers:
   [ 7] .gnu.version      VERSYM          0804826a 00026a 00000a 02   A  5   0  2
   [ 8] .gnu.version_r    VERNEED         08048274 000274 000020 00   A  6   1  4
   [ 9] .rel.dyn          REL             08048294 000294 000008 08   A  5   0  4
-  [10] .rel.plt          REL             0804829c 00029c 000010 08  AI  5  24  4
+  [10] .rel.plt          REL             0804829c 00029c 000010 08  AI  5  23  4
   [11] .init             PROGBITS        080482ac 0002ac 000023 00  AX  0   0  4
   [12] .plt              PROGBITS        080482d0 0002d0 000030 04  AX  0   0 16
-  [13] .plt.got          PROGBITS        08048300 000300 000008 00  AX  0   0  8
-  [14] .text             PROGBITS        08048310 000310 0001e2 00  AX  0   0 16
-  [15] .fini             PROGBITS        080484f4 0004f4 000014 00  AX  0   0  4
-  [16] .rodata           PROGBITS        08048508 000508 000008 00   A  0   0  4
-  [17] .eh_frame_hdr     PROGBITS        08048510 000510 000034 00   A  0   0  4
-  [18] .eh_frame         PROGBITS        08048544 000544 0000ec 00   A  0   0  4
-  [19] .init_array       INIT_ARRAY      08049f08 000f08 000004 00  WA  0   0  4
-  [20] .fini_array       FINI_ARRAY      08049f0c 000f0c 000004 00  WA  0   0  4
-  [21] .jcr              PROGBITS        08049f10 000f10 000004 00  WA  0   0  4
-  [22] .dynamic          DYNAMIC         08049f14 000f14 0000e8 08  WA  6   0  4
-  [23] .got              PROGBITS        08049ffc 000ffc 000004 04  WA  0   0  4
-  [24] .got.plt          PROGBITS        0804a000 001000 000014 04  WA  0   0  4
-  [25] .data             PROGBITS        0804a014 001014 000008 00  WA  0   0  4
-  [26] .bss              NOBITS          0804a01c 00101c 000004 00  WA  0   0  1
-  [27] .comment          PROGBITS        00000000 00101c 000034 01  MS  0   0  1
-  [28] .debug_aranges    PROGBITS        00000000 001050 000020 00      0   0  1
-  [29] .debug_info       PROGBITS        00000000 001070 0000d5 00      0   0  1
-  [30] .debug_abbrev     PROGBITS        00000000 001145 000093 00      0   0  1
-  [31] .debug_line       PROGBITS        00000000 0011d8 000055 00      0   0  1
-  [32] .debug_str        PROGBITS        00000000 00122d 000108 01  MS  0   0  1
-  [33] .shstrtab         STRTAB          00000000 001a28 00014a 00      0   0  1
-  [34] .symtab           SYMTAB          00000000 001338 0004b0 10     35  52  4
-  [35] .strtab           STRTAB          00000000 0017e8 000240 00      0   0  1
+  [13] .plt.got          PROGBITS        08048300 000300 000008 08  AX  0   0  8
+  [14] .text             PROGBITS        08048310 000310 000212 00  AX  0   0 16
+  [15] .fini             PROGBITS        08048524 000524 000014 00  AX  0   0  4
+  [16] .rodata           PROGBITS        08048538 000538 000008 00   A  0   0  4
+  [17] .eh_frame_hdr     PROGBITS        08048540 000540 00004c 00   A  0   0  4
+  [18] .eh_frame         PROGBITS        0804858c 00058c 00012c 00   A  0   0  4
+  [19] .init_array       INIT_ARRAY      08049f0c 000f0c 000004 04  WA  0   0  4
+  [20] .fini_array       FINI_ARRAY      08049f10 000f10 000004 04  WA  0   0  4
+  [21] .dynamic          DYNAMIC         08049f14 000f14 0000e8 08  WA  6   0  4
+  [22] .got              PROGBITS        08049ffc 000ffc 000004 04  WA  0   0  4
+  [23] .got.plt          PROGBITS        0804a000 001000 000014 04  WA  0   0  4
+  [24] .data             PROGBITS        0804a014 001014 000008 00  WA  0   0  4
+  [25] .bss              NOBITS          0804a01c 00101c 000004 00  WA  0   0  1
+  [26] .comment          PROGBITS        00000000 00101c 000024 01  MS  0   0  1
+  [27] .debug_aranges    PROGBITS        00000000 001040 000020 00      0   0  1
+  [28] .debug_info       PROGBITS        00000000 001060 000389 00      0   0  1
+  [29] .debug_abbrev     PROGBITS        00000000 0013e9 000130 00      0   0  1
+  [30] .debug_line       PROGBITS        00000000 001519 0000dc 00      0   0  1
+  [31] .debug_str        PROGBITS        00000000 0015f5 0002bd 01  MS  0   0  1
+  [32] .symtab           SYMTAB          00000000 0018b4 000470 10     33  49  4
+  [33] .strtab           STRTAB          00000000 001d24 000206 00      0   0  1
+  [34] .shstrtab         STRTAB          00000000 001f2a 000145 00      0   0  1
 Key to Flags:
-  W (write), A (alloc), X (execute), M (merge), S (strings)
-  I (info), L (link order), G (group), T (TLS), E (exclude), x (unknown)
-  O (extra OS processing required) o (OS specific), p (processor specific)
+  W (write), A (alloc), X (execute), M (merge), S (strings), I (info),
+  L (link order), O (extra OS processing required), G (group), T (TLS),
+  C (compressed), x (unknown), o (OS specific), E (exclude),
+  p (processor specific)
 ```
 
 Again, a bunch of this information isn't too useful for us, but might be
@@ -169,7 +169,7 @@ themselves. For this, we'll use `objdump` or "object dump". Simply, we
 can call it on the binary executable like so:
 
 ``` example
-$ objdump -d helloworld
+$ objdump -d helloworld   
 
 helloworld:     file format elf32-i386
 
@@ -177,17 +177,17 @@ helloworld:     file format elf32-i386
 Disassembly of section .init:
 
 080482ac <_init>:
-80482ac:53                   push   %ebx
-80482ad:83 ec 08             sub    $0x8,%esp
-80482b0:e8 8b 00 00 00       call   8048340 <__x86.get_pc_thunk.bx>
-80482b5:81 c3 4b 1d 00 00    add    $0x1d4b,%ebx
-80482bb:8b 83 fc ff ff ff    mov    -0x4(%ebx),%eax
-80482c1:85 c0                test   %eax,%eax
-80482c3:74 05                je     80482ca <_init+0x1e>
-80482c5:e8 36 00 00 00       call   8048300 <putchar@plt+0x10>
-80482ca:83 c4 08             add    $0x8,%esp
-80482cd:5b                   pop    %ebx
-80482ce:c3                   ret    
+ 80482ac:	53                   	push   %ebx
+ 80482ad:	83 ec 08             	sub    $0x8,%esp
+ 80482b0:	e8 ab 00 00 00       	call   8048360 <__x86.get_pc_thunk.bx>
+ 80482b5:	81 c3 4b 1d 00 00    	add    $0x1d4b,%ebx
+ 80482bb:	8b 83 fc ff ff ff    	mov    -0x4(%ebx),%eax
+ 80482c1:	85 c0                	test   %eax,%eax
+ 80482c3:	74 05                	je     80482ca <_init+0x1e>
+ 80482c5:	e8 36 00 00 00       	call   8048300 <__gmon_start__@plt>
+ 80482ca:	83 c4 08             	add    $0x8,%esp
+ 80482cd:	5b                   	pop    %ebx
+ 80482ce:	c3                   	ret    
 
     ...
 ```
@@ -196,49 +196,55 @@ It's going to dump a lot of stuff, but lets look more carefully down,
 we'll see one header that looks familiar `main()` and `printhello()`:
 
 ``` example
-0804840b <printhello>:
-804840b:55                   push   %ebp
-804840c:89 e5                mov    %esp,%ebp
-804840e:83 ec 28             sub    $0x28,%esp
-8048411:c7 45 e5 48 65 6c 6c movl   $0x6c6c6548,-0x1b(%ebp)
-8048418:c7 45 e9 6f 2c 20 57 movl   $0x57202c6f,-0x17(%ebp)
-804841f:c7 45 ed 6f 72 6c 64 movl   $0x646c726f,-0x13(%ebp)
-8048426:66 c7 45 f1 21 0a    movw   $0xa21,-0xf(%ebp)
-804842c:c6 45 f3 00          movb   $0x0,-0xd(%ebp)
-8048430:8d 45 e5             lea    -0x1b(%ebp),%eax
-8048433:89 45 f4             mov    %eax,-0xc(%ebp)
-8048436:eb 19                jmp    8048451 <printhello+0x46>
-8048438:8b 45 f4             mov    -0xc(%ebp),%eax
-804843b:0f b6 00             movzbl (%eax),%eax
-804843e:0f be c0             movsbl %al,%eax
-8048441:83 ec 0c             sub    $0xc,%esp
-8048444:50                   push   %eax
-8048445:e8 a6 fe ff ff       call   80482f0 <putchar@plt>
-804844a:83 c4 10             add    $0x10,%esp
-804844d:83 45 f4 01          addl   $0x1,-0xc(%ebp)
-8048451:8b 45 f4             mov    -0xc(%ebp),%eax
-8048454:0f b6 00             movzbl (%eax),%eax
-8048457:84 c0                test   %al,%al
-8048459:75 dd                jne    8048438 <printhello+0x2d>
-804845b:90                   nop
-804845c:c9                   leave  
-804845d:c3                   ret    
+08048426 <printhello>:
+ 8048426:	55                   	push   %ebp
+ 8048427:	89 e5                	mov    %esp,%ebp
+ 8048429:	53                   	push   %ebx
+ 804842a:	83 ec 24             	sub    $0x24,%esp
+ 804842d:	e8 2e ff ff ff       	call   8048360 <__x86.get_pc_thunk.bx>
+ 8048432:	81 c3 ce 1b 00 00    	add    $0x1bce,%ebx
+ 8048438:	c7 45 e5 48 65 6c 6c 	movl   $0x6c6c6548,-0x1b(%ebp)
+ 804843f:	c7 45 e9 6f 2c 20 57 	movl   $0x57202c6f,-0x17(%ebp)
+ 8048446:	c7 45 ed 6f 72 6c 64 	movl   $0x646c726f,-0x13(%ebp)
+ 804844d:	66 c7 45 f1 21 0a    	movw   $0xa21,-0xf(%ebp)
+ 8048453:	c6 45 f3 00          	movb   $0x0,-0xd(%ebp)
+ 8048457:	8d 45 e5             	lea    -0x1b(%ebp),%eax
+ 804845a:	89 45 f4             	mov    %eax,-0xc(%ebp)
+ 804845d:	eb 19                	jmp    8048478 <printhello+0x52>
+ 804845f:	8b 45 f4             	mov    -0xc(%ebp),%eax
+ 8048462:	0f b6 00             	movzbl (%eax),%eax
+ 8048465:	0f be c0             	movsbl %al,%eax
+ 8048468:	83 ec 0c             	sub    $0xc,%esp
+ 804846b:	50                   	push   %eax
+ 804846c:	e8 7f fe ff ff       	call   80482f0 <putchar@plt>
+ 8048471:	83 c4 10             	add    $0x10,%esp
+ 8048474:	83 45 f4 01          	addl   $0x1,-0xc(%ebp)
+ 8048478:	8b 45 f4             	mov    -0xc(%ebp),%eax
+ 804847b:	0f b6 00             	movzbl (%eax),%eax
+ 804847e:	84 c0                	test   %al,%al
+ 8048480:	75 dd                	jne    804845f <printhello+0x39>
+ 8048482:	90                   	nop
+ 8048483:	8b 5d fc             	mov    -0x4(%ebp),%ebx
+ 8048486:	c9                   	leave  
+ 8048487:	c3                   	ret    
 
-0804845e <main>:
-804845e:8d 4c 24 04          lea    0x4(%esp),%ecx
-8048462:83 e4 f0             and    $0xfffffff0,%esp
-8048465:ff 71 fc             pushl  -0x4(%ecx)
-8048468:55                   push   %ebp
-8048469:89 e5                mov    %esp,%ebp
-804846b:51                   push   %ecx
-804846c:83 ec 04             sub    $0x4,%esp
-804846f:e8 97 ff ff ff       call   804840b <printhello>
-8048474:b8 00 00 00 00       mov    $0x0,%eax
-8048479:83 c4 04             add    $0x4,%esp
-804847c:59                   pop    %ecx
-804847d:5d                   pop    %ebp
-804847e:8d 61 fc             lea    -0x4(%ecx),%esp
-8048481:c3                   ret    
+08048488 <main>:
+ 8048488:	8d 4c 24 04          	lea    0x4(%esp),%ecx
+ 804848c:	83 e4 f0             	and    $0xfffffff0,%esp
+ 804848f:	ff 71 fc             	pushl  -0x4(%ecx)
+ 8048492:	55                   	push   %ebp
+ 8048493:	89 e5                	mov    %esp,%ebp
+ 8048495:	51                   	push   %ecx
+ 8048496:	83 ec 04             	sub    $0x4,%esp
+ 8048499:	e8 18 00 00 00       	call   80484b6 <__x86.get_pc_thunk.ax>
+ 804849e:	05 62 1b 00 00       	add    $0x1b62,%eax
+ 80484a3:	e8 7e ff ff ff       	call   8048426 <printhello>
+ 80484a8:	b8 00 00 00 00       	mov    $0x0,%eax
+ 80484ad:	83 c4 04             	add    $0x4,%esp
+ 80484b0:	59                   	pop    %ecx
+ 80484b1:	5d                   	pop    %ebp
+ 80484b2:	8d 61 fc             	lea    -0x4(%ecx),%esp
+ 80484b5:	c3                   	ret    
 ```
 
 This is the assembly for the main function. Looking across, from left to
@@ -257,49 +263,57 @@ user@si485H-base:demo$ objdump -M intel -d helloworld
 
 (... snip ...)
 
-0804840b <printhello>:
-804840b:55                   push   ebp
-804840c:89 e5                mov    ebp,esp
-804840e:83 ec 28             sub    esp,0x28
-8048411:c7 45 e5 48 65 6c 6c mov    DWORD PTR [ebp-0x1b],0x6c6c6548
-8048418:c7 45 e9 6f 2c 20 57 mov    DWORD PTR [ebp-0x17],0x57202c6f
-804841f:c7 45 ed 6f 72 6c 64 mov    DWORD PTR [ebp-0x13],0x646c726f
-8048426:66 c7 45 f1 21 0a    mov    WORD PTR [ebp-0xf],0xa21
-804842c:c6 45 f3 00          mov    BYTE PTR [ebp-0xd],0x0
-8048430:8d 45 e5             lea    eax,[ebp-0x1b]
-8048433:89 45 f4             mov    DWORD PTR [ebp-0xc],eax
-8048436:eb 19                jmp    8048451 <printhello+0x46>
-8048438:8b 45 f4             mov    eax,DWORD PTR [ebp-0xc]
-804843b:0f b6 00             movzx  eax,BYTE PTR [eax]
-804843e:0f be c0             movsx  eax,al
-8048441:83 ec 0c             sub    esp,0xc
-8048444:50                   push   eax
-8048445:e8 a6 fe ff ff       call   80482f0 <putchar@plt>
-804844a:83 c4 10             add    esp,0x10
-804844d:83 45 f4 01          add    DWORD PTR [ebp-0xc],0x1
-8048451:8b 45 f4             mov    eax,DWORD PTR [ebp-0xc]
-8048454:0f b6 00             movzx  eax,BYTE PTR [eax]
-8048457:84 c0                test   al,al
-8048459:75 dd                jne    8048438 <printhello+0x2d>
-804845b:90                   nop
-804845c:c9                   leave  
-804845d:c3                   ret    
+08048426 <printhello>:
+ 8048426:	55                   	push   ebp
+ 8048427:	89 e5                	mov    ebp,esp
+ 8048429:	53                   	push   ebx
+ 804842a:	83 ec 24             	sub    esp,0x24
+ 804842d:	e8 2e ff ff ff       	call   8048360 <__x86.get_pc_thunk.bx>
+ 8048432:	81 c3 ce 1b 00 00    	add    ebx,0x1bce
+ 8048438:	c7 45 e5 48 65 6c 6c 	mov    DWORD PTR [ebp-0x1b],0x6c6c6548
+ 804843f:	c7 45 e9 6f 2c 20 57 	mov    DWORD PTR [ebp-0x17],0x57202c6f
+ 8048446:	c7 45 ed 6f 72 6c 64 	mov    DWORD PTR [ebp-0x13],0x646c726f
+ 804844d:	66 c7 45 f1 21 0a    	mov    WORD PTR [ebp-0xf],0xa21
+ 8048453:	c6 45 f3 00          	mov    BYTE PTR [ebp-0xd],0x0
+ 8048457:	8d 45 e5             	lea    eax,[ebp-0x1b]
+ 804845a:	89 45 f4             	mov    DWORD PTR [ebp-0xc],eax
+ 804845d:	eb 19                	jmp    8048478 <printhello+0x52>
+ 804845f:	8b 45 f4             	mov    eax,DWORD PTR [ebp-0xc]
+ 8048462:	0f b6 00             	movzx  eax,BYTE PTR [eax]
+ 8048465:	0f be c0             	movsx  eax,al
+ 8048468:	83 ec 0c             	sub    esp,0xc
+ 804846b:	50                   	push   eax
+ 804846c:	e8 7f fe ff ff       	call   80482f0 <putchar@plt>
+ 8048471:	83 c4 10             	add    esp,0x10
+ 8048474:	83 45 f4 01          	add    DWORD PTR [ebp-0xc],0x1
+ 8048478:	8b 45 f4             	mov    eax,DWORD PTR [ebp-0xc]
+ 804847b:	0f b6 00             	movzx  eax,BYTE PTR [eax]
+ 804847e:	84 c0                	test   al,al
+ 8048480:	75 dd                	jne    804845f <printhello+0x39>
+ 8048482:	90                   	nop
+ 8048483:	8b 5d fc             	mov    ebx,DWORD PTR [ebp-0x4]
+ 8048486:	c9                   	leave  
+ 8048487:	c3                   	ret    
 
-0804845e <main>:
-804845e:8d 4c 24 04          lea    ecx,[esp+0x4]
-8048462:83 e4 f0             and    esp,0xfffffff0
-8048465:ff 71 fc             push   DWORD PTR [ecx-0x4]
-8048468:55                   push   ebp
-8048469:89 e5                mov    ebp,esp
-804846b:51                   push   ecx
-804846c:83 ec 04             sub    esp,0x4
-804846f:e8 97 ff ff ff       call   804840b <printhello>
-8048474:b8 00 00 00 00       mov    eax,0x0
-8048479:83 c4 04             add    esp,0x4
-804847c:59                   pop    ecx
-804847d:5d                   pop    ebp
-804847e:8d 61 fc             lea    esp,[ecx-0x4]
-8048481:c3                   ret    
+08048488 <main>:
+ 8048488:	8d 4c 24 04          	lea    ecx,[esp+0x4]
+ 804848c:	83 e4 f0             	and    esp,0xfffffff0
+ 804848f:	ff 71 fc             	push   DWORD PTR [ecx-0x4]
+ 8048492:	55                   	push   ebp
+ 8048493:	89 e5                	mov    ebp,esp
+ 8048495:	51                   	push   ecx
+ 8048496:	83 ec 04             	sub    esp,0x4
+ 8048499:	e8 18 00 00 00       	call   80484b6 <__x86.get_pc_thunk.ax>
+ 804849e:	05 62 1b 00 00       	add    eax,0x1b62
+ 80484a3:	e8 7e ff ff ff       	call   8048426 <printhello>
+ 80484a8:	b8 00 00 00 00       	mov    eax,0x0
+ 80484ad:	83 c4 04             	add    esp,0x4
+ 80484b0:	59                   	pop    ecx
+ 80484b1:	5d                   	pop    ebp
+ 80484b2:	8d 61 fc             	lea    esp,[ecx-0x4]
+ 80484b5:	c3                   	ret    
+ 
+ (... snip ...)
 ```
 
 ### Disassembling with `gdb`
@@ -309,14 +323,14 @@ which also does a tone of other tasks which we will look at later. To
 start, run the program under the debugger:
 
 ``` example
-$ gdb ./helloworld 
-GNU gdb (Ubuntu 7.11.1-0ubuntu1~16.04) 7.11.1
-Copyright (C) 2016 Free Software Foundation, Inc.
+$ gdb helloworld 
+GNU gdb (Ubuntu 8.1-0ubuntu3) 8.1.0.20180409-git
+Copyright (C) 2018 Free Software Foundation, Inc.
 License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
 This is free software: you are free to change and redistribute it.
 There is NO WARRANTY, to the extent permitted by law.  Type "show copying"
 and "show warranty" for details.
-This GDB was configured as "i686-linux-gnu".
+This GDB was configured as "x86_64-linux-gnu".
 Type "show configuration" for configuration details.
 For bug reporting instructions, please see:
 <http://www.gnu.org/software/gdb/bugs/>.
@@ -324,53 +338,60 @@ Find the GDB manual and other documentation resources online at:
 <http://www.gnu.org/software/gdb/documentation/>.
 For help, type "help".
 Type "apropos word" to search for commands related to "word"...
-Reading symbols from ./helloworld...done.
-(gdb) ds printhello 
+Reading symbols from helloworld...done.
+(gdb) ds printhello
 Dump of assembler code for function printhello:
-0x0804840b <+0>:push   ebp
-0x0804840c <+1>:mov    ebp,esp
-0x0804840e <+3>:sub    esp,0x28
-0x08048411 <+6>:mov    DWORD PTR [ebp-0x1b],0x6c6c6548
-0x08048418 <+13>:mov    DWORD PTR [ebp-0x17],0x57202c6f
-0x0804841f <+20>:mov    DWORD PTR [ebp-0x13],0x646c726f
-0x08048426 <+27>:mov    WORD PTR [ebp-0xf],0xa21
-0x0804842c <+33>:mov    BYTE PTR [ebp-0xd],0x0
-0x08048430 <+37>:lea    eax,[ebp-0x1b]
-0x08048433 <+40>:mov    DWORD PTR [ebp-0xc],eax
-0x08048436 <+43>:jmp    0x8048451 <printhello+70>
-0x08048438 <+45>:mov    eax,DWORD PTR [ebp-0xc]
-0x0804843b <+48>:movzx  eax,BYTE PTR [eax]
-0x0804843e <+51>:movsx  eax,al
-0x08048441 <+54>:sub    esp,0xc
-0x08048444 <+57>:push   eax
-0x08048445 <+58>:call   0x80482f0 <putchar@plt>
-0x0804844a <+63>:add    esp,0x10
-0x0804844d <+66>:add    DWORD PTR [ebp-0xc],0x1
-0x08048451 <+70>:mov    eax,DWORD PTR [ebp-0xc]
-0x08048454 <+73>:movzx  eax,BYTE PTR [eax]
-0x08048457 <+76>:test   al,al
-0x08048459 <+78>:jne    0x8048438 <printhello+45>
-0x0804845b <+80>:nop
-0x0804845c <+81>:leave  
-0x0804845d <+82>:ret    
+   0x08048426 <+0>:	push   ebp
+   0x08048427 <+1>:	mov    ebp,esp
+   0x08048429 <+3>:	push   ebx
+   0x0804842a <+4>:	sub    esp,0x24
+   0x0804842d <+7>:	call   0x8048360 <__x86.get_pc_thunk.bx>
+   0x08048432 <+12>:	add    ebx,0x1bce
+   0x08048438 <+18>:	mov    DWORD PTR [ebp-0x1b],0x6c6c6548
+   0x0804843f <+25>:	mov    DWORD PTR [ebp-0x17],0x57202c6f
+   0x08048446 <+32>:	mov    DWORD PTR [ebp-0x13],0x646c726f
+   0x0804844d <+39>:	mov    WORD PTR [ebp-0xf],0xa21
+   0x08048453 <+45>:	mov    BYTE PTR [ebp-0xd],0x0
+   0x08048457 <+49>:	lea    eax,[ebp-0x1b]
+   0x0804845a <+52>:	mov    DWORD PTR [ebp-0xc],eax
+   0x0804845d <+55>:	jmp    0x8048478 <printhello+82>
+   0x0804845f <+57>:	mov    eax,DWORD PTR [ebp-0xc]
+   0x08048462 <+60>:	movzx  eax,BYTE PTR [eax]
+   0x08048465 <+63>:	movsx  eax,al
+   0x08048468 <+66>:	sub    esp,0xc
+   0x0804846b <+69>:	push   eax
+   0x0804846c <+70>:	call   0x80482f0 <putchar@plt>
+   0x08048471 <+75>:	add    esp,0x10
+   0x08048474 <+78>:	add    DWORD PTR [ebp-0xc],0x1
+   0x08048478 <+82>:	mov    eax,DWORD PTR [ebp-0xc]
+   0x0804847b <+85>:	movzx  eax,BYTE PTR [eax]
+   0x0804847e <+88>:	test   al,al
+   0x08048480 <+90>:	jne    0x804845f <printhello+57>
+   0x08048482 <+92>:	nop
+   0x08048483 <+93>:	mov    ebx,DWORD PTR [ebp-0x4]
+   0x08048486 <+96>:	leave  
+   0x08048487 <+97>:	ret    
 End of assembler dump.
 (gdb) ds main
 Dump of assembler code for function main:
-0x0804845e <+0>:lea    ecx,[esp+0x4]
-0x08048462 <+4>:and    esp,0xfffffff0
-0x08048465 <+7>:push   DWORD PTR [ecx-0x4]
-0x08048468 <+10>:push   ebp
-0x08048469 <+11>:mov    ebp,esp
-0x0804846b <+13>:push   ecx
-0x0804846c <+14>:sub    esp,0x4
-0x0804846f <+17>:call   0x804840b <printhello>
-0x08048474 <+22>:mov    eax,0x0
-0x08048479 <+27>:add    esp,0x4
-0x0804847c <+30>:pop    ecx
-0x0804847d <+31>:pop    ebp
-0x0804847e <+32>:lea    esp,[ecx-0x4]
-0x08048481 <+35>:ret    
+   0x08048488 <+0>:	lea    ecx,[esp+0x4]
+   0x0804848c <+4>:	and    esp,0xfffffff0
+   0x0804848f <+7>:	push   DWORD PTR [ecx-0x4]
+   0x08048492 <+10>:	push   ebp
+   0x08048493 <+11>:	mov    ebp,esp
+   0x08048495 <+13>:	push   ecx
+   0x08048496 <+14>:	sub    esp,0x4
+   0x08048499 <+17>:	call   0x80484b6 <__x86.get_pc_thunk.ax>
+   0x0804849e <+22>:	add    eax,0x1b62
+   0x080484a3 <+27>:	call   0x8048426 <printhello>
+   0x080484a8 <+32>:	mov    eax,0x0
+   0x080484ad <+37>:	add    esp,0x4
+   0x080484b0 <+40>:	pop    ecx
+   0x080484b1 <+41>:	pop    ebp
+   0x080484b2 <+42>:	lea    esp,[ecx-0x4]
+   0x080484b5 <+45>:	ret    
 End of assembler dump.
+
 ```
 
 This will print out a disclaimer and leave you in a gdb terminal. Now,
@@ -664,16 +685,17 @@ The first set of instructions in our main function is for managing the
 stack frame for the current function. In our code, this looks like this:
 
 ``` example
-0x0804840b <+0>:push   ebp
-0x0804840c <+1>:mov    ebp,esp
-0x0804840e <+3>:sub    esp,0x28
+ 0x08048426 <+0>:	push   ebp
+ 0x08048427 <+1>:	mov    ebp,esp
+ 0x08048429 <+3>:	push   ebx
+ 0x0804842a <+4>:	sub    esp,0x24
 ```
 
 Let's first analyze the first four instructions. The push instruction
 will push a value onto the stack, and in this case it is the previous
 base pointer, ie, the saved based pointer. Next, the base pointer is set
 to the stack pointer (`mov`). Next, subtracting from the stack pointer
-allocates the rest of the stack frame, which is 0x28 bytes long or 44
+allocates the rest of the stack frame, which is 0x24 bytes long or 36
 bytes (don't forget about hex).
 
 The need for these instructions is so that the previous stack frame, the
@@ -709,7 +731,7 @@ esp->|  func args  |       |  func args  |      |  func args  |
 
 
 
-       (3) mov ebp,esp         (4) sub esp,0x28
+       (3) mov ebp,esp         (4) sub esp,0x24
 
          .-------------.        .-------------.       
          |    ...      |        |    ...      |   
@@ -730,17 +752,58 @@ esp,ebp->|  saved ebp  |    bp->|  saved ebp  |
                                 '-------------'
 ```
 
+## The `__x86.get_pc_thunk` functions
+
+You may have noticed that in the disassembled x86 for both `main` and
+`printhello` is two extra function calls, `__x86.get_pc_thunk.bx` and
+`__x86.get_pc_thunk.ax`. These two functions are added by the compiler to load
+the address of the *next* instruction into the `bx` and `ax` portion of the
+register, respectively. The `add` that follows clears out the lower `bh/bl` and
+`ah/al` portion of the registers, so the two work in combination.
+
+Why is this useful? Well, it isn't, at least, not for our programs. This is used
+for handling position independent compilation, which is necessary for dynamic
+libraries. The ability to load certain program-counter points comes more
+naturally in x86_64, but since we are compiling 32-bit on a 64-bit machine
+(e.g., the `-m32` and `-no-pie` option to compilation), `gcc` goes ahead and adds in these
+functions where needed. They have no real effect on the 32-bit programs we are
+analyzing, so you can essentially ignore them.
+
+However, if you're curious how it works, you can use `gdb` to print the
+instructions:
+
+``` example
+
+(gdb) x/2i 0x8048360
+   0x8048360 <__x86.get_pc_thunk.bx>:	mov    ebx,DWORD PTR [esp]
+   0x8048363 <__x86.get_pc_thunk.bx+3>:	ret 
+```
+
+Since we reached the function via a `call`, the return address is pushed onto
+the stack. `esp` is reference that return address. The `mov` instruction, along
+with the deference of `DWORD PTR [esp]`, saves the return address into the `ebx`
+register. This way of quickly saving an address actually will come in handy
+later when we start writing shell code.
+
+Finally, the `mov` instruction at the end of the `printhello` instruction is
+also connected to this compiler addition. Since the instruction of the start of
+the function is loaded into `ebx`, it places the return address of the function
+`printhello` stored at `ebp-0x4`. This, again, is to track execution to enable
+position independent code. You can mostly ignore these extra instructions, but
+be careful to verify first that it is not effecting the normal operations of the
+program you are analyzing.
+
 ## De-allocating a stack frame
 
-Now that a new stack frame construction is complete, we can jump to the
-end and look at what happens once the function returns. How is the stack
-frame deallocated and popped off the stack.
+Now that a new stack frame construction is complete, we can jump to the end and
+look at what happens once the function returns. How is the stack frame
+deallocated and popped off the stack.
 
 Two instructions manage that process.
 
 ``` example
-  0x0804845c <+81>:leave  
-  0x0804845d <+82>:ret    
+ 0x08048486 <+96>:	leave  
+ 0x08048487 <+97>:	ret   
 ```
 
 First the `leave` instruction will do two things:
@@ -820,11 +883,11 @@ The string "Hello World!\\n" is set on the stack in 15 byte character
 array. In assembly, this looks like this.
 
 ``` example
-0x08048411 <+6>:mov    DWORD PTR [ebp-0x1b],0x6c6c6548
-0x08048418 <+13>:mov    DWORD PTR [ebp-0x17],0x57202c6f
-0x0804841f <+20>:mov    DWORD PTR [ebp-0x13],0x646c726f
-0x08048426 <+27>:mov    WORD PTR [ebp-0xf],0xa21
-0x0804842c <+33>:mov    BYTE PTR [ebp-0xd],0x0
+ 0x08048438 <+18>:	mov    DWORD PTR [ebp-0x1b],0x6c6c6548
+ 0x0804843f <+25>:	mov    DWORD PTR [ebp-0x17],0x57202c6f
+ 0x08048446 <+32>:	mov    DWORD PTR [ebp-0x13],0x646c726f
+ 0x0804844d <+39>:	mov    WORD PTR [ebp-0xf],0xa21
+ 0x08048453 <+45>:	mov    BYTE PTR [ebp-0xd],0x0
 ```
 
 If you squint at the `<src>` of the operators, you'll recognize that
@@ -858,8 +921,8 @@ program like this, though):
 The next two instructions are a bit different:
 
 ``` example
-0x08048430 <+37>:lea    eax,[ebp-0x1b]
-0x08048433 <+40>:mov    DWORD PTR [ebp-0xc],eax
+ 0x08048457 <+49>:	lea    eax,[ebp-0x1b]
+ 0x0804845a <+52>:	mov    DWORD PTR [ebp-0xc],eax
 ```
 
 =lea= stands for *load effective address* and is a short cut for to do a
@@ -890,19 +953,19 @@ Now, we've reached the meat of the program: the inner loop. We can
 follow the execution at this point by following the jumps.
 
 ``` example
-0x08048436 <+43>:jmp    0x8048451 <printhello+70> # ------------.
-0x08048438 <+45>:mov    eax,DWORD PTR [ebp-0xc]   # <------.    |
-0x0804843b <+48>:movzx  eax,BYTE PTR [eax]        #        |    |
-0x0804843e <+51>:movsx  eax,al                    #        |    |
-0x08048441 <+54>:sub    esp,0xc                   #        |    |
-0x08048444 <+57>:push   eax                       #        |    | //exit condition check
-0x08048445 <+58>:call   0x80482f0 <putchar@plt>   #        |    |
-0x0804844a <+63>:add    esp,0x10                  #        |    |
-0x0804844d <+66>:add    DWORD PTR [ebp-0xc],0x1   #        |    |
-0x08048451 <+70>:mov    eax,DWORD PTR [ebp-0xc]   # <------+----'
-0x08048454 <+73>:movzx  eax,BYTE PTR [eax]        #        | //loop body
-0x08048457 <+76>:test   al,al                     #        |
-0x08048459 <+78>:jne    0x8048438 <printhello+45> # -------'
+   0x0804845d <+55>:	jmp    0x8048478 <printhello+82>  # ------------.                          
+   0x0804845f <+57>:	mov    eax,DWORD PTR [ebp-0xc]    # <------.    |                          
+   0x08048462 <+60>:	movzx  eax,BYTE PTR [eax]         #        |    |                          
+   0x08048465 <+63>:	movsx  eax,al                     #        |    |                          
+   0x08048468 <+66>:	sub    esp,0xc                    #        |    |                          
+   0x0804846b <+69>:	push   eax                        #        |    | //exit condition check   
+   0x0804846c <+70>:	call   0x80482f0 <putchar@plt>    #        |    |                          
+   0x08048471 <+75>:	add    esp,0x10                   #        |    |                          
+   0x08048474 <+78>:	add    DWORD PTR [ebp-0xc],0x1    #        |    |                          
+   0x08048478 <+82>:	mov    eax,DWORD PTR [ebp-0xc]    # <------+----'                          
+   0x0804847b <+85>:	movzx  eax,BYTE PTR [eax]         #        | //loop body                   
+   0x0804847e <+88>:	test   al,al                      #        |                               
+   0x08048480 <+90>:	jne    0x804845f <printhello+57>  # -------'                               
 ```
 
 A `jmp` instruction changes the instruction pointer to the destination
@@ -911,10 +974,10 @@ that jump in the code, we find the following three instructions which is
 testing the exit condition from the loop.
 
 ``` example
-0x08048451 <+70>:mov    eax,DWORD PTR [ebp-0xc]   
-0x08048454 <+73>:movzx  eax,BYTE PTR [eax]        
-0x08048457 <+76>:test   al,al                     
-0x08048459 <+78>:jne    0x8048438 <printhello+45> 
+  0x08048478 <+82>:	mov    eax,DWORD PTR [ebp-0xc]
+  0x0804847b <+85>:	movzx  eax,BYTE PTR [eax]
+  0x0804847e <+88>:	test   al,al
+  0x08048480 <+90>:	jne    0x804845f <printhello+57>
 ```
 
 Recall that `ebp-0xc` is the address of the pointer `p`, so doing
@@ -948,13 +1011,13 @@ and continue the loop.
 If we investigate the loop body, we find the following instructions:
 
 ``` example
-0x08048438 <+45>:mov    eax,DWORD PTR [ebp-0xc]  
-0x0804843b <+48>:movzx  eax,BYTE PTR [eax]       
-0x0804843e <+51>:movsx  eax,al                   
-0x08048441 <+54>:sub    esp,0xc                  
-0x08048444 <+57>:push   eax                      
-0x08048445 <+58>:call   0x80482f0 <putchar@plt>  
-0x0804844a <+63>:add    esp,0x10                 
+   0x0804845f <+57>:	mov    eax,DWORD PTR [ebp-0xc]
+   0x08048462 <+60>:	movzx  eax,BYTE PTR [eax]
+   0x08048465 <+63>:	movsx  eax,al
+   0x08048468 <+66>:	sub    esp,0xc
+   0x0804846b <+69>:	push   eax
+   0x0804846c <+70>:	call   0x80482f0 <putchar@plt>
+   0x08048471 <+75>:	add    esp,0x10
 ```
 
 The first set of instructions, much like the test before, is to
@@ -990,7 +1053,7 @@ allocate prior to the call.
 The final instruction to consider is
 
 ``` example
-   0x0804844d <+66>:add    DWORD PTR [ebp-0xc],0x1  
+    0x08048474 <+78>:	add    DWORD PTR [ebp-0xc],0x1
 ```
 
 =p=, and the instructions following test weather `p` now references
