@@ -12,12 +12,12 @@
 |      | Fri. 8/31 | [Lab 2 ](labs/lab_02.md)    |                                                                  | |
 |---   |---        |---                          |---                                                     |---         |
 | 3    |**Tue.** 9/4 |  [Unit 2](units/unit_02.md) | [Disassembling a Binary Program](units/unit_01.md#program-memory-layout) |[HW 1](hw/hw_01.md) **due!** |
-|      | Wed. 9/5  |  [Unit 2](units/unit_02.md) |  [Basics of x86 Assembly Programming](units/unit_01.md#program-memory-layout)<br> [Managing Stacks in Assembly](units/unit_02.md#stack-frame-management-and-assembly) | |
-|      | Fri. 9/7  | [Lab 3] (labs/lab_03.md) 
+|      | Wed. 9/5  |  [Unit 2](units/unit_02.md) |  [Basics of x86 Assembly Programming](units/unit_02.md#program-memory-layout)<br> [Managing Stacks in Assembly](units/unit_02.md#stack-frame-management-and-assembly) | |
+|      | Fri. 9/7  | [Lab 3](labs/lab_03.md) 
 |---   |---        |---                          |---                                                     |---         |
 | 4    | Mon. 9/10 | Lab Work Day (Rosh Hashana) |
 |      | Wed. 9/12 | [Unit 2](units/unit_02.md)  | [References/Loops/Functions in x86](units/unit_02.md#stack-frame-management-and-assembly) | |
-|      | Fri. 9/14 | [Unit 2](units/unit_02.md)  |  [Tracing a program with gdb](units/unit_02.md#stack-frame-management-and-assembly) | |                         
+|      | Fri. 9/14 | [Unit 2](units/unit_02.md) <br> [Lab 4](labs/lab_04.md) |  [Tracing a program with gdb](units/unit_02.md#stack-frame-management-and-assembly) | |                         
 |---   |---        |---                          |---                                                     |---         |
 | 5    | Mon. 9/17 | **Lab Assessment**          | Assessment for Week 1-3 labs                           | [HW 2](hw/hw_02.md) **due!** |
 |      | Wed. 9/19 | **Midterm 1**               | Midterm covers unit 1-2                 
