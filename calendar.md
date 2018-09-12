@@ -19,7 +19,7 @@
 |      | Wed. 9/12 | [Unit 2](units/unit_02.md)  | [References/Loops/Functions in x86](units/unit_02.md#stack-frame-management-and-assembly) | |
 |      | Fri. 9/14 | [Unit 2](units/unit_02.md)  |  [Tracing a program with gdb](units/unit_02.md#stack-frame-management-and-assembly) | |                         
 |---   |---        |---                          |---                                                     |---         |
-| 5    | Mon. 9/17 | **Lab Assessment**          | Assessment for Week 1-4 labs                           | [HW 2](hw/hw_02.md) **due!** |
+| 5    | Mon. 9/17 | **Lab Assessment**          | Assessment for Week 1-3 labs                           | [HW 2](hw/hw_02.md) **due!** |
 |      | Wed. 9/19 | **Midterm 1**               | Midterm covers unit 1-2                 
 |      | Fri. 9/21 | **Practicum 1**             | Practicum covers Unit 1-2 
 |---   |---        |---                          |---                                                     |---         |
