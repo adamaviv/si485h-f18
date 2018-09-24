@@ -841,25 +841,21 @@ Visually this would look like this:
 At this point the stack is almost back to its state prior to the
 function call. The last thing to do is to pop off the return value and
 set the instruction pointer (i.e., the current execution point) to the
-return value. Conceptually, we can see that `ret` does both those in two
-steps:
+return value. Conceptually, we can see that `ret` does both those in one
+step:
 
 1.  `pop eip` : pop the return value and set it to the instruction
-    pointer
-2.  `jmp eip` : move execution to the instruction pointer
+    pointer.
 
-In reality, these procedures happen at the same time since setting the
-eip is the same as jumping, but it's good to think of them as separate
-steps.
 
 ``` example
-                             ret                  ret 
-                            1. pop eip          2. jmp eip
+                             ret                 
+                            1. pop eip          
       .-------------.      .-------------.     
-ebp-> |    ...      | ebp->|      ...    |        Execution
-      :             :      :             :        returns to calling 
-         calling            calling               function after the call
-      :  stack      :      : stack       :        with stack frame reset
+ebp-> |    ...      | ebp->|      ...    |        
+      :             :      :             :         
+         calling            calling               
+      :  stack      :      : stack       :        
       |  frame      |      | frame       |
       |             |      |             |
       |  func args  | esp->| func args   |
