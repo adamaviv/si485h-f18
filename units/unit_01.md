@@ -591,7 +591,7 @@ int main(int argc, char * argv[]){
 
   //largest negative signed int:
   //  binary: 1111 1111 1111 1111 1111 1111 1111 1111
-  //     hex:   8    f   f     f    f    f    f   f
+  //     hex:   f    f   f     f    f    f    f   f
   int l_neg = 0xffffffff;
 
 
