@@ -23,11 +23,11 @@
 |      | Wed. 9/19 | **Midterm 1**               | Midterm covers unit 1-2                 
 |      | Fri. 9/21 | **Practicum 1**             | Practicum covers Unit 1-2 
 |---   |---        |---                          |---                                                     |---         |
-| 6    | Mon. 9/24 | [Unit 3](units/unit_03.md)  | [Smashing the Stack for Fun and Profit](units/unit_03.md#smashing-the-stack-for-fun-and-profit) 
-|      | Wed. 9/26 | [Unit 3](units/unit_03.md)  | [Shell Code and x86 System Calls](units/unit_03.md#shell-code-and-system-calls-in-x86)
-|      | Fri. 9/28 | 
+| 6    | Mon. 9/24 | Exam Review                 | 
+|      | Wed. 9/26 | [Unit 3](units/unit_03.md)  | [Smashing the Stack for Fun and Profit](units/unit_03.md#smashing-the-stack-for-fun-and-profit) 
+|      | Fri. 9/28 | [Lab 5](labs/lab_05.md)     
 |---   |---        |---                          |---                                                     |---         |
-| 7    | Mon. 10/1 | [Unit 3](units/unit_03.md)  | [Writing Shell Code in x86](units/unit_03.md#shell-code-and-system-calls-in-x86) | 
+| 7    | Mon. 10/1 | [Unit 3](units/unit_03.md)  | [Writing Shell Code in x86](units/unit_03.md#shell-code-and-system-calls-in-x86) <br> [Shell Code and x86 System Calls](units/unit_03.md#shell-code-and-system-calls-in-x86)| 
 |      | Wed. 10/3 | [Unit 3](units/unit_03.md)  |  [Making Shell Code Exploit Ready](unit_03.md#making-shell-code-exploit-ready) |
 |      | Fri. 10/5 | 
 |---   |---        |---                          |---                                                     |---         |

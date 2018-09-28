@@ -10,3 +10,6 @@ complete and submit a lab.
 ## Labs
 - [Lab 1](lab_01.md)
 - [Lab 2](lab_02.md)
+- [Lab 3](lab_03.md)
+- [Lab 4](lab_04.md)
+- [Lab 5](lab_05.md)
