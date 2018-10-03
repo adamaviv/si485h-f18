@@ -29,7 +29,7 @@
 |---   |---        |---                          |---                                                     |---         |
 | 7    | Mon. 10/1 | [Unit 3](units/unit_03.md)  | [Writing Shell Code in x86](units/unit_03.md#shell-code-and-system-calls-in-x86) <br> [Shell Code and x86 System Calls](units/unit_03.md#shell-code-and-system-calls-in-x86)| 
 |      | Wed. 10/3 | [Unit 3](units/unit_03.md)  |  [Making Shell Code Exploit Ready](unit_03.md#making-shell-code-exploit-ready) |
-|      | Fri. 10/5 | 
+|      | Fri. 10/5 | [Lab 6](labs/lab_06.md) 
 |---   |---        |---                          |---                                                     |---         |
 | 8    | Mon. 10/8 | **No Class: Columbus Day**  |                                                        |            |
 |      | Wed. 10/10| [Unit 3](units/unit_03.md)  | [Smashing the Stack with Shell Code](units/unit_03.md#stack-smashing-with-shell-code) 

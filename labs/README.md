@@ -13,3 +13,4 @@ complete and submit a lab.
 - [Lab 3](lab_03.md)
 - [Lab 4](lab_04.md)
 - [Lab 5](lab_05.md)
+- [Lab 6](lab_06.md)
