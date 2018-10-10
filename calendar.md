@@ -33,17 +33,17 @@
 |---   |---        |---                          |---                                                     |---         |
 | 8    | Mon. 10/8 | **No Class: Columbus Day**  |                                                        |            |
 |      | Wed. 10/10| [Unit 3](units/unit_03.md)  | [Smashing the Stack with Shell Code](units/unit_03.md#stack-smashing-with-shell-code) 
-|      | Fri. 10/12| 
+|      | Fri. 10/12| [Lab 7](labs/lab_07.md) 
 |---   |---        |---                          |---                                                     |---         |
 | 9    | Mon. 10/15 | [Unit 4](units/unit_04.md) | [Smaller and Smaller Shell Code](units/unit_03.md#stack-smashing-with-shell-code) | [HW 3](hw/hw_03.md) **due!**
 |      | Wed. 10/17 | [Unit 4](units/unit_04.md) | [Obfuscating Shell Code](units/unit_03.md#stack-smashing-with-shell-code)
-|      | Fri. 10/19
+|      | Fri. 10/19 |
 |---   |---        |---                          |---                                                     |---         |
 | 10   | Mon. 10/22| [Unit 4](units/unit_04.md)  | [Socket Programming and Remote Shell in C](units/unit_03.md#stack-smashing-with-shell-code) |  [HW 4](hw/hw_04.md) due! |
 |      | Wed. 10/24| [Unit 4](units/unit_04.md)  | [Socket Programming and Remote Shell in x86](units/unit_03.md#stack-smashing-with-shell-code) | |
-|      |Fri. 10/26
+|      |Fri. 10/26 |
 |---   |---        |---                          |---                                                     |---         |
-| 11   | Mon. 10/29| **Lab Assessment 2**        | Assessment covers labs from Week 1-10                  | [HW 5](hw/hw_05.md) **due!**
+| 11   | Mon. 10/29| **Lab Assessment 2**        | Assessment covers labs from Week 1-8                  | [HW 5](hw/hw_05.md) **due!**
 |      | Wed. 10/31| **Midterm 2**               | Midterm covers units 1-4     
 |      | Fri. 11/2 | **Practicum 2**             | Practicum covers units 1-4 
 |---   |---        |---                          |---                                                     |---         |
