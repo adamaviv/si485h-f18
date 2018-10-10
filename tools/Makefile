@@ -5,6 +5,7 @@ BIN=$(SRC:.c=)
 
 AS=nasm
 ASFLAGS=-g -f elf32
+ASLDFLAGS=-m elf_i386
 LD=ld
 
 AS_SRC=$(wildcard *.asm)
@@ -15,7 +16,7 @@ AS_BIN=$(AS_SRC:.asm=)
 all: $(BIN) $(AS_BIN)
 
 $(AS_BIN): $(AS_OBJ)
-	$(LD) $(LDFLAGS) -o $@ $(@:=.o)
+	$(LD) $(ASLDFLAGS) -o $@ $(@:=.o)
 
 $(AS_OBJ): $(AS_SRC)
 	$(AS) $(ASFLAGS) -o $@ $(@:.o=.asm)
