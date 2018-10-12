@@ -43,7 +43,7 @@
 |      | Wed. 10/24| [Unit 4](units/unit_04.md)  | [Socket Programming and Remote Shell in x86](units/unit_03.md#stack-smashing-with-shell-code) | |
 |      |Fri. 10/26 |
 |---   |---        |---                          |---                                                     |---         |
-| 11   | Mon. 10/29| **Lab Assessment 2**        | Assessment covers labs from Week 1-8                  | [HW 5](hw/hw_05.md) **due!**
+| 11   | Mon. 10/29| **Lab Assessment 2**        | Assessment covers labs from Week 1-9                  | [HW 5](hw/hw_05.md) **due!**
 |      | Wed. 10/31| **Midterm 2**               | Midterm covers units 1-4     
 |      | Fri. 11/2 | **Practicum 2**             | Practicum covers units 1-4 
 |---   |---        |---                          |---                                                     |---         |
