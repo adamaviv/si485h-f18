@@ -1011,7 +1011,7 @@ happens under the hood of gcc.
 To assemble using nasm
 
 ``` example
-  nasme -f elf helloworld.asm -o helloworld.o
+  nasm -f elf32 helloworld.asm -o helloworld.o
 ```
 
 The `-f elf` indicates the output format should be in elf. The object
@@ -1021,7 +1021,7 @@ semester.
 Next, we can link our object file with `ld` to produce the executable:
 
 ``` example
-  ld helloworld.o -o helloworld
+  ld -m elf_i386 helloworld.o -o helloworld
 ```
 
 Then, we run our program:
