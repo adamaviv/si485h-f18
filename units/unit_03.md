@@ -154,7 +154,7 @@ $2 = 0
 
 The next instructions prior to the call to `strcpy()` will reveal the
 location of `buf` and `str`. We know that the order of arguments to
-strcpy is first source then destination, so whichever memory address is
+strcpy is first destination then source, so whichever memory address is
 loaded at the stack pointer `esp` must be `buf` (the destination) and
 whatever is loaded at `+4` from the stack pointer must be the string
 str. Looking closely, that the address `ebp-0x2c` is eventually written
