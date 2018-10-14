@@ -10,5 +10,5 @@ learn.
   off. Just put it in your source directory and fire away. It doesn't not handle
   dependencies, though, so sources should be self contained.
   
-  
+* [hexify.sh](hexify.sh) : A tool to convert a compiled assembly program into a hex string for use in an exploit.  
   
