@@ -643,7 +643,7 @@ Here are the bytes to our small shell code from objdump:
 
 First, I want to conver this into little-endian encode 4-byte sequences
 that I can push onto the stack. I've written a script to do this
-`le-foourbyte.py` and is provided in the classed tools directory. Here's
+`le-fourbyte.py` and is provided in the classed tools directory. Here's
 an example of using it on this shell code:
 
 ``` example
