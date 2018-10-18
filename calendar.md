@@ -37,7 +37,7 @@
 |---   |---        |---                          |---                                                     |---         |
 | 9    | Mon. 10/15 | [Unit 4](units/unit_04.md) | [Smaller and Smaller Shell Code](units/unit_03.md#stack-smashing-with-shell-code) | [HW 3](hw/hw_03.md) **due!**
 |      | Wed. 10/17 | [Unit 4](units/unit_04.md) | [Obfuscating Shell Code](units/unit_03.md#stack-smashing-with-shell-code)
-|      | Fri. 10/19 |
+|      | Fri. 10/19 | [Lab 8](labs/lab_08.md)
 |---   |---        |---                          |---                                                     |---         |
 | 10   | Mon. 10/22| [Unit 4](units/unit_04.md)  | [Socket Programming and Remote Shell in C](units/unit_03.md#stack-smashing-with-shell-code) |  [HW 4](hw/hw_04.md) due! |
 |      | Wed. 10/24| [Unit 4](units/unit_04.md)  | [Socket Programming and Remote Shell in x86](units/unit_03.md#stack-smashing-with-shell-code) | |
