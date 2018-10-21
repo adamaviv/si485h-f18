@@ -31,7 +31,7 @@
 % \end{myanswer}
 %
 % You can also use macro's in your \myanswer if you want to control the
-% formatting. Such as verbatim enviroment or lstlisting environment.
+% formatting. Such as verbatim environment or lstlisting environment.
 %
 % BUT(!) I have to be able to read/grade your resulting pdf to give you credit,
 % so make sure your home work is well formatted.
@@ -126,7 +126,7 @@ _start:
 \item (5 points) At MARK 1, explain why \texttt{mul ecx} will zero out the register \texttt{eax} and \texttt{edx}.
 
 \item (5 points) At MARK 2, how come we are not creating an argv array for
-execve? What areguments are we passing instead?
+execve? What arguments are we passing instead?
 
 \item (5 points) How many bytes is this shell code?
 \end{enumerate}
@@ -149,7 +149,7 @@ _start:
 \begin{enumerate}
 \item (5 points) Provide an english-language description of the process of this shell code
 
-\item (5 points) Will this shell code work consistantly?
+\item (5 points) Will this shell code work consistently?
 
 \item (5 points) How would you use this shell code to launch a shell?
 
@@ -164,7 +164,7 @@ Choose a shell code from the Intel x86 header, compile and run
 that shell code, and describe it's properties and something
 interesting you learned from it. Be sure to include the code.
 
-\item Consider the simple signature matching instrusion detection scheme:
+\item Consider the simple signature matching instruction detection scheme:
 
 \begin{verbatim}
 int sig_check(char * p){
@@ -218,9 +218,9 @@ int sig_check(char *str, char * sig0, char *sig1){
 \end{verbatim}
 
 \begin{enumerate}
-\item (5 points) Provide a signatures (i.e., arugments to sig\(_{\text{check}}\) above) that
+\item (5 points) Provide a signatures (i.e., arguments to sig\(_{\text{check}}\) above) that
 will match both shell codes (from the previous questions) use
-of the excve system call.
+of the execve system call.
 
 \item (5 points) Consider the following change to the shell code below, does
 your previous signature still work? If so, explain why, if not,
@@ -252,7 +252,7 @@ explain why not.
 804807e: ff d4           call esp
 \end{verbatim}
 
-\item (5 points) What is polymorphic shell code? How does it relate to the shortcomins of the signature matching scheme from before?
+\item (5 points) What is polymorphic shell code? How does it relate to the shortcomings of the signature matching scheme from before?
 
 \item (5 points) What is decode shell code? Would decoder shell code be immune from signature matching schemes?
 
@@ -278,7 +278,7 @@ explain why not.
 \begin{enumerate}
 \item (5 points) What is the decode key? Explain how you know this.
 
-\item (5 points) Why is the comparison (\texttt{cmp}) comapring to 0x14 for loop exit?
+\item (5 points) Why is the comparison (\texttt{cmp}) comparing to 0x14 for loop exit?
 
 \item (5 points) Explain the last instruction's relevance \texttt{jmp esp}.
 \end{enumerate}
