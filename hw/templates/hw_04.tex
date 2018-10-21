@@ -139,10 +139,10 @@ SECTION .text
         global _start:
 
 _start:
-        cltrd
+        cdq ; or cltrd
         push 0xb
         pop eax
-        push a
+        pusha
         pop ecx
         int 0x80
 \end{verbatim}
