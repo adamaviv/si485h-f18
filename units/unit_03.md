@@ -364,12 +364,12 @@ Breakpoint 3, main (argc=10, argv=0x0) at vulnerable.c:31
 
 Before we call `vuln()` the base pointer in main references the 0x00
 address, namely to deallocate the whole stack upon leave. Further notice
-the address of the base pointer ends in 0xbffff6f88. After we continue
+the address of the base pointer ends in 0xbffff6f68. After we continue
 through `vuln()` and return, if we examine the base pointer again, the
 address of the base pointer is 0xbffff600. How did this happen exactly?
 
 Well we wrote 44 bytes of 'A', but a string is null terminated by 0x00
-(the 45th byte) and that 0x00 overflows the array and overwrote the 88
+(the 45th byte) and that 0x00 overflows the array and overwrote the 68
 in the saved base pointer. Now, when the base pointer is restored and
 main tries to return, the new base pointer is set to something
 nonsensical, and in fact references are long string of A's. The program
