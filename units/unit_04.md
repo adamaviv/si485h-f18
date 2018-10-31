@@ -166,7 +166,7 @@ Disassembly of section .text:
 Looking closely, there are two bytes for every push, and we push 7
 items, for 14 bytes. Referring back to the jmp-callback version of the
 code. There were 12 bytes for the call back and 2 bytes for the jmp,
-that's 14 byts. We gained nothing!
+that's 14 bytes. We gained nothing!
 
 Worse, let's see if this shell code actually works:
 
@@ -1174,7 +1174,7 @@ struct sockaddr_in {
 
 Two important points about the address structure: (1) note that the port
 is stored in network byte order (not Little Endian) and we need to use
-`htnos()` to cover the order, and this is also the same for the
+`htons()` to cover the order, and this is also the same for the
 `in_addr` portion; (2) there is a lot of padding in the structure, but
 the core parts, sin<sub>family</sub>, sin<sub>port</sub> and
 sin<sub>addr</sub> will be 2 + 2 + 4 or 8 bytes in size, and with the
