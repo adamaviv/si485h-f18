@@ -1317,7 +1317,7 @@ file descriptors. After the dup's all input/output/error from the
 program is drector to/from the socket. The last thing to do is to
 execute the shell which will inherent the file descriptor table, and
 thus now the shell is using the socket for all communication with the
-user. To connect the circuit, on a remote host, we connect to the serve.
+user. To connect the circuit, on a remote host, we connect to the server.
 
 ``` c
 //rsh.c
