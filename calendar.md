@@ -41,7 +41,7 @@
 |---   |---        |---                          |---                                                     |---         |
 | 10   | Mon. 10/22| [Unit 4](units/unit_04.md)  | [Socket Programming and Remote Shell in C](units/unit_03.md#stack-smashing-with-shell-code) |  [HW 4](hw/hw_04.md) due! |
 |      | Wed. 10/24| [Unit 4](units/unit_04.md)  | [Socket Programming and Remote Shell in x86](units/unit_03.md#stack-smashing-with-shell-code) | |
-|      |Fri. 10/26 |
+|      |Fri. 10/26 | [Lab 9](labs/lab_09.md)
 |---   |---        |---                          |---                                                     |---         |
 | 11   | Mon. 10/29| **Lab Assessment 2**        | Assessment covers labs from Week 1-9                  | [HW 5](hw/hw_05.md) **due!**
 |      | Wed. 10/31| **Midterm 2**               | Midterm covers units 1-4     
@@ -49,7 +49,7 @@
 |---   |---        |---                          |---                                                     |---         |
 | 12   | Mon. 11/5 | [Unit 5](units/unit_05.md)  |  [Address Space Layout Randomization](units/unit_03.md#stack-smashing-with-shell-code) | |
 |      | Wed. 11/7 | [Unit 5](units/unit_05.md)  |  [Defeating Address Space Layout Randomization](units/unit_03.md#stack-smashing-with-shell-code) | |
-|      | Fri. 11/9 | 
+|      | Fri. 11/9 | [Lab 10](labs/lab_10.md)
 |---   |---        |---                          |---                                                     |---         |
 | 13   | Mon. 11/12|**No Class: Veterans' Day**  |
 |      | Wed. 11/14|[Unit 5](units/unit_05.md)   | [Stack Guards](units/unit_05.md#stack-smashing-detected) | 
