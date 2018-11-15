@@ -17,4 +17,5 @@ complete and submit a lab.
 - [Lab 7](lab_07.md)
 - [Lab 8](lab_08.md)
 - [Lab 9](lab_09.md)
-- [Lab 9](lab_10.md)
+- [Lab 10](lab_10.md)
+- [Lab 11](lab_11.md)
