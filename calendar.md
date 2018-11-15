@@ -65,7 +65,7 @@
 |---   |---        |---                          |---                                                     |---         |
 | 16   | Mon. 12/3 |[Unit 7](units/unit_07.md)   | [Return Oriented Programming II](units/unit_06.md#using-formats-in-an-exploit) | 
 |      | Wed. 12/5 | **SOFS**                    |                                                        | [HW 8](hw/hw_08.md) **due**!
-|      | Fri. 12/7 | **Lab Assessment 3**        | Assessment covers labs from weeks 1-13 
+|      | Fri. 12/7 | **Lab Assessment 3**        | Assessment covers labs from weeks 1-11 (not 12 or 13) 
 |---   |---        |---                          |---                                                     |---         |
 
 ### Exam Period
