@@ -69,6 +69,6 @@
 |---   |---        |---                          |---                                                     |---         |
 
 ### Exam Period
-
-- TBA: **Final Exam**
 - Fri. 12/14: <font color="red">**Final day to submit labs**</font>
+- Mon. 12/17: **Final Exam**
+
