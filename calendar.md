@@ -56,15 +56,15 @@
 |      | Fri. 11/16| [Lab 11](labs/lab_11.md)
 |---   |---        |---                          |---                                                     |---         |
 | 14   | Mon. 11/19| [Unit 6](units/unit_06.md)  | [Format String Attacks I](units/unit_05.md#stack-smashing-detected) |  [HW 6](hw/hw_6.md) **due**!
-|      | Wed. 11/21| [Unit 6](units/unit_06.md)  | [Format String Attacks II](units/unit_06.md#using-formats-in-an-exploit) |
+|      | Wed. 11/21| [Unit 6](units/unit_06.md)  <br> [Lab 12](labs/lab_12.md)    |  <br>  [Format String Attacks II](units/unit_06.md#using-formats-in-an-exploit) |
 |      | Fri. 11/23|**No Class: Thanksgiving Break** |
 |---   |---        |---                          |---                                                     |---         |
 | 15   | Mon. 11/26| [Unit 7](units/unit_07.md) | [WxorE and Return to Lib C](units/unit_06.md#using-formats-in-an-exploit) |[HW 7](hw/hw_07.md) **due**!
 |      | Wed. 11/28| [Unit 7](units/unit_07.md) | [Return Oriented Programming I](units/unit_06.md#using-formats-in-an-exploit)
-|      | Fri. 11/30| [Lab 12](labs/lab_12.md) <br> [Lab 13](labs/lab_13.md)
+|      | Fri. 11/30| [Lab 13](labs/lab_13.md)
 |---   |---        |---                          |---                                                     |---         |
-| 16   | Mon. 12/3 |[Unit 7](units/unit_07.md)   | [Return Oriented Programming II](units/unit_06.md#using-formats-in-an-exploit) | 
-|      | Wed. 12/5 | **SOFS**                    |                                                        | [HW 8](hw/hw_08.md) **due**!
+| 16   | Mon. 12/3 |[Unit 7](units/unit_07.md)   | [Return Oriented Programming II](units/unit_06.md#using-formats-in-an-exploit) | [HW 8](hw/hw_08.md) **due** |
+|      | Wed. 12/5 | **SOFS**                    |                                                        | !
 |      | Fri. 12/7 | **Lab Assessment 3**        | Assessment covers labs from weeks 1-11 (not 12 or 13) 
 |---   |---        |---                          |---                                                     |---         |
 
