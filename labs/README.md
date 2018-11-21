@@ -19,3 +19,4 @@ complete and submit a lab.
 - [Lab 9](lab_09.md)
 - [Lab 10](lab_10.md)
 - [Lab 11](lab_11.md)
+- [Lab 12](lab_12.md)
